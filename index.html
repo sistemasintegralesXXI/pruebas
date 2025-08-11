@@ -3,766 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Ventas - Alimentos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /*
-         * Aquí va tu CSS, he incluido el que me proporcionaste anteriormente.
-         * Lo he organizado por secciones para mayor claridad.
-         */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .login-form {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 350px;
-        }
-        .login-form h2 {
-            margin-bottom: 30px;
-            color: #333;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .btn {
-            background-color: #764ba2;
-            color: #fff;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #667eea;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .dashboard-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            min-height: 100vh;
-            background-color: #f4f7f6;
-        }
-        .sidebar {
-            background-color: #34495e;
-            color: #ecf0f1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        .sidebar-header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #555;
-            padding-bottom: 20px;
-        }
-        .sidebar-header h2 {
-            font-size: 24px;
-            margin-top: 10px;
-        }
-        .sidebar-menu a {
-            display: block;
-            color: #ecf0f1;
-            text-decoration: none;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: #5a7b97;
-        }
-        .sidebar-menu a i {
-            margin-right: 10px;
-        }
-        .main-content {
-            padding: 30px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .header h1 {
-            color: #34495e;
-            font-size: 28px;
-        }
-        .user-info {
-            font-weight: bold;
-            color: #555;
-        }
-        .content-section {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .content-section h3 {
-            margin-bottom: 20px;
-            color: #34495e;
-        }
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .btn-add { background-color: #2ecc71; color: #fff; }
-        .btn-edit { background-color: #3498db; color: #fff; }
-        .btn-delete { background-color: #e74c3c; color: #fff; }
-        .btn-pay { background-color: #f39c12; color: #fff; }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #34495e;
-            font-weight: bold;
-        }
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-        .table-actions button {
-            margin-right: 5px;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            padding: 30px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
-            border-radius: 10px;
-            position: relative;
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            line-height: 20px;
-            cursor: pointer;
-        }
-        .close-btn:hover, .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-        }
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .table-container {
-            overflow-x: auto;
-        }
-    </style>
+    <title>¡Carnes al Barril!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <div id="loginSection" class="login-container">
-        <div class="login-form">
-            <h2><i class="fas fa-utensils"></i> Sistema de Ventas</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </button>
-            </form>
-        </div>
-    </div>
 
-    <div id="mainDashboard" class="dashboard-container hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Menú</h2>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Sabores al Barril</h1>
+        <p>Las mejores carnes y porciones para deleitar tu paladar.</p>
+    </header>
+
+    <main class="container my-5">
+        <section id="products-section">
+            <h2 class="text-center mb-4">Nuestro Menú</h2>
+            <div id="products-list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                </div>
+            <div class="text-center mt-5">
+                <button id="show-cart-btn" class="btn btn-success btn-lg">Ver mi Pedido</button>
             </div>
-            <nav class="sidebar-menu">
-                <a href="#" class="nav-link active" data-section="home"><i class="fas fa-home"></i> Inicio</a>
-                <a href="#" class="nav-link" data-section="productos"><i class="fas fa-box"></i> Productos</a>
-                <a href="#" class="nav-link" data-section="clientes"><i class="fas fa-users"></i> Clientes</a>
-                <a href="#" class="nav-link" data-section="ventas"><i class="fas fa-shopping-cart"></i> Ventas</a>
-                <a href="#" class="nav-link" data-section="usuarios"><i class="fas fa-user-circle"></i> Usuarios</a>
-                <a href="#" class="nav-link" data-section="estadisticas"><i class="fas fa-chart-line"></i> Estadísticas</a>
-                <a href="#" class="nav-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </nav>
-        </aside>
+        </section>
+    </main>
 
-        <main class="main-content">
-            <div id="homeSection" class="content-section">
-                <div class="header">
-                    <h1>Bienvenido, <span id="currentUserName">Usuario</span></h1>
-                    <div class="user-info">
-                        <span id="currentUserRole">Rol</span>
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Mi Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="cart-items" class="list-group"></ul>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <span id="cart-total"></span>
+                    </div>
+
+                    <div id="auth-section" class="mt-4">
+                        <h6 class="text-center">Antes de confirmar, cuéntanos...</h6>
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="pills-new-tab" data-bs-toggle="pill" data-bs-target="#pills-new" type="button" role="tab">Soy Cliente Nuevo</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-old-tab" data-bs-toggle="pill" data-bs-target="#pills-old" type="button" role="tab">Soy Cliente Antiguo</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-new" role="tabpanel">
+                                <form id="new-client-form">
+                                    <div class="mb-3"><input type="text" class="form-control" id="new-name" placeholder="Nombre" required></div>
+                                    <div class="mb-3"><input type="text" class="form-control" id="new-doc4" pattern="\d{4}" maxlength="4" placeholder="Últimos 4 del documento" required></div>
+                                    <div class="mb-3"><input type="text" class="form-control" id="new-address" placeholder="Dirección" required></div>
+                                    <div class="mb-3"><input type="tel" class="form-control" id="new-phone" placeholder="Teléfono" required></div>
+                                    <button type="submit" class="btn btn-primary w-100">Registrar y Confirmar</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="pills-old" role="tabpanel">
+                                <form id="old-client-form">
+                                    <div class="mb-3"><input type="text" class="form-control" id="old-doc4" pattern="\d{4}" maxlength="4" placeholder="Últimos 4 del documento" required></div>
+                                    <button type="submit" class="btn btn-primary w-100">Validar y Confirmar</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="auth-message" class="mt-3 text-center"></div>
                     </div>
                 </div>
-                </div>
-
-            <div id="productosSection" class="content-section hidden">
-                <div class="content-header">
-                    <h3>Gestión de Productos</h3>
-                    <button class="btn btn-add" id="openAddProductoModal">
-                        <i class="fas fa-plus"></i> Agregar Producto
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table id="productosTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Descripción</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir Comprando</button>
+                    </div>
             </div>
-
-            <div id="clientesSection" class="content-section hidden">
-                <div class="content-header">
-                    <h3>Gestión de Clientes</h3>
-                    <button class="btn btn-add" id="openAddClienteModal">
-                        <i class="fas fa-plus"></i> Agregar Cliente
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table id="clientesTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Email</th>
-                                <th>Dirección</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="usuariosSection" class="content-section hidden">
-                <div class="content-header">
-                    <h3>Gestión de Usuarios</h3>
-                    <button class="btn btn-add" id="openAddUsuarioModal">
-                        <i class="fas fa-plus"></i> Agregar Usuario
-                    </button>
-                </div>
-                <div class="table-container">
-                    <table id="usuariosTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Rol</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="ventasSection" class="content-section hidden">
-                <h3>Ventas</h3>
-                </div>
-
-            <div id="estadisticasSection" class="content-section hidden">
-                <h3>Estadísticas</h3>
-                </div>
-        </main>
-    </div>
-
-    <div id="productoModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3 id="productoModalTitle">Agregar Producto</h3>
-            <form id="productoForm">
-                <div class="form-group">
-                    <label for="productoId">ID</label>
-                    <input type="text" id="productoId" name="id" required>
-                </div>
-                <div class="form-group">
-                    <label for="productoNombre">Nombre</label>
-                    <input type="text" id="productoNombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="productoPrecio">Precio</label>
-                    <input type="number" id="productoPrecio" name="precio" required>
-                </div>
-                <div class="form-group">
-                    <label for="productoStock">Stock</label>
-                    <input type="number" id="productoStock" name="stock" required>
-                </div>
-                <div class="form-group">
-                    <label for="productoDescripcion">Descripción</label>
-                    <textarea id="productoDescripcion" name="descripcion" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-add">Guardar</button>
-            </form>
         </div>
     </div>
 
-    <div id="clienteModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3 id="clienteModalTitle">Agregar Cliente</h3>
-            <form id="clienteForm">
-                <div class="form-group">
-                    <label for="clienteId">ID</label>
-                    <input type="text" id="clienteId" name="id" required>
-                </div>
-                <div class="form-group">
-                    <label for="clienteNombre">Nombre</label>
-                    <input type="text" id="clienteNombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="clienteTelefono">Teléfono</label>
-                    <input type="tel" id="clienteTelefono" name="telefono" required>
-                </div>
-                <div class="form-group">
-                    <label for="clienteEmail">Email</label>
-                    <input type="email" id="clienteEmail" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="clienteDireccion">Dirección</label>
-                    <input type="text" id="clienteDireccion" name="direccion">
-                </div>
-                <button type="submit" class="btn btn-add">Guardar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="usuarioModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3 id="usuarioModalTitle">Agregar Usuario</h3>
-            <form id="usuarioForm">
-                <div class="form-group">
-                    <label for="usuarioId">ID</label>
-                    <input type="text" id="usuarioId" name="id" required>
-                </div>
-                <div class="form-group">
-                    <label for="usuarioNombre">Nombre</label>
-                    <input type="text" id="usuarioNombre" name="nombre" required>
-                </div>
-                <div class="form-group">
-                    <label for="usuarioPassword">Contraseña</label>
-                    <input type="password" id="usuarioPassword" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="usuarioRol">Rol</label>
-                    <input type="text" id="usuarioRol" name="rol" required>
-                </div>
-                <button type="submit" class="btn btn-add">Guardar</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="loading" class="hidden">
-        <div class="spinner"></div>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // =========================================================================
-        // CONFIGURACIÓN Y LÓGICA DE LA APLICACIÓN
-        // =========================================================================
+  const appsScriptURL = 'https://script.google.com/macros/s/AKfycbzmADWtM8FPsG2IIKhRO1JZ_J_rW42-nxNRPYe2MkxO1T8XbHygUbnAjUxak4WLozQ/exec'; // REEMPLAZA con la URL que obtuviste
 
-        // IMPORTANTE: Reemplaza esta URL con la que obtuviste al desplegar tu Apps Script.
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmADWtM8FPsG2IIKhRO1JZ_J_rW42-nxNRPYe2MkxO1T8XbHygUbnAjUxak4WLozQ/exec';
+document.addEventListener('DOMContentLoaded', () => {
+    // Variables y elementos del DOM
+    const productsList = document.getElementById('products-list');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartTotalSpan = document.getElementById('cart-total');
+    const newClientForm = document.getElementById('new-client-form');
+    const oldClientForm = document.getElementById('old-client-form');
+    const authMessage = document.getElementById('auth-message');
+    const showCartBtn = document.getElementById('show-cart-btn');
 
-        // Elementos del DOM
-        const loginForm = document.getElementById('loginForm');
-        const loginSection = document.getElementById('loginSection');
-        const mainDashboard = document.getElementById('mainDashboard');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const loadingSpinner = document.getElementById('loading');
+    let cart = {};
+    let cliente = null;
 
-        // Variables para gestionar modales y datos
-        const productoModal = document.getElementById('productoModal');
-        const clienteModal = document.getElementById('clienteModal');
-        const usuarioModal = document.getElementById('usuarioModal');
-        const productoForm = document.getElementById('productoForm');
-        const clienteForm = document.getElementById('clienteForm');
-        const usuarioForm = document.getElementById('usuarioForm');
-        const productosTableBody = document.querySelector('#productosTable tbody');
-        const clientesTableBody = document.querySelector('#clientesTable tbody');
-        const usuariosTableBody = document.querySelector('#usuariosTable tbody');
-
-        let isEditing = false;
-        let currentItem = {};
-
-        // Función para mostrar alertas
-        function showAlert(message, type = 'info') {
-            alert(message); // Puedes reemplazar esto por un modal o toast más elegante
-        }
-
-        // Función para mostrar y ocultar el spinner de carga
-        function showLoading() {
-            loadingSpinner.classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            loadingSpinner.classList.add('hidden');
-        }
-
-        // Función para enviar peticiones a Apps Script
-        async function sendRequest(action, data = {}) {
-            showLoading();
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ action, ...data })
-                });
-                
-                const result = await response.json();
-                hideLoading();
-                return result;
-
-            } catch (error) {
-                hideLoading();
-                console.error('Error en la petición:', error);
-                showAlert('Error de conexión con el servidor. Intente de nuevo más tarde.', 'error');
-                return { success: false, message: 'Error de conexión.' };
-            }
-        }
-
-        // Manejar el login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const result = await sendRequest('login', { username, password });
-
-            if (result.success) {
-                showAlert('¡Bienvenido!', 'success');
-                loginSection.classList.add('hidden');
-                mainDashboard.classList.remove('hidden');
-                document.getElementById('currentUserName').textContent = result.data.nombre;
-                document.getElementById('currentUserRole').textContent = result.data.rol;
-                // Cargar datos iniciales del dashboard
-                showSection('home');
-                loadProductos();
-            } else {
-                showAlert(result.message, 'error');
-            }
-        });
-
-        // Manejar el cierre de sesión
-        logoutBtn.addEventListener('click', () => {
-            loginSection.classList.remove('hidden');
-            mainDashboard.classList.add('hidden');
-            showAlert('Sesión cerrada correctamente.', 'success');
-        });
-
-        // Navegación entre secciones
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = e.target.closest('a').dataset.section;
-                showSection(sectionId);
-                // Actualizar la clase 'active'
-                navLinks.forEach(nav => nav.classList.remove('active'));
-                e.target.closest('a').classList.add('active');
+    // --- Funciones de Comunicación con el Backend ---
+    async function fetchData(action, payload = {}) {
+        try {
+            const response = await fetch(appsScriptURL, {
+                method: 'POST',
+                body: JSON.stringify({ action, payload }),
+                headers: { 'Content-Type': 'application/json' }
             });
-        });
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId + 'Section').classList.remove('hidden');
-
-            // Cargar datos al cambiar de sección
-            if (sectionId === 'productos') loadProductos();
-            if (sectionId === 'clientes') loadClientes();
-            if (sectionId === 'usuarios') loadUsuarios();
-            // ... otras secciones ...
+            return await response.json();
+        } catch (error) {
+            console.error('Error al comunicarse con Apps Script:', error);
+            return { success: false, message: 'Error de conexión con el servidor.' };
         }
+    }
 
-        // =========================================================================
-        // LÓGICA ESPECÍFICA DE CADA MÓDULO
-        // =========================================================================
-
-        // ----------------------- Productos --------------------------
-        async function loadProductos() {
-            const result = await sendRequest('getProductos');
-            if (result.success) {
-                renderTable(productosTableBody, result.data, 'productos');
-            } else {
-                showAlert(result.message, 'error');
-            }
-        }
-
-        document.getElementById('openAddProductoModal').addEventListener('click', () => {
-            isEditing = false;
-            document.getElementById('productoModalTitle').textContent = 'Agregar Producto';
-            productoForm.reset();
-            productoModal.style.display = 'flex';
-        });
-
-        productoForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const productoData = Object.fromEntries(formData.entries());
-
-            const action = isEditing ? 'updateProducto' : 'addProducto';
-            const result = await sendRequest(action, productoData);
-            
-            if (result.success) {
-                showAlert(result.message, 'success');
-                productoModal.style.display = 'none';
-                loadProductos();
-            } else {
-                showAlert(result.message, 'error');
-            }
-        });
-
-        // ----------------------- Clientes --------------------------
-        async function loadClientes() {
-            const result = await sendRequest('getClientes');
-            if (result.success) {
-                renderTable(clientesTableBody, result.data, 'clientes');
-            } else {
-                showAlert(result.message, 'error');
-            }
-        }
-
-        document.getElementById('openAddClienteModal').addEventListener('click', () => {
-            isEditing = false;
-            document.getElementById('clienteModalTitle').textContent = 'Agregar Cliente';
-            clienteForm.reset();
-            clienteModal.style.display = 'flex';
-        });
-
-        clienteForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const clienteData = Object.fromEntries(formData.entries());
-
-            const action = isEditing ? 'updateCliente' : 'addCliente';
-            const result = await sendRequest(action, clienteData);
-            
-            if (result.success) {
-                showAlert(result.message, 'success');
-                clienteModal.style.display = 'none';
-                loadClientes();
-            } else {
-                showAlert(result.message, 'error');
-            }
-        });
-
-        // ----------------------- Usuarios --------------------------
-        async function loadUsuarios() {
-            const result = await sendRequest('getUsuarios');
-            if (result.success) {
-                renderTable(usuariosTableBody, result.data, 'usuarios');
-            } else {
-                showAlert(result.message, 'error');
-            }
-        }
-
-        document.getElementById('openAddUsuarioModal').addEventListener('click', () => {
-            isEditing = false;
-            document.getElementById('usuarioModalTitle').textContent = 'Agregar Usuario';
-            usuarioForm.reset();
-            usuarioModal.style.display = 'flex';
-        });
-
-        usuarioForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const usuarioData = Object.fromEntries(formData.entries());
-
-            const action = isEditing ? 'updateUsuario' : 'addUsuario';
-            const result = await sendRequest(action, usuarioData);
-            
-            if (result.success) {
-                showAlert(result.message, 'success');
-                usuarioModal.style.display = 'none';
-                loadUsuarios();
-            } else {
-                showAlert(result.message, 'error');
-            }
-        });
-
-        // ----------------------- Funciones de la tabla --------------------------
-        function renderTable(tableBody, data, type) {
-            tableBody.innerHTML = ''; // Limpiar la tabla
-            if (!data || data.length === 0) return;
-
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                let actionsHtml = '';
-
-                // Renderizar las celdas
-                for (const key in item) {
-                    const cell = document.createElement('td');
-                    cell.textContent = item[key];
-                    row.appendChild(cell);
-                }
-
-                // Generar los botones de acciones
-                actionsHtml += `
-                    <button class="btn btn-edit" onclick="openEditModal('${type}', '${item.id}')"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-delete" onclick="deleteItem('${type}', '${item.id}')"><i class="fas fa-trash"></i></button>
+    // --- Lógica de Productos (Se carga al inicio) ---
+    async function loadProducts() {
+        const result = await fetchData('getProducts');
+        if (result.success) {
+            productsList.innerHTML = '';
+            result.data.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'col';
+                productCard.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${product.ImagenURL}" class="card-img-top" alt="${product.Nombre}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.Nombre}</h5>
+                            <p class="card-text">${product.Descripción}</p>
+                            <div class="mt-3">
+                                <label for="qty-${product.ID}" class="form-label">Cantidad</label>
+                                <input type="number" class="form-control" id="qty-${product.ID}" value="1" min="1">
+                            </div>
+                            <div class="mt-3">
+                                <select class="form-select" id="price-option-${product.ID}">
+                                    <option value="Porcion" data-price="${product.PrecioPorcion}" data-name="Porción">Porción - $${product.PrecioPorcion.toLocaleString()}</option>
+                                    <option value="Libra" data-price="${product.PrecioLibra}" data-name="Libra">Libra - $${product.PrecioLibra.toLocaleString()}</option>
+                                    <option value="Kilo" data-price="${product.PrecioKilo}" data-name="Kilo">Kilo - $${product.PrecioKilo.toLocaleString()}</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-3 add-to-cart-btn" data-id="${product.ID}">Añadir al Carrito</button>
+                        </div>
+                    </div>
                 `;
-                
-                const actionsCell = document.createElement('td');
-                actionsCell.innerHTML = actionsHtml;
-                row.appendChild(actionsCell);
-                tableBody.appendChild(row);
+                productsList.appendChild(productCard);
             });
-        }
 
-        async function openEditModal(type, id) {
-            isEditing = true;
-            // Aquí deberías hacer una petición para obtener los datos del item por su ID
-            // y luego llenar el formulario del modal
-            showAlert(`Abriendo modal de edición para ${type} con ID: ${id}`);
-        }
+            // Añadir event listeners a los botones de añadir al carrito
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    const qty = parseInt(document.getElementById(`qty-${productId}`).value);
+                    const priceOption = document.getElementById(`price-option-${productId}`);
+                    const selectedPrice = parseInt(priceOption.options[priceOption.selectedIndex].dataset.price);
+                    const selectedName = priceOption.options[priceOption.selectedIndex].dataset.name;
+                    const productName = result.data.find(p => p.ID === productId).Nombre;
 
-        async function deleteItem(type, id) {
-            if (confirm(`¿Estás seguro de que quieres eliminar este ${type} con ID: ${id}?`)) {
-                const action = `delete${type.charAt(0).toUpperCase() + type.slice(1, -1)}`; // deleteProducto, deleteCliente...
-                const result = await sendRequest(action, { id });
-                if (result.success) {
-                    showAlert(result.message, 'success');
-                    if (type === 'productos') loadProductos();
-                    if (type === 'clientes') loadClientes();
-                    if (type === 'usuarios') loadUsuarios();
-                } else {
-                    showAlert(result.message, 'error');
-                }
+                    const cartItemId = `${productId}-${selectedName}`;
+                    
+                    if (cart[cartItemId]) {
+                        cart[cartItemId].qty += qty;
+                    } else {
+                        cart[cartItemId] = {
+                            id: productId,
+                            name: `${productName} (${selectedName})`,
+                            price: selectedPrice,
+                            qty: qty
+                        };
+                    }
+                    alert(`${productName} (${selectedName}) añadido al carrito.`);
+                    updateCartUI();
+                });
+            });
+        } else {
+            productsList.innerHTML = `<div class="text-center text-danger">Error al cargar los productos: ${result.message}</div>`;
+        }
+    }
+
+    // --- Lógica del Carrito (Modal) ---
+    function updateCartUI() {
+        cartItemsList.innerHTML = '';
+        let total = 0;
+        if (Object.keys(cart).length === 0) {
+            cartItemsList.innerHTML = '<li class="list-group-item text-center">El carrito está vacío.</li>';
+        } else {
+            for (const id in cart) {
+                const item = cart[id];
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `
+                    ${item.name}
+                    <span class="badge bg-primary rounded-pill">${item.qty}</span>
+                    <span class="ms-auto">$${itemTotal.toLocaleString()}</span>
+                `;
+                cartItemsList.appendChild(li);
             }
         }
+        cartTotalSpan.textContent = `$${total.toLocaleString()}`;
+    }
 
-        // Manejar el cierre de modales
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.closest('.modal').style.display = 'none';
-            });
-        });
+    // Evento para abrir el modal del carrito
+    showCartBtn.addEventListener('click', () => {
+        if (Object.keys(cart).length === 0) {
+            alert('Tu carrito está vacío. Añade productos para continuar.');
+            return;
+        }
+        updateCartUI();
+        const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+        cartModal.show();
+    });
 
-        window.addEventListener('click', (event) => {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        });
+    // --- Lógica de Autenticación y Confirmación de Pedido ---
+    async function confirmOrder() {
+        const salePayload = {
+            id_cliente: cliente.id,
+            productos: cart,
+            total: Object.values(cart).reduce((sum, item) => sum + item.price * item.qty, 0)
+        };
 
-        // =========================================================================
-        // INICIALIZACIÓN
-        // =========================================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ocultar todas las secciones excepto la de login al cargar
-            showSection('login');
-        });
-    </script>
+        const result = await fetchData('createSale', salePayload);
+        if (result.success) {
+            alert('🎉 ¡Tu pedido ha sido confirmado! Te contactaremos por WhatsApp para la confirmación. 🎉');
+            cart = {};
+            updateCartUI();
+            const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+            cartModal.hide();
+        } else {
+            alert('Hubo un error al procesar tu pedido. Por favor, intenta de nuevo.');
+        }
+    }
+
+    newClientForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            nombre: document.getElementById('new-name').value,
+            docID4: document.getElementById('new-doc4').value,
+            direccion: document.getElementById('new-address').value,
+            telefono: document.getElementById('new-phone').value
+        };
+        const result = await fetchData('registerClient', payload);
+        if (result.success) {
+            authMessage.className = 'mt-3 text-center text-success';
+            authMessage.textContent = 'Registro exitoso. Confirmando tu pedido...';
+            cliente = { id: result.id, nombre: payload.nombre };
+            await confirmOrder();
+        } else {
+            authMessage.className = 'mt-3 text-center text-danger';
+            authMessage.textContent = result.message;
+        }
+    });
+
+    oldClientForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = { docID4: document.getElementById('old-doc4').value };
+        const result = await fetchData('checkClient', payload);
+        if (result.success) {
+            authMessage.className = 'mt-3 text-center text-success';
+            authMessage.textContent = `Bienvenido de nuevo, ${result.client.nombre}. Confirmando tu pedido...`;
+            cliente = result.client;
+            await confirmOrder();
+        } else {
+            authMessage.className = 'mt-3 text-center text-danger';
+            authMessage.textContent = 'Cliente no encontrado. Por favor, regístrate.';
+        }
+    });
+    
+    // Cargar los productos al inicio
+    loadProducts();
+});
+  </script>
 </body>
 </html>
