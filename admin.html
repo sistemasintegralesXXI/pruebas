@@ -25,6 +25,9 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
         }
 
         .sidebar h2 {
@@ -54,6 +57,26 @@
         .main-content {
             flex-grow: 1;
             padding: 20px;
+            margin-left: 250px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            .sidebar h2, .sidebar ul {
+                display: none;
+            }
+            .sidebar ul li {
+                display: inline-block;
+            }
+            .main-content {
+                margin-left: 0;
+            }
         }
 
         .header {
@@ -98,7 +121,7 @@
             border-radius: 5px;
         }
 
-        .estado-venta-En-Preparación {
+        .estado-venta-En-Preparacion {
             background-color: #ffc107;
             color: #000;
             padding: 5px 10px;
@@ -151,16 +174,12 @@
                 <input type="password" class="form-control" id="password" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-            <br><br><br><br>
-            <a href="index.html" style="text-decoration: none; font-weight: bold;">
-                    🥩 Página de Compras
-                </a>
         </form>
     </div>
 </div>
 
 <div class="wrapper d-none" id="admin-panel">
-    <nav id="sidebar" class="sidebar d-none d-md-block">
+    <nav id="sidebar" class="sidebar">
         <h2 class="text-warning">Admin Panel</h2>
         <div id="user-info" class="text-center mb-3">
             <span id="user-name" class="fw-bold"></span><br>
@@ -187,7 +206,7 @@
                         <i class="fas fa-bell"></i> <span class="badge bg-danger" id="notificaciones-badge">0</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacionesDropdown" id="notificaciones-list">
-                        <li><a class="dropdown-item" href="#">No hay notificaciones</a></li>
+                        <li><span class="dropdown-item">No hay notificaciones</span></li>
                     </ul>
                 </div>
                 <button class="btn btn-dark d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
@@ -313,6 +332,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Usuario</th>
                             <th>Nombre</th>
                             <th>Rol</th>
@@ -333,6 +353,7 @@
                         <tr>
                             <th>Fecha</th>
                             <th>Acción</th>
+                            <th>Detalles</th>
                             <th>Usuario</th>
                         </tr>
                     </thead>
@@ -350,6 +371,40 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <canvas id="productosMasPedidosChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customAlertModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="customAlertModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar este elemento? Esta acción no se puede deshacer.</p>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -375,13 +430,42 @@
                     </div>
                     <div class="mb-3">
                         <label for="precioProducto" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="precioProducto" required>
+                        <input type="number" step="0.01" class="form-control" id="precioProducto" required>
                     </div>
                     <div class="mb-3">
                         <label for="imagenProducto" class="form-label">Imagen del Producto</label>
                         <input type="file" class="form-control" id="imagenProducto" accept="image/*" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalEditarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarProductoLabel">Editar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarProducto">
+                    <input type="hidden" id="editProductId">
+                    <div class="mb-3">
+                        <label for="editProductName" class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="editProductName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editProductDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductPrice" class="form-label">Precio</label>
+                        <input type="number" step="0.01" class="form-control" id="editProductPrice" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
                 </form>
             </div>
         </div>
@@ -398,6 +482,10 @@
             <div class="modal-body">
                 <form id="formCrearCliente">
                     <div class="mb-3">
+                        <label for="documentoCliente" class="form-label">Documento de Identidad</label>
+                        <input type="text" class="form-control" id="documentoCliente" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="nombreCliente" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="nombreCliente" required>
                     </div>
@@ -410,6 +498,39 @@
                         <input type="text" class="form-control" id="telefonoCliente" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Guardar Cliente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarCliente" tabindex="-1" aria-labelledby="modalEditarClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarClienteLabel">Editar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarCliente">
+                    <input type="hidden" id="editClientId">
+                    <div class="mb-3">
+                        <label for="editClientDocumento" class="form-label">Documento de Identidad</label>
+                        <input type="text" class="form-control" id="editClientDocumento" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="editClientName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientAddress" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="editClientAddress" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientPhone" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="editClientPhone" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
                 </form>
             </div>
         </div>
@@ -451,12 +572,93 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarUsuarioLabel">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarUsuario">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                        <label for="editUserUsername" class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-control" id="editUserUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserPassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="editUserPassword">
+                        <small class="form-text text-muted">Deja en blanco para no cambiar.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserName" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="editUserName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserRole" class="form-label">Rol</label>
+                        <select class="form-control" id="editUserRole" required>
+                            <option value="Admin">Admin</option>
+                            <option value="Empleado">Empleado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarVenta" tabindex="-1" aria-labelledby="modalEditarVentaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarVentaLabel">Editar Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarVenta">
+                    <input type="hidden" id="editSaleId">
+                    <div class="mb-3">
+                        <label for="editSaleClient" class="form-label">Cliente</label>
+                        <input type="text" class="form-control" id="editSaleClient" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSalePedido" class="form-label">Pedido</label>
+                        <input type="text" class="form-control" id="editSalePedido" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSaleTotal" class="form-label">Total</label>
+                        <input type="number" step="0.01" class="form-control" id="editSaleTotal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSaleStatus" class="form-label">Estado</label>
+                        <select class="form-select" id="editSaleStatus" required>
+                            <option value="Pedido">Pedido</option>
+                            <option value="En Preparación">En Preparación</option>
+                            <option value="Entregado">Entregado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
+    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
     let currentUser = null;
     let users = [];
+    const customAlertModal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+    const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+    const modalEditarUsuario = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+    const modalEditarCliente = new bootstrap.Modal(document.getElementById('modalEditarCliente'));
+    const modalEditarProducto = new bootstrap.Modal(document.getElementById('modalEditarProducto'));
+    const modalEditarVenta = new bootstrap.Modal(document.getElementById('modalEditarVenta'));
 
     document.addEventListener('DOMContentLoaded', () => {
         const loggedInUser = localStorage.getItem('loggedInUser');
@@ -468,6 +670,13 @@
         loadUsers();
         loadDashboard();
     });
+
+    // Función para mostrar el modal de alerta personalizado
+    function showCustomAlert(title, message) {
+        document.getElementById('customAlertModalLabel').textContent = title;
+        document.getElementById('customAlertModalBody').innerHTML = message;
+        customAlertModal.show();
+    }
 
     async function loadUsers() {
         try {
@@ -492,9 +701,9 @@
             currentUser = user;
             localStorage.setItem('loggedInUser', JSON.stringify(user));
             showAdminPanel();
-            alert(`¡Bienvenido, ${user.nombre}! Has iniciado sesión como ${user.rol}.`);
+            showCustomAlert('Bienvenido', `¡Hola, ${user.nombre}! Has iniciado sesión como ${user.rol}.`);
         } else {
-            alert('Usuario o contraseña incorrectos.');
+            showCustomAlert('Error de inicio de sesión', 'Usuario o contraseña incorrectos.');
         }
     });
 
@@ -578,8 +787,8 @@
                         <td>${p.descripcion}</td>
                         <td>$${p.precio}</td>
                         <td>
-                            <button class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn btn-sm btn-info me-2" onclick="editProduct(${p.id}, '${p.nombre}', '${p.descripcion}', ${p.precio})"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="confirmDelete('product', ${p.id})"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 `;
@@ -613,8 +822,8 @@
                             </select>
                         </td>
                         <td>
-                             <button class="btn btn-sm btn-info me-2" onclick="editSale(${s.id})"><i class="fas fa-edit"></i></button>
-                             <button class="btn btn-sm btn-danger" onclick="deleteSale(${s.id})"><i class="fas fa-trash-alt"></i></button>
+                             <button class="btn btn-sm btn-info me-2" onclick="editSale(${s.id}, '${s.cliente}', '${s.pedido}', ${s.total}, '${s.estado}')"><i class="fas fa-edit"></i></button>
+                             <button class="btn btn-sm btn-danger" onclick="confirmDelete('sale', ${s.id})"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
                 `;
@@ -626,34 +835,42 @@
 
     async function updateSaleStatus(id, estado) {
         try {
-            await fetch(SPREADSHEET_URL, {
+            const response = await fetch(SPREADSHEET_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'updateSaleStatus', data: { id, estado } }),
                 headers: { 'Content-Type': 'application/json' }
             });
-            // Recargar la tabla para ver el cambio
-            loadSales();
-            loadDashboard(); // Actualizar el dashboard
+            const result = await response.json();
+            if (result.success) {
+                showCustomAlert('Éxito', 'Estado de la venta actualizado.');
+                loadSales();
+                loadDashboard();
+            } else {
+                showCustomAlert('Error', `Error al actualizar estado: ${result.error}`);
+            }
         } catch (error) {
+            showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
             console.error('Error al actualizar estado:', error);
         }
     }
 
-    // Funciones para Editar y Eliminar (ahora con ID correcto)
-    function editSale(id) {
-        alert(`Editar venta con ID: ${id}`);
-        // Aquí se implementaría la lógica para cargar el formulario de edición
+    function editProduct(id, nombre, descripcion, precio) {
+        document.getElementById('editProductId').value = id;
+        document.getElementById('editProductName').value = nombre;
+        document.getElementById('editProductDescription').value = descripcion;
+        document.getElementById('editProductPrice').value = precio;
+        modalEditarProducto.show();
     }
-    function deleteSale(id) {
-        alert(`Eliminar venta con ID: ${id}`);
-        // Aquí se implementaría la lógica para eliminar la venta
+    
+    function editSale(id, cliente, pedido, total, estado) {
+        document.getElementById('editSaleId').value = id;
+        document.getElementById('editSaleClient').value = cliente;
+        document.getElementById('editSalePedido').value = pedido;
+        document.getElementById('editSaleTotal').value = total;
+        document.getElementById('editSaleStatus').value = estado;
+        modalEditarVenta.show();
     }
-    function editClient(id) {
-        alert(`Editar cliente con ID: ${id}`);
-    }
-    function deleteClient(id) {
-        alert(`Eliminar cliente con ID: ${id}`);
-    }
+    
 
     // Carga de Datos de Clientes
     async function loadClients() {
@@ -666,14 +883,13 @@
                 tableBody.innerHTML += `
                     <tr>
                         <td>${c.id}</td>
-                        <td>...${c.documento}</td>
+                        <td>${c.documento}</td>
                         <td>${c.nombre}</td>
                         <td>${c.direccion}</td>
                         <td>${c.telefono}</td>
                         <td>${c.compras}</td>
                         <td>
-                             <button class="btn btn-sm btn-info me-2" onclick="editClient(${c.id})"><i class="fas fa-edit"></i></button>
-                             <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})"><i class="fas fa-trash-alt"></i></button>
+                             <button class="btn btn-sm btn-info me-2" onclick="editClient(${c.id}, '${c.documento}', '${c.nombre}', '${c.direccion}', '${c.telefono}')"><i class="fas fa-edit"></i></button>
                         </td>
                     </tr>
                 `;
@@ -683,6 +899,15 @@
         }
     }
 
+    function editClient(id, documento, nombre, direccion, telefono) {
+        document.getElementById('editClientId').value = id;
+        document.getElementById('editClientDocumento').value = documento;
+        document.getElementById('editClientName').value = nombre;
+        document.getElementById('editClientAddress').value = direccion;
+        document.getElementById('editClientPhone').value = telefono;
+        modalEditarCliente.show();
+    }
+
     // Carga de datos de Usuarios
     function renderUsersTable(usersData) {
         const tableBody = document.getElementById('users-table-body');
@@ -690,18 +915,27 @@
         usersData.forEach(u => {
             tableBody.innerHTML += `
                 <tr>
+                    <td>${u.id}</td>
                     <td>${u.usuario}</td>
                     <td>${u.nombre}</td>
                     <td>${u.rol}</td>
                     <td>
-                        <button class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn btn-sm btn-info me-2" onclick="editUser(${u.id}, '${u.usuario}', '${u.nombre}', '${u.rol}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmDelete('user', ${u.id})"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 </tr>
             `;
         });
     }
 
+    function editUser(id, usuario, nombre, rol) {
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editUserUsername').value = usuario;
+        document.getElementById('editUserName').value = nombre;
+        document.getElementById('editUserRole').value = rol;
+        modalEditarUsuario.show();
+    }
+    
     // Funciones de Creación
     document.getElementById('formCrearProducto').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -710,7 +944,7 @@
         formData.append('nombre', document.getElementById('nombreProducto').value);
         formData.append('descripcion', document.getElementById('descripcionProducto').value);
         formData.append('precio', document.getElementById('precioProducto').value);
-        formData.append('file', document.getElementById('imagenProducto').files[0]);
+        formData.append('imagenProducto', document.getElementById('imagenProducto').files[0]);
 
         try {
             const response = await fetch(SPREADSHEET_URL, {
@@ -718,14 +952,14 @@
                 body: formData
             });
             const result = await response.json();
-            alert(result.success ? 'Producto creado con éxito.' : `Error: ${result.error}`);
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
             if (result.success) {
                 loadProducts();
                 bootstrap.Modal.getInstance(document.getElementById('modalCrearProducto')).hide();
                 document.getElementById('formCrearProducto').reset();
             }
         } catch (error) {
-            alert('Error al crear el producto.');
+            showCustomAlert('Error', 'Error al crear el producto.');
             console.error('Error creating product:', error);
         }
     });
@@ -733,6 +967,7 @@
     document.getElementById('formCrearCliente').addEventListener('submit', async (e) => {
         e.preventDefault();
         const clientData = {
+            documento: document.getElementById('documentoCliente').value,
             nombre: document.getElementById('nombreCliente').value,
             direccion: document.getElementById('direccionCliente').value,
             telefono: document.getElementById('telefonoCliente').value
@@ -745,14 +980,14 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
-            alert(result.success ? 'Cliente creado con éxito.' : `Error: ${result.error}`);
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
             if (result.success) {
                 loadClients();
                 bootstrap.Modal.getInstance(document.getElementById('modalCrearCliente')).hide();
                 document.getElementById('formCrearCliente').reset();
             }
         } catch (error) {
-            alert('Error al crear el cliente.');
+            showCustomAlert('Error', 'Error al crear el cliente.');
             console.error('Error creating client:', error);
         }
     });
@@ -773,18 +1008,194 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
-            alert(result.success ? 'Usuario creado con éxito.' : `Error: ${result.error}`);
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
             if (result.success) {
                 loadUsers();
                 bootstrap.Modal.getInstance(document.getElementById('modalCrearUsuario')).hide();
                 document.getElementById('formCrearUsuario').reset();
             }
         } catch (error) {
-            alert('Error al crear el usuario.');
+            showCustomAlert('Error', 'Error al crear el usuario.');
             console.error('Error creating user:', error);
         }
     });
+
+    // Funciones de Edición
+    document.getElementById('formEditarProducto').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const productData = {
+            id: document.getElementById('editProductId').value,
+            nombre: document.getElementById('editProductName').value,
+            descripcion: document.getElementById('editProductDescription').value,
+            precio: parseFloat(document.getElementById('editProductPrice').value)
+        };
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateProduct', data: productData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
+            if (result.success) {
+                loadProducts();
+                modalEditarProducto.hide();
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error al editar el producto.');
+            console.error('Error updating product:', error);
+        }
+    });
+
+    document.getElementById('formEditarCliente').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clientData = {
+            id: document.getElementById('editClientId').value,
+            documento: document.getElementById('editClientDocumento').value,
+            nombre: document.getElementById('editClientName').value,
+            direccion: document.getElementById('editClientAddress').value,
+            telefono: document.getElementById('editClientPhone').value
+        };
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateClient', data: clientData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
+            if (result.success) {
+                loadClients();
+                modalEditarCliente.hide();
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error al editar el cliente.');
+            console.error('Error updating client:', error);
+        }
+    });
     
+    document.getElementById('formEditarUsuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userData = {
+            id: document.getElementById('editUserId').value,
+            usuario: document.getElementById('editUserUsername').value,
+            contrasena: document.getElementById('editUserPassword').value,
+            nombre: document.getElementById('editUserName').value,
+            rol: document.getElementById('editUserRole').value
+        };
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateUser', data: userData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
+            if (result.success) {
+                loadUsers();
+                modalEditarUsuario.hide();
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error al editar el usuario.');
+            console.error('Error updating user:', error);
+        }
+    });
+    
+    document.getElementById('formEditarVenta').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const saleData = {
+            id: document.getElementById('editSaleId').value,
+            cliente: document.getElementById('editSaleClient').value,
+            pedido: document.getElementById('editSalePedido').value,
+            total: parseFloat(document.getElementById('editSaleTotal').value),
+            estado: document.getElementById('editSaleStatus').value
+        };
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateSale', data: saleData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || `Error: ${result.error}`);
+            if (result.success) {
+                loadSales();
+                modalEditarVenta.hide();
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error al editar la venta.');
+            console.error('Error updating sale:', error);
+        }
+    });
+
+    // Función de Confirmación de Eliminación
+    let deleteAction = null;
+    function confirmDelete(type, id) {
+        deleteAction = async () => {
+            let actionName;
+            switch(type) {
+                case 'product': actionName = 'deleteProduct'; break;
+                case 'client': actionName = 'deleteClient'; break;
+                case 'user': actionName = 'deleteUser'; break;
+                case 'sale': actionName = 'deleteSale'; break;
+            }
+            try {
+                const response = await fetch(SPREADSHEET_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: actionName, data: { id } }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || 'Error al eliminar.');
+                if (result.success) {
+                    switch(type) {
+                        case 'product': loadProducts(); break;
+                        case 'client': loadClients(); break;
+                        case 'user': loadUsers(); break;
+                        case 'sale': loadSales(); break;
+                    }
+                }
+            } catch (error) {
+                showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
+                console.error('Error deleting item:', error);
+            }
+            confirmDeleteModal.hide();
+        };
+        confirmDeleteModal.show();
+    }
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+        if (deleteAction) {
+            deleteAction();
+        }
+    });
+
+    // Carga de Historial
+    async function loadHistorial() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getHistoricalActions`);
+            const result = await response.json();
+            const tableBody = document.getElementById('historial-table-body');
+            tableBody.innerHTML = '';
+            if (result.success && result.actions.length > 0) {
+                result.actions.forEach(a => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${new Date(a.timestamp).toLocaleString()}</td>
+                            <td>${a.action}</td>
+                            <td>${a.details}</td>
+                            <td>${a.user}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No hay historial de acciones.</td></tr>';
+            }
+        } catch (error) {
+            console.error('Error loading historical actions:', error);
+            document.getElementById('historial-table-body').innerHTML = '<tr><td colspan="4" class="text-danger text-center">Error al cargar el historial.</td></tr>';
+        }
+    }
+
     // Gráficos de Estadísticas (usando Chart.js)
     let ventasChart, productosChart;
 
@@ -795,8 +1206,11 @@
             if (data.success) {
                 renderVentasPorMesChart(data.monthlySales);
                 renderProductosMasPedidosChart(data.mostOrderedProducts);
+            } else {
+                showCustomAlert('Error', `Error al cargar estadísticas: ${data.error}`);
             }
         } catch (error) {
+            showCustomAlert('Error', 'Error de conexión al cargar las estadísticas.');
             console.error('Error loading stats:', error);
         }
     }
@@ -817,6 +1231,7 @@
                 }]
             },
             options: {
+                responsive: true,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -888,19 +1303,12 @@
                 list.innerHTML = `<li><span class="dropdown-item">No hay notificaciones</span></li>`;
             }
 
-            // Alerta visual
-            if (pending.length > 0) {
-                // Podríamos mostrar un `toast` o una alerta más visible aquí.
-                // alert(`¡ATENCIÓN! Hay ${pending.length} pedidos pendientes.`);
-            }
-
         } catch (error) {
             console.error('Error checking pending orders:', error);
         }
     }
 
-    // Intervalo para las notificaciones (cada 5 minutos)
-    setInterval(checkPendingOrders, 5 * 60 * 1000);
+    setInterval(checkPendingOrders, 5 * 60 * 1000); // 5 minutos
     checkPendingOrders(); // Primera carga al iniciar
 </script>
 </body>
