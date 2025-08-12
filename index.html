@@ -1,618 +1,630 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA DE VENTAS</title>
+    <base target="_top">
+    <title>Sistema de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #4a00e0, #8e2de2);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 56px;
+            background: #f8f9fa;
+            color: #333;
+            padding-bottom: 80px;
         }
-
-        .navbar {
-            background-color: #2c004a !important;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .container {
+            margin-top: 30px;
         }
-
-        .navbar-brand, .nav-link {
-            color: #fff !important;
-            font-weight: bold;
-        }
-
-        .container-main {
-            flex: 1;
-            padding: 2rem 1rem;
-        }
-
         .product-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
-        .product-card .card-img-top {
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .product-card .card-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-card .card-title {
-            font-weight: bold;
-            color: #ffcc00;
-        }
-
-        .product-card .card-text {
-            color: #e0e0e0;
-            flex-grow: 1;
-        }
-
-        .footer {
-            background-color: #2c004a;
-            color: #fff;
-            padding: 1rem 0;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
             text-align: center;
+            height: 100%;
         }
-
-        .modal-content {
-            background: #2c004a;
-            color: #fff;
-            border-radius: 15px;
+        .product-card:hover {
+            transform: scale(1.03);
         }
-
-        .modal-header, .modal-footer {
-            border-color: rgba(255, 255, 255, 0.2);
+        .product-card img {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            height: 150px;
+            object-fit: cover;
+            width: 100%;
         }
-
-        .btn-primary {
-            background-color: #ffcc00;
-            border-color: #ffcc00;
-            color: #2c004a;
+        .cart-summary {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            z-index: 999;
         }
-
-        .btn-primary:hover {
-            background-color: #e6b800;
-            border-color: #e6b800;
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
         }
-
-        .form-control {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
-        .form-control::placeholder {
-            color: #ccc;
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
         }
-
-        .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
-        }
-
-        .estado-pedido {
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-            color: #fff;
-        }
-
-        .estado-pedido.Pedido {
-            background-color: #0d6efd;
-        }
-        .estado-pedido.En-Preparacion {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .estado-pedido.Entregado {
-            background-color: #198754;
-        }
-        .rating .star {
-            font-size: 2rem;
-            cursor: pointer;
-            color: #ccc;
-        }
-        .rating .star.selected {
-            color: #ffcc00;
-        }
-        .review-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid #ffcc00;
-            padding: 1rem;
-            margin-bottom: 1rem;
+        #pedido-animation {
+            text-align: center;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">SISTEMA DE VENTAS</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#verPedidoModal"><i class="fas fa-search me-1"></i>Ver estado de mi pedido</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="admin.html"><i class="fas fa-user-shield me-1"></i>Admin</a>
+    <div class="container">
+        <h1 class="text-center my-4">Menú de Productos</h1>
+        <div class="row" id="products-list">
+            </div>
+
+        <div class="cart-summary">
+            <h5>Mi Pedido <span class="cart-count" id="cart-item-count">0</span></h5>
+            <ul class="list-group" id="cart-list">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Cesta vacía
                 </li>
             </ul>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <strong>Total:</strong>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalConfirmarPedido">Confirmar Pedido</button>
+            <button class="btn btn-secondary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
         </div>
+
     </div>
-</nav>
 
-<div class="container container-main">
-    <div id="products-container" class="row g-4">
-        </div>
-</div>
-
-<footer class="footer">
-    <p>&copy; 2024 SISTEMA DE VENTAS. Todos los derechos reservados.</p>
-</footer>
-
-<div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="customAlertModalLabel"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="customAlertModalBody">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="verPedidoModal" tabindex="-1" aria-labelledby="verPedidoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="verPedidoModalLabel">Ver Estado de mi Pedido</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="form-ver-pedido">
-                    <div class="mb-3">
-                        <label for="documentoCliente" class="form-label">Ingresa los últimos 4 dígitos de tu documento</label>
-                        <input type="text" class="form-control" id="documentoCliente" required>
+    <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarPedidoLabel">Confirmar Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="confirm-type-selection">
+                        <p>¿Eres un cliente nuevo o antiguo?</p>
+                        <button class="btn btn-primary" id="btn-cliente-antiguo">Cliente Antiguo</button>
+                        <button class="btn btn-success" id="btn-cliente-nuevo">Cliente Nuevo</button>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Consultar</button>
-                </form>
-                <div id="estadoPedidosContainer" class="mt-4" style="display: none;">
-                    <div id="pedidosEnCurso">
-                        <h6>Pedidos en Curso</h6>
-                        <ul class="list-group">
-                            </ul>
-                    </div>
-                    <div id="pedidosAnteriores" class="mt-3">
-                        <h6>Pedidos Anteriores</h6>
-                        <ul class="list-group">
-                            </ul>
-                    </div>
+
+                    <form id="formClienteAntiguo" class="d-none">
+                        <p>Ingresa tu número de documento para validar tus datos.</p>
+                        <div class="mb-3">
+                            <label for="docAntiguo" class="form-label">Número de Documento</label>
+                            <input type="text" class="form-control" id="docAntiguo" required>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" id="btn-validar-cliente-antiguo">Validar</button>
+                        <hr>
+                        <div id="cliente-antiguo-info" class="d-none">
+                            <h6>Datos del Cliente</h6>
+                            <div class="mb-3">
+                                <label for="nombreAntiguo" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreAntiguo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="direccionAntiguo" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direccionAntiguo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefonoAntiguo" class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" id="telefonoAntiguo" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Confirmar y Enviar Pedido</button>
+                        </div>
+                    </form>
+
+                    <form id="formClienteNuevo" class="d-none">
+                        <p>Ingresa tus datos para registrarte y confirmar tu pedido.</p>
+                        <div class="mb-3">
+                            <label for="docNuevo" class="form-label">Número de Documento</label>
+                            <input type="text" class="form-control" id="docNuevo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombreNuevo" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombreNuevo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccionNuevo" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccionNuevo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefonoNuevo" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefonoNuevo" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Registrar y Confirmar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="calificacionModal" tabindex="-1" aria-labelledby="calificacionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="calificacionModalLabel">Calificar Pedido</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="modalVerPedidos" tabindex="-1" aria-labelledby="modalVerPedidosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVerPedidosLabel">Ver Mis Pedidos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Ingresa tu número de documento para validar la información de tus pedidos.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Número de Documento" id="documentoBusquedaPedidos">
+                        <button class="btn btn-primary" type="button" id="btnBuscarPedidos">Buscar</button>
+                    </div>
+                    <hr>
+                    <div id="historial-pedidos-body">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="form-calificar-pedido">
-                    <input type="hidden" id="calificarPedidoId">
-                    <div class="mb-3">
-                        <label class="form-label">Califica de 1 a 5 estrellas</label>
-                        <div class="rating">
-                            <span class="star" data-value="1">&#9733;</span>
-                            <span class="star" data-value="2">&#9733;</span>
-                            <span class="star" data-value="3">&#9733;</span>
-                            <span class="star" data-value="4">&#9733;</span>
-                            <span class="star" data-value="5">&#9733;</span>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalResena" tabindex="-1" aria-labelledby="modalResenaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalResenaLabel">Califica y Comenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formResena">
+                        <input type="hidden" id="resena-documento">
+                        <input type="hidden" id="resena-fecha">
+                        <div class="mb-3">
+                            <label for="ratingResena" class="form-label">Calificación</label>
+                            <select class="form-select" id="ratingResena">
+                                <option value="1">⭐</option>
+                                <option value="2">⭐⭐</option>
+                                <option value="3">⭐⭐⭐</option>
+                                <option value="4">⭐⭐⭐⭐</option>
+                                <option value="5">⭐⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comentarioResena" class="form-label">Comentario</label>
+                            <textarea class="form-control" id="comentarioResena" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="enviarResena()">Enviar Reseña</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalProductoInfo" tabindex="-1" aria-labelledby="modalProductoInfoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProductoInfoLabel">Detalles del Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <img id="producto-info-img" src="" alt="Imagen del Producto" class="img-fluid mb-3" style="max-height: 200px; object-fit: cover;">
+                        <h4 id="producto-info-nombre"></h4>
+                        <p id="producto-info-descripcion"></p>
+                        <h5 class="text-primary" id="producto-info-precio"></h5>
+                        <hr>
+                        <h6>Reseñas y Calificaciones</h6>
+                        <div id="producto-info-resenas">
+                            <p>No hay reseñas para este producto.</p>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="comentario" class="form-label">Comentarios</label>
-                        <textarea class="form-control" id="comentario" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Enviar Calificación</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="productDetailsModalLabel">Detalles del Producto</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6 text-center">
-                        <img id="productImageModal" src="" class="img-fluid rounded mb-3" alt="Imagen del producto">
-                    </div>
-                    <div class="col-md-6">
-                        <h4 id="productNameModal"></h4>
-                        <p id="productDescriptionModal"></p>
-                    </div>
-                </div>
-                <hr>
-                <h5>Opiniones y Comentarios</h5>
-                <div id="productReviewsContainer">
-                    <p class="text-center">No hay opiniones para este producto aún.</p>
+                </div> 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orderModalLabel">Realizar Pedido</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <div id="loading-overlay" class="d-none">
+        <div id="pedido-animation" class="d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
             </div>
-            <div class="modal-body">
-                <h6 id="orderProductName"></h6>
-                <p>Precio: <span id="orderProductPrice" class="fw-bold text-warning"></span></p>
-                
-                <div id="clientTypeSelection">
-                    <p>¿Eres un cliente nuevo o antiguo?</p>
-                    <button class="btn btn-primary w-100 mb-2" onclick="showNewClientForm()">Soy un cliente nuevo</button>
-                    <button class="btn btn-outline-light w-100" onclick="showExistingClientForm()">Soy un cliente antiguo</button>
-                </div>
-
-                <form id="newClientForm" style="display: none;">
-                    <div class="mb-3">
-                        <label for="newClientDocumento" class="form-label">Documento de Identidad</label>
-                        <input type="text" class="form-control" id="newClientDocumento" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newClientName" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="newClientName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newClientAddress" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="newClientAddress" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newClientPhone" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="newClientPhone" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
-                </form>
-
-                <form id="existingClientForm" style="display: none;">
-                    <div class="mb-3">
-                        <label for="existingClientDoc" class="form-label">Ingresa los últimos 4 dígitos de tu documento</label>
-                        <input type="text" class="form-control" id="existingClientDoc" required maxlength="4">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
-                </form>
-            </div>
+            <h4 class="mt-3">En construcción de tu pedido...</h4>
         </div>
-    </div>
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
-    let selectedProduct = null;
-    const customAlertModal = new bootstrap.Modal(document.getElementById('customAlertModal'));
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadProducts();
-    });
-
-    // Función para mostrar el modal de alerta personalizado
-    function showCustomAlert(title, message) {
-        document.getElementById('customAlertModalLabel').textContent = title;
-        document.getElementById('customAlertModalBody').innerHTML = message;
-        customAlertModal.show();
-    }
-
-    async function loadProducts() {
-        const productsContainer = document.getElementById('products-container');
-        productsContainer.innerHTML = '<div class="col-12 text-center text-white">Cargando productos...</div>';
-        try {
-            const response = await fetch(`${SPREADSHEET_URL}?action=getProducts`);
-            const products = await response.json();
-            productsContainer.innerHTML = '';
-            products.forEach(product => {
-                const productCard = createProductCard(product);
-                productsContainer.appendChild(productCard);
-            });
-        } catch (error) {
-            productsContainer.innerHTML = '<div class="col-12 text-center text-white">Error al cargar los productos.</div>';
-            console.error('Error loading products:', error);
-        }
-    }
-
-    function createProductCard(product) {
-        const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-4';
-        col.innerHTML = `
-            <div class="card product-card h-100">
-                <img src="${product.imagen}" class="card-img-top" alt="${product.nombre}">
-                <div class="card-body">
-                    <h5 class="card-title">${product.nombre}</h5>
-                    <p class="card-text">${product.descripcion.substring(0, 100)}...</p>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <span class="fs-4 text-warning fw-bold">$${product.precio}</span>
-                        <div>
-                            <button class="btn btn-sm btn-outline-light me-2" onclick="showProductDetails('${product.nombre}', '${product.imagen}', '${product.descripcion}')">Ver más</button>
-                            <button class="btn btn-primary btn-sm" onclick="showOrderForm('${product.nombre}', '${product.precio}')">Pedir</button>
-                        </div>
-                    </div>
-                </div>
+        <div id="success-animation" class="d-none">
+            <div class="text-success" style="font-size: 4rem;">
+                <i class="fas fa-check-circle"></i>
             </div>
-        `;
-        return col;
-    }
-
-    async function showProductDetails(name, image, description) {
-        const productDetailsModal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
-        document.getElementById('productNameModal').textContent = name;
-        document.getElementById('productImageModal').src = image;
-        document.getElementById('productDescriptionModal').textContent = description;
-        
-        const reviewsContainer = document.getElementById('productReviewsContainer');
-        reviewsContainer.innerHTML = '<p class="text-center">Cargando opiniones...</p>';
-
-        try {
-            const response = await fetch(`${SPREADSHEET_URL}?action=getProductRatings&productName=${encodeURIComponent(name)}`);
-            const result = await response.json();
+            <h4 class="mt-3">¡Pedido enviado!</h4>
+        </div>
+    </div> 
+  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
             
-            reviewsContainer.innerHTML = '';
-            if (result.success && result.ratings.length > 0) {
-                result.ratings.forEach(r => {
-                    const stars = '⭐'.repeat(r.rating);
-                    reviewsContainer.innerHTML += `
-                        <div class="review-card">
-                            <p class="mb-1"><strong>${r.cliente}</strong> <span class="float-end">${stars}</span></p>
-                            <p class="mb-0">${r.comment}</p>
+            const productsList = document.getElementById('products-list');
+            const cartList = document.getElementById('cart-list');
+            const cartTotalSpan = document.getElementById('cart-total');
+            const cartItemCountSpan = document.getElementById('cart-item-count');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const pedidoAnimation = document.getElementById('pedido-animation');
+            const successAnimation = document.getElementById('success-animation');
+            const historialPedidosBody = document.getElementById('historial-pedidos-body');
+
+            const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
+            const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
+            const btnValidarClienteAntiguo = document.getElementById('btn-validar-cliente-antiguo');
+            const formClienteAntiguo = document.getElementById('formClienteAntiguo');
+            const formClienteNuevo = document.getElementById('formClienteNuevo');
+            const confirmTypeSelection = document.getElementById('confirm-type-selection');
+            const clienteAntiguoInfo = document.getElementById('cliente-antiguo-info');
+
+            let cart = [];
+            let allProducts = [];
+
+            function showLoading(message, isSuccess = false) {
+                loadingOverlay.classList.remove('d-none');
+                pedidoAnimation.classList.add('d-none');
+                successAnimation.classList.add('d-none');
+
+                if (isSuccess) {
+                    successAnimation.classList.remove('d-none');
+                    document.querySelector('#success-animation h4').innerText = message;
+                } else {
+                    pedidoAnimation.classList.remove('d-none');
+                    document.querySelector('#pedido-animation h4').innerText = message;
+                }
+            }
+
+            function hideLoading() {
+                loadingOverlay.classList.add('d-none');
+            }
+
+            async function sendData(action, data) {
+                showLoading('Enviando solicitud...', false);
+                try {
+                    const response = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify({ action, data }),
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error de conexión con el servidor.');
+                    return { success: false };
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            function renderProducts(products) {
+                allProducts = products;
+                productsList.innerHTML = '';
+                products.forEach(product => {
+                    const productHtml = `
+                        <div class="col-md-4 mb-4">
+                            <div class="card product-card">
+                                <img src="${product.imagenUrl}" class="card-img-top" alt="${product.nombre}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${product.nombre}</h5>
+                                    <p class="card-text">$${product.precio}</p>
+                                    <button class="btn btn-info btn-sm" onclick="showProductInfo(${product.id})">Más info</button>
+                                    <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir</button>
+                                </div>
+                            </div>
                         </div>
                     `;
+                    productsList.innerHTML += productHtml;
                 });
-            } else {
-                reviewsContainer.innerHTML = '<p class="text-center">No hay opiniones para este producto aún.</p>';
             }
-        } catch (error) {
-            reviewsContainer.innerHTML = '<p class="text-danger text-center">Error al cargar las opiniones.</p>';
-            console.error('Error loading product ratings:', error);
-        }
-        productDetailsModal.show();
-    }
 
-    function showOrderForm(productName, productPrice) {
-        selectedProduct = { productName, productPrice };
-        const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
-        document.getElementById('orderProductName').textContent = productName;
-        document.getElementById('orderProductPrice').textContent = `$${productPrice}`;
+            function renderCart() {
+                cartList.innerHTML = '';
+                let total = 0;
+                let itemCount = 0;
+                if (cart.length === 0) {
+                    cartList.innerHTML = '<li class="list-group-item d-flex justify-content-between align-items-center">Cesta vacía</li>';
+                } else {
+                    cart.forEach(item => {
+                        const itemTotal = item.cantidad * item.precio;
+                        total += itemTotal;
+                        itemCount += item.cantidad;
+                        const itemHtml = `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ${item.nombre} (x${item.cantidad}) - $${item.precio}
+                                <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">x</button>
+                            </li>
+                        `;
+                        cartList.innerHTML += itemHtml;
+                    });
+                }
+                cartTotalSpan.innerText = `$${total.toFixed(2)}`;
+                cartItemCountSpan.innerText = itemCount;
+            }
 
-        document.getElementById('clientTypeSelection').style.display = 'block';
-        document.getElementById('newClientForm').style.display = 'none';
-        document.getElementById('existingClientForm').style.display = 'none';
-        document.getElementById('newClientForm').reset();
-        document.getElementById('existingClientForm').reset();
+            window.addToCart = function(id) {
+                const product = allProducts.find(p => p.id == id);
+                if (!product) return;
+                
+                const existingItem = cart.find(item => item.id == id);
+                if (existingItem) {
+                    existingItem.cantidad++;
+                } else {
+                    cart.push({ id, nombre: product.nombre, precio: parseFloat(product.precio), cantidad: 1 });
+                }
+                renderCart();
+            }
 
-        orderModal.show();
-    }
+            window.removeFromCart = function(id) {
+                const existingItemIndex = cart.findIndex(item => item.id == id);
+                if (existingItemIndex !== -1) {
+                    cart.splice(existingItemIndex, 1);
+                }
+                renderCart();
+            }
 
-    function showNewClientForm() {
-        document.getElementById('clientTypeSelection').style.display = 'none';
-        document.getElementById('newClientForm').style.display = 'block';
-    }
+            // Event Listeners para el modal de confirmación de pedido
+            btnClienteAntiguo.addEventListener('click', () => {
+                confirmTypeSelection.classList.add('d-none');
+                formClienteNuevo.classList.add('d-none');
+                formClienteAntiguo.classList.remove('d-none');
+            });
+            
+            btnClienteNuevo.addEventListener('click', () => {
+                confirmTypeSelection.classList.add('d-none');
+                formClienteAntiguo.classList.add('d-none');
+                formClienteNuevo.classList.remove('d-none');
+            });
 
-    function showExistingClientForm() {
-        document.getElementById('clientTypeSelection').style.display = 'none';
-        document.getElementById('existingClientForm').style.display = 'block';
-    }
+            btnValidarClienteAntiguo.addEventListener('click', async () => {
+                const documento = document.getElementById('docAntiguo').value;
+                if (!documento) {
+                    alert('Por favor, ingresa tu número de documento.');
+                    return;
+                }
 
-    document.getElementById('newClientForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const clientData = {
-            isNew: true,
-            documento: document.getElementById('newClientDocumento').value,
-            nombre: document.getElementById('newClientName').value,
-            direccion: document.getElementById('newClientAddress').value,
-            telefono: document.getElementById('newClientPhone').value
-        };
-        await sendOrder(clientData, selectedProduct);
-    });
+                const response = await sendData('getClientByDocument', { documento });
+                if (response.success) {
+                    const client = response.data;
+                    document.getElementById('nombreAntiguo').value = client.nombre;
+                    document.getElementById('direccionAntiguo').value = client.direccion;
+                    document.getElementById('telefonoAntiguo').value = client.telefono;
+                    clienteAntiguoInfo.classList.remove('d-none');
+                } else {
+                    alert(response.error);
+                }
+            });
 
-    document.getElementById('existingClientForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const documento = document.getElementById('existingClientDoc').value;
-        try {
-            const response = await fetch(`${SPREADSHEET_URL}?action=checkClient&documento=${documento}`);
-            const result = await response.json();
+            formClienteAntiguo.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const documento = document.getElementById('docAntiguo').value;
+                const nombre = document.getElementById('nombreAntiguo').value;
+                const direccion = document.getElementById('direccionAntiguo').value;
+                const telefono = document.getElementById('telefonoAntiguo').value;
 
-            if (result.success && result.exists) {
-                const clientData = {
-                    isNew: false,
-                    ultimos4: documento,
-                    documento: result.data.documento,
-                    nombre: result.data.nombre
+                if (cart.length === 0) {
+                    alert('Tu canasta está vacía. Agrega productos para continuar.');
+                    return;
+                }
+                
+                showLoading('En construcción de tu pedido...', false);
+                const response = await sendData('createOrderAndModifyClient', {
+                    documento, nombre, direccion, telefono,
+                    pedido: cart.map(item => ({ nombre: item.nombre, cantidad: item.cantidad })),
+                    total: parseFloat(cartTotalSpan.innerText.replace('$', ''))
+                });
+
+                if (response.success) {
+                    showLoading('Pedido enviado!', true);
+                    setTimeout(() => {
+                        hideLoading();
+                        bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
+                        cart = [];
+                        renderCart();
+                    }, 2000);
+                } else {
+                    alert(response.error);
+                    hideLoading();
+                }
+            });
+
+            formClienteNuevo.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const data = {
+                    documento: document.getElementById('docNuevo').value,
+                    nombre: document.getElementById('nombreNuevo').value,
+                    direccion: document.getElementById('direccionNuevo').value,
+                    telefono: document.getElementById('telefonoNuevo').value,
+                    pedido: cart.map(item => ({ nombre: item.nombre, cantidad: item.cantidad })),
+                    total: parseFloat(cartTotalSpan.innerText.replace('$', ''))
                 };
-                await sendOrder(clientData, selectedProduct);
-            } else {
-                showCustomAlert('Error', 'No se encontró un cliente con esos 4 dígitos. Por favor, regístrate como cliente nuevo.');
-            }
-        } catch (error) {
-            showCustomAlert('Error', 'Error al verificar el cliente. Intenta de nuevo.');
-            console.error('Error checking client:', error);
-        }
-    });
 
-    async function sendOrder(clientData, product) {
-        try {
-            const response = await fetch(SPREADSHEET_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'crearPedido',
-                    cliente: clientData,
-                    pedido: {
-                        producto: product.productName,
-                        precio: product.productPrice
+                if (cart.length === 0) {
+                    alert('Tu canasta está vacía. Agrega productos para continuar.');
+                    return;
+                }
+                
+                showLoading('En construcción de tu pedido...', false);
+                const response = await sendData('createOrderAndRegisterClient', data);
+                if (response.success) {
+                    showLoading('Pedido enviado!', true);
+                    setTimeout(() => {
+                        hideLoading();
+                        bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
+                        cart = [];
+                        renderCart();
+                    }, 2000);
+                } else {
+                    alert(response.error);
+                    hideLoading();
+                }
+            });
+
+            document.getElementById('btnBuscarPedidos').addEventListener('click', async function() {
+                const documento = document.getElementById('documentoBusquedaPedidos').value;
+                if (!documento) {
+                    alert('Por favor, ingresa tu número de documento.');
+                    return;
+                }
+
+                const response = await sendData('getSalesAndClientByDocument', { documento });
+                
+                historialPedidosBody.innerHTML = '';
+
+                if (response.success) {
+                    if (response.data.sales.length > 0) {
+                        const clientInfo = response.data.client;
+                        historialPedidosBody.innerHTML += `
+                            <div class="card mb-3 bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Información del Cliente</h5>
+                                    <p><strong>Nombre:</strong> ${clientInfo.nombre}</p>
+                                    <p><strong>Documento:</strong> ${clientInfo.documento}</p>
+                                    <p><strong>Dirección:</strong> ${clientInfo.direccion}</p>
+                                    <p><strong>Teléfono:</strong> ${clientInfo.telefono}</p>
+                                    <p class="text-success"><strong>Compras realizadas:</strong> ${clientInfo.compras}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6>Historial de Pedidos</h6>
+                        `;
+
+                        response.data.sales.forEach(sale => {
+                            let pedidoText = Array.isArray(sale.pedido) ? sale.pedido.map(item => `${item.nombre} (x${item.cantidad})`).join(', ') : 'Error en el formato del pedido';
+                            const pedidoHtml = `
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Pedido del ${new Date(sale.fecha).toLocaleString()}</h6>
+                                        <p class="card-text"><strong>Productos:</strong> ${pedidoText}</p>
+                                        <p class="card-text"><strong>Total:</strong> $${sale.total}</p>
+                                        <p class="card-text"><strong>Estado:</strong> <span class="badge bg-info">${sale.estado}</span></p>
+                                        <p class="card-text"><strong>Calificación:</strong> ${sale.rating || 'Sin calificar'}</p>
+                                        <p class="card-text"><strong>Comentario:</strong> ${sale.comentario || 'Sin comentario'}</p>
+                                        <button class="btn btn-sm btn-warning" onclick="mostrarModalResena('${sale.cliente}', '${sale.fecha}')">Calificar y Comentar</button>
+                                    </div>
+                                </div>
+                            `;
+                            historialPedidosBody.innerHTML += pedidoHtml;
+                        });
+                    } else {
+                        historialPedidosBody.innerHTML = '<p class="text-danger">No se encontraron pedidos con ese número de documento.</p>';
                     }
-                }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result = await response.json();
-            if (result.success) {
-                showCustomAlert('Pedido Exitoso', 'Tu pedido ha sido realizado con éxito. ¡Te contactaremos pronto!');
-                bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
-                document.getElementById('newClientForm').reset();
-                document.getElementById('existingClientForm').reset();
-            } else {
-                showCustomAlert('Error', `Error al realizar el pedido: ${result.error}`);
-            }
-        } catch (error) {
-            showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
-            console.error('Error creating order:', error);
-        }
-    }
-
-
-    document.getElementById('form-ver-pedido').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const documento = document.getElementById('documentoCliente').value;
-        const estadoPedidosContainer = document.getElementById('estadoPedidosContainer');
-        estadoPedidosContainer.style.display = 'block';
-
-        const pedidosEnCursoList = document.querySelector('#pedidosEnCurso ul');
-        const pedidosAnterioresList = document.querySelector('#pedidosAnteriores ul');
-        pedidosEnCursoList.innerHTML = '<li class="list-group-item text-dark">Buscando pedidos...</li>';
-        pedidosAnterioresList.innerHTML = '';
-
-        try {
-            const response = await fetch(`${SPREADSHEET_URL}?action=getSaleStatus&documento=${documento}`);
-            const result = await response.json();
-
-            pedidosEnCursoList.innerHTML = '';
-            pedidosAnterioresList.innerHTML = '';
-
-            if (result.success && result.pedidos.length > 0) {
-                const pedidosEnCurso = result.pedidos.filter(p => p.estado !== 'Entregado');
-                const pedidosAnteriores = result.pedidos.filter(p => p.estado === 'Entregado');
-
-                if (pedidosEnCurso.length > 0) {
-                    pedidosEnCurso.forEach(p => pedidosEnCursoList.appendChild(createPedidoItem(p, 'curso')));
                 } else {
-                    pedidosEnCursoList.innerHTML = '<li class="list-group-item text-dark">No tienes pedidos en curso.</li>';
+                    historialPedidosBody.innerHTML = `<p class="text-danger">${response.error}</p>`;
                 }
-
-                if (pedidosAnteriores.length > 0) {
-                    pedidosAnteriores.forEach(p => pedidosAnterioresList.appendChild(createPedidoItem(p, 'anterior')));
-                } else {
-                    pedidosAnterioresList.innerHTML = '<li class="list-group-item text-dark">No tienes pedidos anteriores.</li>';
-                }
-            } else {
-                pedidosEnCursoList.innerHTML = `<li class="list-group-item text-dark">${result.error || 'No se encontraron pedidos.'}</li>`;
-            }
-        } catch (error) {
-            pedidosEnCursoList.innerHTML = '<li class="list-group-item text-danger">Error al consultar los pedidos.</li>';
-            console.error('Error al consultar pedidos:', error);
-        }
-    });
-
-    function createPedidoItem(pedido, tipo) {
-        const item = document.createElement('li');
-        item.className = 'list-group-item d-flex justify-content-between align-items-center text-dark';
-        const estadoClass = pedido.estado.replace(/\s/g, '-');
-        item.innerHTML = `
-            <div>
-                <strong>Pedido:</strong> ${pedido.producto}<br>
-                <strong>Fecha:</strong> ${new Date(pedido.fecha).toLocaleDateString()}<br>
-                <strong>Estado:</strong> <span class="estado-pedido ${estadoClass}">${pedido.estado}</span>
-            </div>
-        `;
-        if (tipo === 'anterior' && !pedido.rating) {
-            item.innerHTML += `<button class="btn btn-sm btn-outline-success" onclick="showCalificacionModal(${pedido.id})">Calificar</button>`;
-        } else if (tipo === 'anterior' && pedido.rating) {
-            const stars = '⭐'.repeat(pedido.rating);
-            item.innerHTML += `<div>Calificado: ${stars}</div>`;
-        }
-        return item;
-    }
-
-    function showCalificacionModal(id) {
-        const calificacionModal = new bootstrap.Modal(document.getElementById('calificacionModal'));
-        document.getElementById('calificarPedidoId').value = id;
-        calificacionModal.show();
-    }
-
-    document.getElementById('form-calificar-pedido').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('calificarPedidoId').value;
-        const rating = document.querySelector('.rating .selected')?.dataset.value || 0;
-        const comment = document.getElementById('comentario').value;
-
-        try {
-            const response = await fetch(SPREADSHEET_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'updateSaleRating',
-                    data: { id, rating, comment }
-                }),
-                headers: { 'Content-Type': 'application/json' }
             });
-            const result = await response.json();
-            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || 'Error al guardar la calificación.');
-            bootstrap.Modal.getInstance(document.getElementById('calificacionModal')).hide();
-        } catch (error) {
-            showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
-            console.error('Error al calificar:', error);
-        }
-    });
 
-    document.querySelectorAll('.rating .star').forEach(star => {
-        star.addEventListener('click', () => {
-            document.querySelectorAll('.rating .star').forEach(s => s.classList.remove('selected'));
-            star.classList.add('selected');
+
+            window.showProductInfo = async function(id) {
+                const response = await sendData('getProductDetails', { id });
+                if (response.success) {
+                    const product = response.data.product;
+                    const reviews = response.data.reviews;
+                    
+                    document.getElementById('producto-info-img').src = product.imagenUrl;
+                    document.getElementById('producto-info-nombre').innerText = product.nombre;
+                    document.getElementById('producto-info-descripcion').innerText = product.descripcion;
+                    document.getElementById('producto-info-precio').innerText = `$${product.precio}`;
+
+                    const resenasContainer = document.getElementById('producto-info-resenas');
+                    resenasContainer.innerHTML = '';
+                    if (reviews.length > 0) {
+                        reviews.forEach(review => {
+                            resenasContainer.innerHTML += `
+                                <div class="card mb-2 p-2">
+                                    <p><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
+                                    <p class="mb-0">${review.comentario}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        resenasContainer.innerHTML = '<p class="text-muted">No hay reseñas para este producto.</p>';
+                    }
+
+                    new bootstrap.Modal(document.getElementById('modalProductoInfo')).show();
+                } else {
+                    alert(response.error);
+                }
+            };
+
+            window.mostrarModalResena = function(documento, fecha) {
+                document.getElementById('resena-documento').value = documento;
+                document.getElementById('resena-fecha').value = fecha;
+                new bootstrap.Modal(document.getElementById('modalResena')).show();
+            };
+
+            window.enviarResena = async function() {
+                const documento = document.getElementById('resena-documento').value;
+                const fecha = document.getElementById('resena-fecha').value;
+                const rating = document.getElementById('ratingResena').value;
+                const comentario = document.getElementById('comentarioResena').value;
+                
+                const data = { documento, fecha, rating, comentario };
+                const response = await sendData('submitReview', data);
+                if (response.success) {
+                    alert('Reseña enviada exitosamente.');
+                    bootstrap.Modal.getInstance(document.getElementById('modalResena')).hide();
+                    document.getElementById('btnBuscarPedidos').click(); 
+                } else {
+                    alert(response.error);
+                }
+            };
+            
+
+            function loadProducts() {
+                sendData('getProducts').then(response => {
+                    if (response.success) {
+                        renderProducts(response.data);
+                    }
+                });
+            }
+
+            loadProducts();
+
+            productsList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-to-cart')) {
+                    const id = e.target.dataset.id;
+                    addToCart(id);
+                }
+            });
         });
-    });
-</script>
+
+    </script>
 </body>
 </html>
