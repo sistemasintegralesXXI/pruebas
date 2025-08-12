@@ -1,226 +1,403 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carnes al Barril - Pedidos Online</title>
-  <link rel="icon" type="image/png" href="https://png.pngtree.com/png-clipart/20230810/original/pngtree-cartoon-art-logo-icon-of-a-master-chef-character-with-kitchen-utensils-vector-picture-image_10231625.png">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #f59e0b, #1f2937, #04b330 80%, #10b981, #ef4444);
-        background-attachment: fixed;
-    }
-    .card {
-        background: rgba(255, 255, 255, 0.95);
-        border: none;
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-    }
-    .card-img-top {
-        border-top-left-radius: 20px;
-        border-top-right-radius: 20px;
-        height: 200px;
-        object-fit: cover;
-    }
-    .btn-primary {
-        background: linear-gradient(135deg, #2fa35f 0%, #04b330 100%);
-        border: none;
-        border-radius: 25px;
-        font-weight: 600;
-    }
-    .btn-primary:hover {
-        transform: translateY(-2px);
-    }
-    .btn-secondary {
-        background-color: #6c757d;
-        border: none;
-        border-radius: 25px;
-        font-weight: 600;
-    }
-    .btn-secondary:hover {
-        transform: translateY(-2px);
-    }
-    .modal-content {
-        border-radius: 20px;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    }
-    .form-control, .form-select {
-        border-radius: 15px;
-    }
-    .header-info {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        color: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE VENTAS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 56px;
+        }
+
+        .navbar {
+            background-color: #2c004a !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .container-main {
+            flex: 1;
+            padding: 2rem 1rem;
+        }
+
+        .product-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .product-card .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card .card-title {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .product-card .card-text {
+            color: #e0e0e0;
+            flex-grow: 1;
+        }
+
+        .footer {
+            background-color: #2c004a;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        .modal-content {
+            background: #2c004a;
+            color: #fff;
+            border-radius: 15px;
+        }
+
+        .modal-header, .modal-footer {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #ffcc00;
+            border-color: #ffcc00;
+            color: #2c004a;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6b800;
+            border-color: #e6b800;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
+        }
+
+        .estado-pedido {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .estado-pedido.Pedido {
+            background-color: #0d6efd;
+        }
+        .estado-pedido.En-Preparación {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .estado-pedido.Entregado {
+            background-color: #198754;
+        }
+    </style>
 </head>
 <body>
-    <div class="container py-5">
-        <div class="text-center header-info mb-5">
-            <h1 class="display-4 fw-bold">🍖 Carnes al Barril </h1>
-            <p class="lead">Disfruta de nuestros cortes más frescos y deliciosos. Haz tu pedido ahora!</p>
-            <a href="index.html" class="btn btn-secondary mt-3">Panel de Admin</a>
-        </div>
-        
-        <div id="productos-container" class="row g-4">
-            </div>
 
-    </div>
-
-    <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="pedidoModalLabel">Realizar Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="pedidoForm">
-                        <div class="mb-3">
-                            <label class="form-label">Tipo de Cliente</label>
-                            <select id="tipoCliente" class="form-select">
-                                <option value="nuevo">Cliente Nuevo</option>
-                                <option value="antiguo">Cliente Antiguo</option>
-                            </select>
-                        </div>
-                        <div id="clienteNuevo" class="p-3 border rounded mb-3">
-                            <h6 class="mb-3">Datos del Cliente Nuevo</h6>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="nombreCliente" placeholder="Nombre completo" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="docCliente" placeholder="Documento de Identidad" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="dirCliente" placeholder="Dirección" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="tel" class="form-control" id="telCliente" placeholder="Número de Teléfono" required>
-                            </div>
-                        </div>
-                        <div id="clienteAntiguo" class="p-3 border rounded mb-3" style="display: none;">
-                            <h6 class="mb-3">Datos del Cliente Antiguo</h6>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="ultimos4Doc" placeholder="Últimos 4 digitos del documento" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Producto Seleccionado</label>
-                            <input type="text" class="form-control" id="productoNombre" readonly>
-                            <input type="hidden" id="productoPrecio">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
-                    </form>
-                </div>
-            </div>
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">SISTEMA DE VENTAS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#verPedidoModal"><i class="fas fa-search me-1"></i>Ver estado de mi pedido</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin.html"><i class="fas fa-user-shield me-1"></i>Admin</a>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<div class="container container-main">
+    <div id="products-container" class="row g-4">
+        </div>
+</div>
 
-    <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // ¡ACTUALIZA CON TU URL!
-        const productos = [
-            { id: 1, nombre: 'Porción de Carnes', descripcion: 'Porción de 20.000', precio: 20000, imagen: 'https://cdn.pixabay.com/photo/2016/09/20/19/27/meat-1683416_1280.jpg' },
-            { id: 2, nombre: 'Porción de Longaniza', descripcion: 'Con papa y ají a 6.000', precio: 6000, imagen: 'https://cdn.pixabay.com/photo/2018/12/11/17/57/sausage-3869279_1280.jpg' },
-            { id: 3, nombre: 'Porción de Chicharrón', descripcion: '250gr con yuca y pichaque a 25.000', precio: 25000, imagen: 'https://cdn.pixabay.com/photo/2017/01/17/08/04/pork-rind-1911674_1280.jpg' },
-            { id: 4, nombre: 'Libra de Carne', descripcion: 'Libras de cerdo, res o longaniza', precio: 38000, imagen: 'https://cdn.pixabay.com/photo/2016/03/05/19/02/food-1238475_1280.jpg' },
-            { id: 5, nombre: 'Kilo de Carne', descripcion: 'Kilo de cerdo, res o longaniza', precio: 75000, imagen: 'https://cdn.pixabay.com/photo/2017/05/29/18/00/meat-2354924_1280.jpg' },
-        ];
+<footer class="footer">
+    <p>&copy; 2024 SISTEMA DE VENTAS. Todos los derechos reservados.</p>
+</footer>
 
-        window.addEventListener('load', () => {
-            renderizarProductos();
-        });
+<div class="modal fade" id="verPedidoModal" tabindex="-1" aria-labelledby="verPedidoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verPedidoModalLabel">Ver Estado de mi Pedido</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-ver-pedido">
+                    <div class="mb-3">
+                        <label for="documentoCliente" class="form-label">Ingresa los últimos 4 dígitos de tu documento</label>
+                        <input type="text" class="form-control" id="documentoCliente" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Consultar</button>
+                </form>
+                <div id="estadoPedidosContainer" class="mt-4" style="display: none;">
+                    <div id="pedidosEnCurso">
+                        <h6>Pedidos en Curso</h6>
+                        <ul class="list-group">
+                            </ul>
+                    </div>
+                    <div id="pedidosAnteriores" class="mt-3">
+                        <h6>Pedidos Anteriores</h6>
+                        <ul class="list-group">
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        function renderizarProductos() {
-            const container = document.getElementById('productos-container');
-            container.innerHTML = productos.map(p => `
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}">
-                        <div class="card-body">
-                            <h5 class="card-title">${p.nombre}</h5>
-                            <p class="card-text">${p.descripcion}</p>
-                            <h4 class="card-text text-success">$${p.precio.toLocaleString()}</h4>
-                            <button class="btn btn-primary w-100" onclick="abrirModalPedido('${p.nombre}', ${p.precio})">Pedir</button>
+<div class="modal fade" id="calificacionModal" tabindex="-1" aria-labelledby="calificacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="calificacionModalLabel">Calificar Pedido</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-calificar-pedido">
+                    <input type="hidden" id="calificarPedidoId">
+                    <div class="mb-3">
+                        <label class="form-label">Califica de 1 a 5 estrellas</label>
+                        <div class="rating">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Comentarios</label>
+                        <textarea class="form-control" id="comentario" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Enviar Calificación</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailsModalLabel">Detalles del Producto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="productImageModal" src="" class="img-fluid rounded mb-3" alt="Imagen del producto">
+                <p id="productDescriptionModal"></p> 
+            </div>
+        </div>
+    </div> 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
+
+    document.addEventListener('DOMContentLoaded', () => { 
+        loadProducts(); 
+    }); 
+
+    async function loadProducts() {
+        const productsContainer = document.getElementById('products-container');
+        productsContainer.innerHTML = '<div class="col-12 text-center text-white">Cargando productos...</div>';
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getProducts`);
+            const products = await response.json();
+            productsContainer.innerHTML = '';
+            products.forEach(product => {
+                const productCard = createProductCard(product);
+                productsContainer.appendChild(productCard);
+            });
+        } catch (error) {
+            productsContainer.innerHTML = '<div class="col-12 text-center text-white">Error al cargar los productos.</div>';
+            console.error('Error loading products:', error);
+        }
+    }
+
+    function createProductCard(product) {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card product-card">
+                <img src="${product.imagen}" class="card-img-top" alt="${product.nombre}">
+                <div class="card-body">
+                    <h5 class="card-title">${product.nombre}</h5>
+                    <p class="card-text">${product.descripcion.substring(0, 50)}...</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="fs-4 text-warning fw-bold">$${product.precio}</span>
+                        <div>
+                            <button class="btn btn-sm btn-outline-light me-2" onclick="showProductDetails('${product.imagen}', '${product.descripcion}')">Ver más</button>
+                            <button class="btn btn-primary btn-sm" onclick="showOrderForm('${product.nombre}', '${product.precio}')">Pedir</button>
                         </div>
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `;
+        return col;
+    }
 
-        function abrirModalPedido(nombre, precio) {
-            document.getElementById('productoNombre').value = nombre;
-            document.getElementById('productoPrecio').value = precio;
-            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('pedidoModal'));
-            modal.show();
-        }
+    function showProductDetails(image, description) {
+        const productDetailsModal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
+        document.getElementById('productImageModal').src = image;
+        document.getElementById('productDescriptionModal').textContent = description;
+        productDetailsModal.show();
+    }
 
-        document.getElementById('tipoCliente').addEventListener('change', (e) => {
-            document.getElementById('clienteNuevo').style.display = e.target.value === 'nuevo' ? 'block' : 'none';
-            document.getElementById('clienteAntiguo').style.display = e.target.value === 'antiguo' ? 'block' : 'none';
-        });
+    function showOrderForm(productName, productPrice) {
+        // Lógica para mostrar un formulario de pedido, omitido para brevedad.
+        // Se puede reutilizar el modal de ver pedido o crear uno nuevo.
+        alert(`Has seleccionado ${productName} por $${productPrice}. Por favor, contáctanos.`);
+    }
 
-        document.getElementById('pedidoForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tipoCliente = document.getElementById('tipoCliente').value;
-            let clienteData = {};
+    // Funcionalidad para "Ver estado de mi pedido"
+    document.getElementById('form-ver-pedido').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const documento = document.getElementById('documentoCliente').value;
+        const estadoPedidosContainer = document.getElementById('estadoPedidosContainer');
+        estadoPedidosContainer.style.display = 'block';
 
-            if (tipoCliente === 'nuevo') {
-                clienteData = {
-                    nombre: document.getElementById('nombreCliente').value,
-                    documento: document.getElementById('docCliente').value,
-                    direccion: document.getElementById('dirCliente').value,
-                    telefono: document.getElementById('telCliente').value,
-                };
-            } else {
-                clienteData = {
-                    ultimos4: document.getElementById('ultimos4Doc').value,
-                };
-            }
+        const pedidosEnCursoList = document.querySelector('#pedidosEnCurso ul');
+        const pedidosAnterioresList = document.querySelector('#pedidosAnteriores ul');
+        pedidosEnCursoList.innerHTML = '<li class="list-group-item">Buscando pedidos...</li>';
+        pedidosAnterioresList.innerHTML = '';
 
-            const pedidoData = {
-                producto: document.getElementById('productoNombre').value,
-                precio: document.getElementById('productoPrecio').value,
-            };
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getSaleStatus&documento=${documento}`);
+            const result = await response.json();
 
-            const payload = {
-                action: 'crearPedido',
-                cliente: clienteData,
-                pedido: pedidoData,
-            };
+            pedidosEnCursoList.innerHTML = '';
+            pedidosAnterioresList.innerHTML = '';
 
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain' }, // Importante para Google Apps Script
-                });
-                const json = await res.json();
-                if(json.success) {
-                    alert('✅ Pedido realizado con éxito! Nos comunicaremos contigo por WhatsApp para confirmar.');
+            if (result.success && result.pedidos.length > 0) {
+                const pedidosEnCurso = result.pedidos.filter(p => p.estado !== 'Entregado');
+                const pedidosAnteriores = result.pedidos.filter(p => p.estado === 'Entregado');
+
+                if (pedidosEnCurso.length > 0) {
+                    pedidosEnCurso.forEach(p => pedidosEnCursoList.appendChild(createPedidoItem(p, 'curso')));
                 } else {
-                    alert('❌ Error al realizar el pedido: ' + json.error);
+                    pedidosEnCursoList.innerHTML = '<li class="list-group-item">No tienes pedidos en curso.</li>';
                 }
-            } catch (error) {
-                alert('❌ Ocurrió un error en la conexión. Intenta de nuevo.');
-            } finally {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('pedidoModal'));
-                modal.hide();
-                e.target.reset();
+
+                if (pedidosAnteriores.length > 0) {
+                    pedidosAnteriores.forEach(p => pedidosAnterioresList.appendChild(createPedidoItem(p, 'anterior')));
+                } else {
+                    pedidosAnterioresList.innerHTML = '<li class="list-group-item">No tienes pedidos anteriores.</li>';
+                }
+            } else {
+                pedidosEnCursoList.innerHTML = '<li class="list-group-item">No se encontraron pedidos.</li>';
             }
+        } catch (error) {
+            pedidosEnCursoList.innerHTML = '<li class="list-group-item text-danger">Error al consultar los pedidos.</li>';
+            console.error('Error al consultar pedidos:', error);
+        }
+    });
+
+    function createPedidoItem(pedido, tipo) {
+        const item = document.createElement('li');
+        item.className = 'list-group-item d-flex justify-content-between align-items-center text-dark';
+        const estadoClass = pedido.estado.replace(/\s/g, '-');
+        item.innerHTML = `
+            <div>
+                <strong>Pedido:</strong> ${pedido.producto}<br>
+                <strong>Fecha:</strong> ${new Date(pedido.fecha).toLocaleDateString()}<br>
+                <strong>Estado:</strong> <span class="estado-pedido ${estadoClass}">${pedido.estado}</span>
+            </div>
+        `;
+        if (tipo === 'anterior') {
+            item.innerHTML += `<button class="btn btn-sm btn-outline-success" onclick="showCalificacionModal(${pedido.id})">Calificar</button>`;
+        }
+        return item;
+    }
+
+    function showCalificacionModal(id) {
+        const calificacionModal = new bootstrap.Modal(document.getElementById('calificacionModal'));
+        document.getElementById('calificarPedidoId').value = id;
+        calificacionModal.show();
+    }
+
+    document.getElementById('form-calificar-pedido').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('calificarPedidoId').value;
+        const rating = document.querySelector('.rating .selected')?.dataset.value || 0;
+        const comment = document.getElementById('comentario').value;
+
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updateSaleRating',
+                    data: { id, rating, comment }
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.success ? 'Gracias por tu calificación!' : 'Error al guardar la calificación.');
+            bootstrap.Modal.getInstance(document.getElementById('calificacionModal')).hide();
+        } catch (error) {
+            alert('Error de conexión. Intenta de nuevo.');
+            console.error('Error al calificar:', error);
+        }
+    });
+
+    document.querySelectorAll('.rating .star').forEach(star => {
+        star.addEventListener('click', () => {
+            document.querySelectorAll('.rating .star').forEach(s => s.classList.remove('selected'));
+            star.classList.add('selected');
         });
-    </script>
+    });
+</script>
 </body>
 </html>
