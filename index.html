@@ -2,56 +2,137 @@
 <html>
 <head>
     <base target="_top">
-    <title>Sistema de Pedidos</title>
+    <title>Carnes al Barril - Sistema de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:wght@400;700&display=swap');
         body {
-            font-family: 'Arial', sans-serif;
-            background: #f8f9fa;
-            color: #333;
-            padding-bottom: 80px;
+            font-family: 'Merriweather', serif;
+            background: #2c0e0e;
+            color: #f5f5dc;
+            padding-bottom: 100px;
+        }
+        .navbar {
+            background-color: #4a2828 !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .navbar-brand, .nav-link, .nav-link-btn {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #ffcc80 !important;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #ffcc80;
         }
         .container {
+            max-width: 1100px;
             margin-top: 30px;
         }
-        .product-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .header-section {
             text-align: center;
+            padding: 50px 0;
+            background: url('https://images.unsplash.com/photo-1544025162-d76694265947?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzODQzMjd8MHwxfHNlYXJjaHw1fHxyb2FzdGVkJTIwY2FybmVzfGVufDB8fHx8MTY4OTU5MDMyMw&ixlib=rb-4.0.3&q=80&w=1080') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            color: white;
+            border-bottom: 4px solid #ffcc80;
+        }
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .product-card {
+            background: #4a2828;
+            border: 2px solid #ffcc80;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         .product-card:hover {
-            transform: scale(1.03);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
         .product-card img {
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            height: 150px;
+            height: 200px;
             object-fit: cover;
             width: 100%;
+            border-bottom: 2px solid #ffcc80;
+        }
+        .product-card .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #f5f5dc;
         }
         .cart-summary {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 300px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            background: #4a2828;
+            border: 2px solid #ffcc80;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             padding: 20px;
-            z-index: 999;
+            z-index: 1050;
+            transition: all 0.3s ease;
+        }
+        .cart-summary.minimized {
+            width: 60px;
+            height: 60px;
+            padding: 0;
+            text-align: center;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .cart-summary.minimized .cart-content,
+        .cart-summary.minimized .cart-header {
+            display: none;
+        }
+        .cart-summary.minimized .cart-toggle-btn {
+            display: block;
+            background: none;
+            border: none;
+            width: 100%;
+            height: 100%;
+            color: #fff;
+            font-size: 24px;
+        }
+        .cart-summary .cart-toggle-btn {
+            display: none;
         }
         .cart-count {
             position: absolute;
-            top: -10px;
-            right: -10px;
-            background: red;
+            top: -5px;
+            right: -5px;
+            background: #d9534f;
             color: white;
             border-radius: 50%;
-            padding: 2px 6px;
+            padding: 3px 8px;
             font-size: 12px;
         }
         #loading-overlay {
@@ -60,45 +141,237 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 1100;
+            text-align: center;
+            flex-direction: column;
         }
         .spinner-border {
-            width: 3rem;
-            height: 3rem;
+            color: #ffcc80 !important;
         }
-        #pedido-animation {
-            text-align: center;
-            padding: 20px;
+        #success-animation {
+            color: #5cb85c;
+            font-size: 5rem;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .modal-content {
+            background-color: #4a2828;
+            color: #f5f5dc;
+            border: 2px solid #ffcc80;
+        }
+        .modal-header {
+            border-bottom: 1px solid #ffcc80;
+        }
+        .modal-footer {
+            border-top: 1px solid #ffcc80;
+        }
+        .form-control, .form-select {
+            background-color: #2c0e0e;
+            color: #f5f5dc;
+            border: 1px solid #ffcc80;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #2c0e0e;
+            color: #f5f5dc;
+            border-color: #ffcc80;
+            box-shadow: 0 0 0 0.25rem rgba(255, 204, 128, 0.25);
+        }
+        .btn-primary {
+            background-color: #ffcc80;
+            border-color: #ffcc80;
+            color: #2c0e0e;
+        }
+        .btn-primary:hover {
+            background-color: #e6b873;
+            border-color: #e6b873;
+            color: #2c0e0e;
+        }
+        .btn-success {
+            background-color: #5cb85c;
+            border-color: #5cb85c;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #4cae4c;
+            border-color: #4cae4c;
+        }
+        .btn-warning {
+            background-color: #f0ad4e;
+            border-color: #f0ad4e;
+            color: white;
+        }
+        .btn-warning:hover {
+            background-color: #ec971f;
+            border-color: #ec971f;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+        .status-pedido { background-color: #0d6efd; color: white; }
+        .status-preparacion { background-color: #ffc107; color: black; }
+        .status-entregado { background-color: #198754; color: white; }
+        .gallery-image {
+            object-fit: cover;
+            width: 100%;
+            height: 250px;
+            border-radius: 8px;
+            border: 2px solid #ffcc80;
+            transition: transform 0.3s ease;
+        }
+        .gallery-image:hover {
+            transform: scale(1.05);
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            border: 2px solid #ffcc80;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 class="text-center my-4">Menú de Productos</h1>
-        <div class="row" id="products-list">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Carnes al Barril</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link nav-link-btn" data-section="about">Sobre Nosotros</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link nav-link-btn" data-section="menu">Menú</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link nav-link-btn" data-section="gallery">Galería</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal" data-bs-target="#modalResenas">Reseñas de Clientes</button>
+                    </li>
+                </ul>
             </div>
+        </div>
+    </nav>
 
-        <div class="cart-summary">
-            <h5>Mi Pedido <span class="cart-count" id="cart-item-count">0</span></h5>
-            <ul class="list-group" id="cart-list">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    Cesta vacía
-                </li>
-            </ul>
-            <hr>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <strong>Total:</strong>
-                <span id="cart-total">$0.00</span>
+    <div class="header-section">
+        <div class="header-content">
+            <h1 class="display-3">Barril Norteño el Mono</h1>
+            <p class="lead">¡Alborota tu paladar con nuestro sabor!</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="about-section" class="section active mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Nuestra Historia</h2>
+                    <p>En Barril Norteño el Mono , transformamos la experiencia de comer carne en un arte. Nuestra pasión es el sabor ahumado y único que se consigue con la cocción lenta al barril. Cada plato es preparado con los mejores cortes, seleccionados cuidadosamente para deleitar tu paladar.</p>
+                    <p>Somos un emprendimiento familiar con el objetivo de llevar el sabor auténtico de la parrilla a tu mesa. Ven y disfruta de una experiencia gastronómica inigualable.</p>
+                </div>
+                <div class="col-md-6">
+                    <h2>Contacto</h2>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt"></i> Cerro Norte, El Plan</li>
+                        <li><i class="fas fa-envelope"></i> Email: contacto@carnesalbarril.com</li>
+                        <li>
+                          <a href="tel:+573133118664" style="text-decoration: none; color: inherit;">
+                            <i class="fas fa-phone-alt"></i> Teléfono: +57 313 311 8664
+                          </a>
+                       </li>
+                    </ul>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-primary me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-primary me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/573133118664" class="btn btn-primary"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
             </div>
-            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalConfirmarPedido">Confirmar Pedido</button>
-            <button class="btn btn-secondary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
         </div>
 
+        <div id="menu-section" class="section">
+            <h1 class="text-center my-4">Nuestro Menú</h1>
+            <div class="row" id="products-list">
+                </div>
+        </div>
+
+        <div id="gallery-section" class="section">
+            <h1 class="text-center my-4">Galería de Sabores</h1>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <img src="https://www.eldiario.com.co/wp-content/uploads/2025/04/R1-2-1068x1065.jpg" alt="Carne al barril 1" class="img-fluid gallery-image">
+                </div>
+                <div class="col-md-4">
+                    <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692" class="img-fluid gallery-image">
+                </div>
+                <div class="col-md-4">
+                    <img src="https://homecitycolombia.com/cdn/shop/products/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.jpg?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
+                </div>
+                              <div class="col-md-4">
+                    <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164" alt="Carne al barril 1" class="img-fluid gallery-image">
+                </div>
+                <div class="col-md-4">
+                    <img src="https://i.ytimg.com/vi/6srE1KklzW8/sddefault.jpg" class="img-fluid gallery-image">
+                </div>
+                <div class="col-md-4">
+                    <img src="https://i.ytimg.com/vi/6eI0gsy-TR8/maxresdefault.jpg" alt="Carne al barril 3" class="img-fluid gallery-image">
+                </div>
+                <div class="col-12 mt-5">
+                    <h2 class="text-center">Preparación en Video</h2>
+                    <div class="video-container">
+                        <iframe width="260" height="154" src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_1024x1024@2x.jpg?v=1741317592" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-summary" id="cart-summary">
+            <button class="cart-toggle-btn btn btn-primary" onclick="toggleCart()">
+                <i class="fas fa-shopping-cart"></i>
+            </button>
+            <div class="cart-header d-flex justify-content-between align-items-center">
+                <h5>Mi Pedido <span class="cart-count" id="cart-item-count">0</span></h5>
+                <button class="btn btn-sm btn-outline-light" onclick="toggleCart()">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+            <div class="cart-content">
+                <ul class="list-group mt-3" id="cart-list">
+                    <li class="list-group-item list-group-item-custom">
+                        Cesta vacía
+                    </li>
+                </ul>
+                <hr style="border-color: #ffcc80;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <strong>Total:</strong>
+                    <span id="cart-total">$0.00</span>
+                </div>
+                <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalConfirmarPedido" id="btn-confirmar-pedido">Confirmar Pedido</button>
+                <button class="btn btn-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
@@ -106,7 +379,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalConfirmarPedidoLabel">Confirmar Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="confirm-type-selection">
@@ -121,10 +394,9 @@
                             <label for="docAntiguo" class="form-label">Número de Documento</label>
                             <input type="text" class="form-control" id="docAntiguo" required>
                         </div>
-                        <button type="button" class="btn btn-primary w-100" id="btn-validar-cliente-antiguo">Validar</button>
-                        <hr>
+                        <button type="button" class="btn btn-info w-100 mb-3" id="btn-validar-cliente-antiguo">Validar</button>
                         <div id="cliente-antiguo-info" class="d-none">
-                            <h6>Datos del Cliente</h6>
+                            <h6 class="text-success">Datos del Cliente Encontrado</h6>
                             <div class="mb-3">
                                 <label for="nombreAntiguo" class="form-label">Nombre</label>
                                 <input type="text" class="form-control" id="nombreAntiguo" required>
@@ -171,7 +443,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalVerPedidosLabel">Ver Mis Pedidos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p class="text-muted">Ingresa tu número de documento para validar la información de tus pedidos.</p>
@@ -190,13 +462,12 @@
         </div>
     </div>
 
-
     <div class="modal fade" id="modalResena" tabindex="-1" aria-labelledby="modalResenaLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalResenaLabel">Califica y Comenta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formResena">
@@ -226,27 +497,17 @@
         </div>
     </div>
 
-
-    <div class="modal fade" id="modalProductoInfo" tabindex="-1" aria-labelledby="modalProductoInfoLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="modalResenas" tabindex="-1" aria-labelledby="modalResenasLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalProductoInfoLabel">Detalles del Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="modalResenasLabel">Reseñas de Clientes</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center">
-                        <img id="producto-info-img" src="" alt="Imagen del Producto" class="img-fluid mb-3" style="max-height: 200px; object-fit: cover;">
-                        <h4 id="producto-info-nombre"></h4>
-                        <p id="producto-info-descripcion"></p>
-                        <h5 class="text-primary" id="producto-info-precio"></h5>
-                        <hr>
-                        <h6>Reseñas y Calificaciones</h6>
-                        <div id="producto-info-resenas">
-                            <p>No hay reseñas para este producto.</p>
+                    <div id="all-reviews-list">
                         </div>
-                    </div>
-                </div> 
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
@@ -256,23 +517,22 @@
 
 
     <div id="loading-overlay" class="d-none">
-        <div id="pedido-animation" class="d-none">
-            <div class="spinner-border text-primary" role="status">
+        <div id="pedido-animation">
+            <div class="spinner-border" role="status" style="width: 3.5rem; height: 3.5rem;">
                 <span class="visually-hidden">Cargando...</span>
             </div>
-            <h4 class="mt-3">En construcción de tu pedido...</h4>
+            <h4 class="mt-3" id="loading-text">En construcción de tu pedido...</h4>
         </div>
         <div id="success-animation" class="d-none">
-            <div class="text-success" style="font-size: 4rem;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h4 class="mt-3">¡Pedido enviado!</h4>
+            <i class="fas fa-check-circle"></i>
+            <h4 class="mt-3" id="success-text">¡Pedido enviado!</h4>
         </div>
-    </div> 
-  
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Reemplaza 'TU_URL_DE_APPS_SCRIPT' con la URL de tu despliegue
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
             
             const productsList = document.getElementById('products-list');
@@ -283,6 +543,10 @@
             const pedidoAnimation = document.getElementById('pedido-animation');
             const successAnimation = document.getElementById('success-animation');
             const historialPedidosBody = document.getElementById('historial-pedidos-body');
+            const loadingText = document.getElementById('loading-text');
+            const successText = document.getElementById('success-text');
+            const allReviewsList = document.getElementById('all-reviews-list');
+            const btnConfirmarPedido = document.getElementById('btn-confirmar-pedido');
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -291,9 +555,30 @@
             const formClienteNuevo = document.getElementById('formClienteNuevo');
             const confirmTypeSelection = document.getElementById('confirm-type-selection');
             const clienteAntiguoInfo = document.getElementById('cliente-antiguo-info');
+            const cartSummary = document.getElementById('cart-summary');
 
+            const sections = document.querySelectorAll('.section');
+            const navButtons = document.querySelectorAll('.nav-link-btn');
+            
             let cart = [];
             let allProducts = [];
+
+            window.toggleCart = function() {
+                cartSummary.classList.toggle('minimized');
+            }
+
+            // Maneja el cambio de secciones sin recargar la página
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const sectionId = button.dataset.section;
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    if (sectionId) {
+                        document.getElementById(`${sectionId}-section`).classList.add('active');
+                    }
+                });
+            });
 
             function showLoading(message, isSuccess = false) {
                 loadingOverlay.classList.remove('d-none');
@@ -302,10 +587,10 @@
 
                 if (isSuccess) {
                     successAnimation.classList.remove('d-none');
-                    document.querySelector('#success-animation h4').innerText = message;
+                    successText.innerText = message;
                 } else {
                     pedidoAnimation.classList.remove('d-none');
-                    document.querySelector('#pedido-animation h4').innerText = message;
+                    loadingText.innerText = message;
                 }
             }
 
@@ -314,7 +599,6 @@
             }
 
             async function sendData(action, data) {
-                showLoading('Enviando solicitud...', false);
                 try {
                     const response = await fetch(SCRIPT_URL, {
                         method: 'POST',
@@ -327,9 +611,7 @@
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Error de conexión con el servidor.');
-                    return { success: false };
-                } finally {
-                    hideLoading();
+                    return { success: false, error: 'Error de conexión.' };
                 }
             }
 
@@ -344,8 +626,10 @@
                                 <div class="card-body">
                                     <h5 class="card-title">${product.nombre}</h5>
                                     <p class="card-text">$${product.precio}</p>
-                                    <button class="btn btn-info btn-sm" onclick="showProductInfo(${product.id})">Más info</button>
-                                    <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir</button>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-info btn-sm" onclick="showProductInfo(${product.id})">Más info</button>
+                                        <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir al carrito</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -359,16 +643,21 @@
                 let total = 0;
                 let itemCount = 0;
                 if (cart.length === 0) {
-                    cartList.innerHTML = '<li class="list-group-item d-flex justify-content-between align-items-center">Cesta vacía</li>';
+                    cartList.innerHTML = '<li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">Cesta vacía</li>';
                 } else {
                     cart.forEach(item => {
                         const itemTotal = item.cantidad * item.precio;
                         total += itemTotal;
                         itemCount += item.cantidad;
                         const itemHtml = `
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                ${item.nombre} (x${item.cantidad}) - $${item.precio}
-                                <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">x</button>
+                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">
+                                <div>${item.nombre} (x${item.cantidad})</div>
+                                <div class="d-flex align-items-center">
+                                    <span class="me-2 text-warning">$${itemTotal.toFixed(2)}</span>
+                                    <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </li>
                         `;
                         cartList.innerHTML += itemHtml;
@@ -394,16 +683,29 @@
             window.removeFromCart = function(id) {
                 const existingItemIndex = cart.findIndex(item => item.id == id);
                 if (existingItemIndex !== -1) {
-                    cart.splice(existingItemIndex, 1);
+                    const existingItem = cart[existingItemIndex];
+                    if (existingItem.cantidad > 1) {
+                        existingItem.cantidad--;
+                    } else {
+                        cart.splice(existingItemIndex, 1);
+                    }
                 }
                 renderCart();
             }
 
-            // Event Listeners para el modal de confirmación de pedido
+            // Evento para validar el carrito antes de abrir el modal
+            btnConfirmarPedido.addEventListener('click', function(e) {
+                if (cart.length === 0) {
+                    e.preventDefault();
+                    alert('Por favor, agrega productos a tu carrito antes de confirmar el pedido.');
+                }
+            });
+
             btnClienteAntiguo.addEventListener('click', () => {
                 confirmTypeSelection.classList.add('d-none');
                 formClienteNuevo.classList.add('d-none');
                 formClienteAntiguo.classList.remove('d-none');
+                clienteAntiguoInfo.classList.add('d-none');
             });
             
             btnClienteNuevo.addEventListener('click', () => {
@@ -419,17 +721,29 @@
                     return;
                 }
 
-                const response = await sendData('getClientByDocument', { documento });
+                showLoading('Validando tus datos...');
+                const response = await sendData('getClientDetails', { documento });
+                
                 if (response.success) {
                     const client = response.data;
                     document.getElementById('nombreAntiguo').value = client.nombre;
                     document.getElementById('direccionAntiguo').value = client.direccion;
                     document.getElementById('telefonoAntiguo').value = client.telefono;
                     clienteAntiguoInfo.classList.remove('d-none');
+                    hideLoading();
                 } else {
                     alert(response.error);
+                    hideLoading();
                 }
             });
+
+            function clearForm(formId) {
+                const form = document.getElementById(formId);
+                form.reset();
+                form.classList.add('d-none');
+                confirmTypeSelection.classList.remove('d-none');
+                clienteAntiguoInfo.classList.add('d-none');
+            }
 
             formClienteAntiguo.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -443,20 +757,22 @@
                     return;
                 }
                 
-                showLoading('En construcción de tu pedido...', false);
-                const response = await sendData('createOrderAndModifyClient', {
+                showLoading('En construcción de tu pedido...');
+                const response = await sendData('createOrderFromExistingClient', {
                     documento, nombre, direccion, telefono,
                     pedido: cart.map(item => ({ nombre: item.nombre, cantidad: item.cantidad })),
                     total: parseFloat(cartTotalSpan.innerText.replace('$', ''))
                 });
 
                 if (response.success) {
-                    showLoading('Pedido enviado!', true);
+                    showLoading('¡Pedido enviado!', true);
                     setTimeout(() => {
                         hideLoading();
                         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
+                        clearForm('formClienteAntiguo');
                         cart = [];
                         renderCart();
+                        toggleCart();
                     }, 2000);
                 } else {
                     alert(response.error);
@@ -480,15 +796,17 @@
                     return;
                 }
                 
-                showLoading('En construcción de tu pedido...', false);
-                const response = await sendData('createOrderAndRegisterClient', data);
+                showLoading('En construcción de tu pedido...');
+                const response = await sendData('createOrderFromNewClient', data);
                 if (response.success) {
-                    showLoading('Pedido enviado!', true);
+                    showLoading('¡Pedido enviado!', true);
                     setTimeout(() => {
                         hideLoading();
                         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
+                        clearForm('formClienteNuevo');
                         cart = [];
                         renderCart();
+                        toggleCart();
                     }, 2000);
                 } else {
                     alert(response.error);
@@ -503,15 +821,17 @@
                     return;
                 }
 
+                showLoading('Buscando tus pedidos...');
                 const response = await sendData('getSalesAndClientByDocument', { documento });
                 
                 historialPedidosBody.innerHTML = '';
+                hideLoading();
 
                 if (response.success) {
+                    const clientInfo = response.data.client;
                     if (response.data.sales.length > 0) {
-                        const clientInfo = response.data.client;
                         historialPedidosBody.innerHTML += `
-                            <div class="card mb-3 bg-light">
+                            <div class="card mb-3 bg-dark text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Información del Cliente</h5>
                                     <p><strong>Nombre:</strong> ${clientInfo.nombre}</p>
@@ -527,61 +847,43 @@
 
                         response.data.sales.forEach(sale => {
                             let pedidoText = Array.isArray(sale.pedido) ? sale.pedido.map(item => `${item.nombre} (x${item.cantidad})`).join(', ') : 'Error en el formato del pedido';
+                            
+                            let statusClass = '';
+                            if (sale.estado === 'Entregado') {
+                                statusClass = 'status-entregado';
+                            } else if (sale.estado === 'En Preparación') {
+                                statusClass = 'status-preparacion';
+                            } else {
+                                statusClass = 'status-pedido';
+                            }
+
+                            const hasRated = sale.rating && sale.rating > 0;
+                            const ratingButton = hasRated 
+                                ? `<span class="badge bg-success">Ya calificado</span>`
+                                : `<button class="btn btn-sm btn-warning mt-2" onclick="mostrarModalResena('${sale.cliente}', '${sale.fecha}')">Calificar y Comentar</button>`;
+
                             const pedidoHtml = `
-                                <div class="card mb-3">
+                                <div class="card mb-3 bg-secondary text-white">
                                     <div class="card-body">
                                         <h6 class="card-title">Pedido del ${new Date(sale.fecha).toLocaleString()}</h6>
                                         <p class="card-text"><strong>Productos:</strong> ${pedidoText}</p>
-                                        <p class="card-text"><strong>Total:</strong> $${sale.total}</p>
-                                        <p class="card-text"><strong>Estado:</strong> <span class="badge bg-info">${sale.estado}</span></p>
-                                        <p class="card-text"><strong>Calificación:</strong> ${sale.rating || 'Sin calificar'}</p>
+                                        <p class="card-text"><strong>Total:</strong> <span class="text-warning">$${sale.total}</span></p>
+                                        <p class="card-text"><strong>Estado:</strong> <span class="badge ${statusClass}">${sale.estado}</span></p>
+                                        <p class="card-text"><strong>Calificación:</strong> ${sale.rating ? '⭐'.repeat(sale.rating) : 'Sin calificar'}</p>
                                         <p class="card-text"><strong>Comentario:</strong> ${sale.comentario || 'Sin comentario'}</p>
-                                        <button class="btn btn-sm btn-warning" onclick="mostrarModalResena('${sale.cliente}', '${sale.fecha}')">Calificar y Comentar</button>
+                                        ${ratingButton}
                                     </div>
                                 </div>
                             `;
                             historialPedidosBody.innerHTML += pedidoHtml;
                         });
                     } else {
-                        historialPedidosBody.innerHTML = '<p class="text-danger">No se encontraron pedidos con ese número de documento.</p>';
+                        historialPedidosBody.innerHTML = `<div class="card p-3 text-center bg-dark"><p class="text-danger mb-0">No se encontraron pedidos con ese número de documento.</p></div>`;
                     }
                 } else {
-                    historialPedidosBody.innerHTML = `<p class="text-danger">${response.error}</p>`;
+                    historialPedidosBody.innerHTML = `<div class="card p-3 text-center bg-dark"><p class="text-danger mb-0">${response.error}</p></div>`;
                 }
             });
-
-
-            window.showProductInfo = async function(id) {
-                const response = await sendData('getProductDetails', { id });
-                if (response.success) {
-                    const product = response.data.product;
-                    const reviews = response.data.reviews;
-                    
-                    document.getElementById('producto-info-img').src = product.imagenUrl;
-                    document.getElementById('producto-info-nombre').innerText = product.nombre;
-                    document.getElementById('producto-info-descripcion').innerText = product.descripcion;
-                    document.getElementById('producto-info-precio').innerText = `$${product.precio}`;
-
-                    const resenasContainer = document.getElementById('producto-info-resenas');
-                    resenasContainer.innerHTML = '';
-                    if (reviews.length > 0) {
-                        reviews.forEach(review => {
-                            resenasContainer.innerHTML += `
-                                <div class="card mb-2 p-2">
-                                    <p><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
-                                    <p class="mb-0">${review.comentario}</p>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        resenasContainer.innerHTML = '<p class="text-muted">No hay reseñas para este producto.</p>';
-                    }
-
-                    new bootstrap.Modal(document.getElementById('modalProductoInfo')).show();
-                } else {
-                    alert(response.error);
-                }
-            };
 
             window.mostrarModalResena = function(documento, fecha) {
                 document.getElementById('resena-documento').value = documento;
@@ -595,8 +897,10 @@
                 const rating = document.getElementById('ratingResena').value;
                 const comentario = document.getElementById('comentarioResena').value;
                 
+                showLoading("Enviando tu reseña...");
                 const data = { documento, fecha, rating, comentario };
                 const response = await sendData('submitReview', data);
+                hideLoading();
                 if (response.success) {
                     alert('Reseña enviada exitosamente.');
                     bootstrap.Modal.getInstance(document.getElementById('modalResena')).hide();
@@ -605,10 +909,42 @@
                     alert(response.error);
                 }
             };
-            
+
+            window.loadAllReviews = async function() {
+                showLoading("Cargando reseñas...");
+                const response = await sendData('getAllReviews');
+                hideLoading();
+                
+                allReviewsList.innerHTML = '';
+
+                if (response.success && response.data.length > 0) {
+                    response.data.forEach(review => {
+                        const reviewHtml = `
+                            <div class="card mb-3 bg-dark text-white">
+                                <div class="card-body">
+                                    <p class="card-text mb-1"><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
+                                    <p class="card-text mb-1"><strong>Comentario:</strong> ${review.comentario}</p>
+                                    <p class="card-text text-muted mb-0"><small>Cliente con documento ${review.documento}</small></p>
+                                </div>
+                            </div>
+                        `;
+                        allReviewsList.innerHTML += reviewHtml;
+                    });
+                } else {
+                    allReviewsList.innerHTML = `<div class="p-3 text-center"><p class="text-muted mb-0">Aún no hay reseñas de clientes.</p></div>`;
+                }
+            }
+
+            // Carga las reseñas cuando el modal se muestra
+            const modalResenas = document.getElementById('modalResenas');
+            modalResenas.addEventListener('show.bs.modal', function () {
+                loadAllReviews();
+            });
 
             function loadProducts() {
+                showLoading('Cargando productos...');
                 sendData('getProducts').then(response => {
+                    hideLoading();
                     if (response.success) {
                         renderProducts(response.data);
                     }
@@ -624,7 +960,6 @@
                 }
             });
         });
-
     </script>
 </body>
 </html>
