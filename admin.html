@@ -2,760 +2,906 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login y Panel de Administración - Carnes al Barril</title>
-    <link rel="icon" type="image/png" href="https://png.pngtree.com/png-clipart/20230810/original/pngtree-cartoon-art-logo-icon-of-a-master-chef-character-with-kitchen-utensils-vector-picture-image_10231625.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+    <title>Panel de Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* CSS del Login */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-        :root {
-            --primary-color: #2fa35f;
-            --secondary-color: #04b330;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f8fafc;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
         body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .wrapper {
             display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f59e0b, #1f2937, #04b330 80%, #10b981, #ef4444);
-            background-attachment: fixed;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c004a;
+            color: #fff;
+            padding: 20px;
+            display: flex;
             flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar ul li a.active, .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            flex-grow: 1;
             padding: 20px;
         }
-        .login-wrapper {
-            position: relative;
-            width: 400px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            overflow: hidden;
-            transition: all 0.3s ease;
+
+        .header {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
-        .login-wrapper:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 35px 55px rgba(0, 0, 0, 0.2);
-        }
-        .login-logo {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        .login-logo h1 {
-            font-size: 32px;
-            color: #fff;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        .login-logo p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .login-wrapper h2 {
-            font-size: 24px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-        .input-group {
-            position: relative;
-            margin: 25px 0;
-            width: 100%;
-        }
-        .input-group input {
-            width: 100%;
-            height: 50px;
-            font-size: 16px;
-            color: #fff;
-            padding: 0 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-group input:focus {
-            border-color: #667eea;
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        .login-button {
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-size: 16px;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 25px;
-            border: none;
-            outline: none;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        .login-button:active {
-            transform: translateY(0);
-        }
-        .forgot-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .forgot-link p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-        }
-        .forgot-link p a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .forgot-link p a:hover {
-            color: #fff;
-            text-decoration: underline;
         }
 
-        /* CSS del Panel de Administración */
-        #adminPanel {
-            display: none;
-            width: 100%;
-            height: 100%;
+        .table-responsive {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
         }
-        .navbar {
-            background: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-        }
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-            transform: translateY(-2px);
-        }
-        .container-fluid {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .form-control, .form-select {
-            border-radius: 15px;
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .module-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .module-card:hover {
-            transform: scale(1.05);
-        }
-        .module-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .user-info {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 0.5rem 1rem;
-            color: white;
-        }
+
         .table {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0;
         }
-        .table th {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            border: none;
-            font-weight: 600;
+        
+        .estado-venta-Pedido {
+            background-color: #0d6efd;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-        .status-badge {
-            white-space: nowrap;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            line-height: 1;
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
+
+        .estado-venta-En-Preparación {
+            background-color: #ffc107;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-        .status-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+
+        .estado-venta-Entregado {
+            background-color: #198754;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-        .status-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
         }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
+
+        .login-box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .modal-dialog-centered {
+            display: flex;
+            align-items: center;
+            min-height: calc(100vh - 1rem);
         }
-        .hidden { display: none; }
-        .text-white a { color: white !important; }
     </style>
 </head>
 <body>
 
-    <div id="loginContainer" class="login-wrapper">
-        <div class="login-logo">
-            <h1>🍖 Carnes al Barril</h1>
-            <p>Sistema de Administración de Ventas</p>
-        </div>
-        <form id="loginForm">
-            <h2>Iniciar Sesión</h2>
-            <div class="input-group">
-                <input type="text" id="usuario" placeholder="Usuario" required>
+<div class="login-container" id="login-screen">
+    <div class="login-box">
+        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="username" required>
             </div>
-            <div class="input-group">
-                <input type="password" id="contrasena" placeholder="Contraseña" required>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" required>
             </div>
-            <button type="submit" class="login-button">Ingresar</button>
-            <div class="forgot-link text-white">
-                <p>¿Olvidaste tu contraseña? <a href="https://wa.me/573133118664?text=JOEL%20SE%20ME%20OLVIDO%20LA%20CONTRASE%C3%91A%20AYUDAME" target="_blank">Click aquí</a></p>
-            </div>
-            <div class="forgot-link text-white">
-                <a href="index.html" style="text-decoration: none; font-weight: bold;">
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+            <br><br><br><br>
+            <a href="index.html" style="text-decoration: none; font-weight: bold;">
                     🥩 Página de Compras
                 </a>
-            </div>
         </form>
     </div>
+</div>
 
-    <div id="adminContainer" class="hidden">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Admin Ventas</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link active" href="#" onclick="showModule('dashboard')"><i class="fas fa-home me-1"></i>Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('products')"><i class="fas fa-utensils me-1"></i>Productos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('sales')"><i class="fas fa-dollar-sign me-1"></i>Ventas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('clients')"><i class="fas fa-users me-1"></i>Clientes</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('users')"><i class="fas fa-user-shield me-1"></i>Usuarios</a></li>
+<div class="wrapper d-none" id="admin-panel">
+    <nav id="sidebar" class="sidebar d-none d-md-block">
+        <h2 class="text-warning">Admin Panel</h2>
+        <div id="user-info" class="text-center mb-3">
+            <span id="user-name" class="fw-bold"></span><br>
+            <span id="user-role" class="badge bg-secondary"></span>
+        </div>
+        <ul class="list-unstyled components">
+            <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+            <li><a href="#" data-section="productos"><i class="fas fa-box me-2"></i>Productos</a></li>
+            <li><a href="#" data-section="ventas"><i class="fas fa-chart-line me-2"></i>Ventas</a></li>
+            <li><a href="#" data-section="clientes"><i class="fas fa-users me-2"></i>Clientes</a></li>
+            <li><a href="#" data-section="usuarios"><i class="fas fa-user-plus me-2"></i>Usuarios</a></li>
+            <li><a href="#" data-section="historial"><i class="fas fa-history me-2"></i>Historial</a></li>
+            <li><a href="#" data-section="estadisticas"><i class="fas fa-chart-pie me-2"></i>Estadísticas</a></li>
+            <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="header">
+            <h3 class="mb-0">Bienvenido, <span id="welcome-name"></span></h3>
+            <div class="d-flex align-items-center">
+                <div class="dropdown me-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="notificacionesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i> <span class="badge bg-danger" id="notificaciones-badge">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacionesDropdown" id="notificaciones-list">
+                        <li><a class="dropdown-item" href="#">No hay notificaciones</a></li>
                     </ul>
-                    <div class="d-flex align-items-center">
-                        <div class="user-info me-3"><i class="fas fa-user me-2"></i><span id="currentUser">Usuario</span></div>
-                        <button class="btn btn-outline-light btn-sm" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt me-1"></i>Salir</button>
-                    </div>
                 </div>
+                <button class="btn btn-dark d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </nav>
-
-        <div class="container-fluid">
-            <div id="dashboardModule" class="fade-in">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card text-center p-4">
-                            <h1 class="mb-3">📊 Panel de Estadísticas</h1>
-                            <p class="lead">Visión general de tu negocio de Carnes al Barril</p>
-                            <hr>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('sales')">
-                            <div class="module-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <h4>Ventas Totales</h4>
-                            <p class="text-muted" id="totalSales">Cargando...</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('sales')">
-                            <div class="module-icon"><i class="fas fa-shopping-basket"></i></div>
-                            <h4>Pedidos Pendientes</h4>
-                            <p class="text-muted" id="pendingOrders">Cargando...</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('clients')">
-                            <div class="module-icon"><i class="fas fa-users"></i></div>
-                            <h4>Clientes Registrados</h4>
-                            <p class="text-muted" id="totalClients">Cargando...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="productsModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="mb-0"><i class="fas fa-utensils me-2"></i>Gestión de Productos</h3>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-plus me-1"></i>Crear Producto</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Imagen</th>
-                                    <th>Nombre</th>
-                                    <th>Precio</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <tr><td colspan="4" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="salesModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Gestión de Ventas</h3>
-                        <div class="input-group w-50">
-                            <label class="input-group-text">Filtrar por Mes</label>
-                            <select id="filtroMesVentas" class="form-select">
-                                <option value="">Todos los meses</option>
-                                <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-                                <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-                                <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-                                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Pedido</th>
-                                    <th>Total</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="salesTableBody">
-                                <tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="clientsModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <h3 class="mb-3"><i class="fas fa-users me-2"></i>Gestión de Clientes</h3>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Documento (4 digitos)</th>
-                                    <th>Teléfono</th>
-                                    <th>Dirección</th>
-                                    <th># Compras</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientsTableBody">
-                                <tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="usersModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <h3 class="mb-3"><i class="fas fa-user-shield me-2"></i>Gestión de Usuarios</h3>
-                    <p>Usuarios de sistema para el login de administrador.</p>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Usuario</th>
-                                    <th>Nombre</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <tr>
-                                    <td>zuleima</td><td>Zuleima</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>directora</td><td>Rosana</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>pastor</td><td>Pastor</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>0678</td><td>Admin</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>asegurador</td><td>Joel</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="productModalLabel">Crear/Editar Producto</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div id="dashboard" class="panel-section active">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <i class="fas fa-dollar-sign fa-3x mb-2"></i>
+                            <h5 class="card-title">Ventas Totales</h5>
+                            <h3 id="total-sales">$0</h3>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <form id="productForm">
-                            <div class="mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="productName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <textarea class="form-control" id="productDescription" rows="3" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Precio</label>
-                                <input type="number" class="form-control" id="productPrice" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">URL de Imagen</label>
-                                <input type="text" class="form-control" id="productImage">
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
-                        </form>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <i class="fas fa-hourglass-start fa-3x mb-2"></i>
+                            <h5 class="card-title">Pedidos Pendientes</h5>
+                            <h3 id="pending-orders">0</h3>
+                        </div>
                     </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <i class="fas fa-motorcycle fa-3x mb-2"></i>
+                            <h5 class="card-title">En Preparación</h5>
+                            <h3 id="in-preparation-orders">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-3x mb-2"></i>
+                            <h5 class="card-title">Pedidos Entregados</h5>
+                            <h3 id="delivered-orders">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="productos" class="panel-section d-none">
+            <div class="d-flex justify-content-between mb-3">
+                <h4>Productos</h4>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearProducto">Crear Producto</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="ventas" class="panel-section d-none">
+            <h4>Ventas</h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Pedido</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="clientes" class="panel-section d-none">
+            <div class="d-flex justify-content-between mb-3">
+                <h4>Clientes</h4>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCliente">Crear Cliente</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Documento</th>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Compras</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="usuarios" class="panel-section d-none">
+            <div class="d-flex justify-content-between mb-3">
+                <h4>Usuarios</h4>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">Crear Usuario</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="historial" class="panel-section d-none">
+            <h4>Historial de Acciones</h4>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Acción</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historial-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="estadisticas" class="panel-section d-none">
+            <h4>Estadísticas de Ventas</h4>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <canvas id="ventasPorMesChart"></canvas>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <canvas id="productosMasPedidosChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</div>
 
-    <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // ¡ACTUALIZA CON TU URL!
+<div class="modal fade" id="modalCrearProducto" tabindex="-1" aria-labelledby="modalCrearProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearProductoLabel">Crear Nuevo Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrearProducto">
+                    <div class="mb-3">
+                        <label for="nombreProducto" class="form-label">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="nombreProducto" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcionProducto" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcionProducto" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="precioProducto" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="precioProducto" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagenProducto" class="form-label">Imagen del Producto</label>
+                        <input type="file" class="form-control" id="imagenProducto" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        const loginContainer = document.getElementById('loginContainer');
-        const adminContainer = document.getElementById('adminContainer');
+<div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearClienteLabel">Crear Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrearCliente">
+                    <div class="mb-3">
+                        <label for="nombreCliente" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombreCliente" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccionCliente" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccionCliente" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoCliente" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefonoCliente" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cliente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        let allSales = [];
-        let allClients = [];
-        let allProducts = [];
-        const usuariosValidos = [
-            { usuario: 'zuleima', contrasena: 'zuleima', nombre: 'Zuleima' },
-            { usuario: 'directora', contrasena: 'directora', nombre: 'Rosana' },
-            { usuario: 'pastor', contrasena: 'pastor', nombre: 'Pastor' },
-            { usuario: '0678', contrasena: '0678', nombre: 'Admin' },
-            { usuario: 'asegurador', contrasena: 'asegurador', nombre: 'Joel' }
-        ];
+<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearUsuarioLabel">Crear Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrearUsuario">
+                    <div class="mb-3">
+                        <label for="usuarioNombre" class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-control" id="usuarioNombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usuarioContrasena" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="usuarioContrasena" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usuarioNombreCompleto" class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="usuarioNombreCompleto" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="usuarioRol" class="form-label">Rol</label>
+                        <select class="form-control" id="usuarioRol" required>
+                            <option value="Admin">Admin</option>
+                            <option value="Empleado">Empleado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        window.addEventListener('load', function() {
-            if (sessionStorage.getItem('autenticado') === 'true') {
-                mostrarPanelAdmin();
-            } else {
-                mostrarLogin();
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
+    let currentUser = null;
+    let users = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (loggedInUser) {
+            currentUser = JSON.parse(loggedInUser);
+            showAdminPanel();
+        }
+        
+        loadUsers();
+        loadDashboard();
+    });
+
+    async function loadUsers() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getUsers`);
+            users = await response.json();
+            if (currentUser) {
+                renderUsersTable(users);
             }
-        });
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const user = users.find(u => u.usuario === username && u.contrasena === password);
+        
+        if (user) {
+            currentUser = user;
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
+            showAdminPanel();
+            alert(`¡Bienvenido, ${user.nombre}! Has iniciado sesión como ${user.rol}.`);
+        } else {
+            alert('Usuario o contraseña incorrectos.');
+        }
+    });
+
+    function showAdminPanel() {
+        document.getElementById('login-screen').classList.add('d-none');
+        document.getElementById('admin-panel').classList.remove('d-none');
+        document.getElementById('welcome-name').textContent = currentUser.nombre;
+        document.getElementById('user-name').textContent = currentUser.nombre;
+        document.getElementById('user-role').textContent = currentUser.rol;
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('loggedInUser');
+        location.reload();
+    });
+
+    // Navegación del Sidebar
+    document.querySelectorAll('.sidebar a[data-section]').forEach(link => {
+        link.addEventListener('click', (e) => {
             e.preventDefault();
-            iniciarSesion();
+            document.querySelectorAll('.panel-section').forEach(section => section.classList.add('d-none'));
+            document.getElementById(e.target.dataset.section).classList.remove('d-none');
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            e.target.classList.add('active');
+
+            // Cargar datos al cambiar de sección
+            switch (e.target.dataset.section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'productos':
+                    loadProducts();
+                    break;
+                case 'ventas':
+                    loadSales();
+                    break;
+                case 'clientes':
+                    loadClients();
+                    break;
+                case 'usuarios':
+                    loadUsers();
+                    break;
+                case 'historial':
+                    loadHistorial();
+                    break;
+                case 'estadisticas':
+                    loadStats();
+                    break;
+            }
         });
+    });
 
-        function mostrarLogin() {
-            loginContainer.classList.remove('hidden');
-            adminContainer.classList.add('hidden');
-        }
-
-        function mostrarPanelAdmin() {
-            loginContainer.classList.add('hidden');
-            adminContainer.classList.remove('hidden');
-            const user = sessionStorage.getItem('usuario') || 'Admin';
-            document.getElementById('currentUser').textContent = user;
-            loadDashboard();
-        }
-
-        function iniciarSesion() {
-            const user = document.getElementById("usuario").value.trim().toLowerCase();
-            const pass = document.getElementById("contrasena").value.trim();
-            const encontrado = usuariosValidos.find(u => u.usuario === user && u.contrasena === pass);
-            
-            if (encontrado) {
-                sessionStorage.setItem('autenticado', 'true');
-                sessionStorage.setItem('usuario', encontrado.nombre);
-                sessionStorage.setItem('ultimoAcceso', Date.now().toString());
-                
-                const button = document.querySelector('.login-button');
-                button.innerHTML = 'Iniciando...';
-                button.disabled = true;
-                
-                setTimeout(() => {
-                    mostrarPanelAdmin();
-                }, 1000);
-            } else {
-                alert("❌ Usuario o contraseña incorrectos");
+    // Carga de Datos del Dashboard
+    async function loadDashboard() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getDashboardData`);
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('total-sales').textContent = `$${data.totalSales.toFixed(2)}`;
+                document.getElementById('pending-orders').textContent = data.pendingOrders;
+                document.getElementById('in-preparation-orders').textContent = data.inPreparationOrders;
+                document.getElementById('delivered-orders').textContent = data.deliveredOrders;
             }
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
         }
+    }
 
-        function cerrarSesion() {
-            sessionStorage.clear();
-            location.reload();
-        }
-
-        function showModule(module) {
-            document.querySelectorAll('#adminContainer > .container-fluid > div').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(module + 'Module').style.display = 'block';
-            document.querySelector(`[onclick="showModule('${module}')"]`).classList.add('active');
-
-            if (module === 'dashboard') loadDashboard();
-            if (module === 'products') loadProducts();
-            if (module === 'sales') loadSales();
-            if (module === 'clients') loadClients();
-            if (module === 'users') loadUsers();
-        }
-        
-        async function loadDashboard() {
-            document.getElementById('totalSales').textContent = '...'
-            document.getElementById('pendingOrders').textContent = '...'
-            document.getElementById('totalClients').textContent = '...'
-            
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getDashboardData`);
-                const data = await res.json();
-                if(data.success) {
-                    document.getElementById('totalSales').textContent = `$${data.totalSales.toLocaleString()}`;
-                    document.getElementById('pendingOrders').textContent = data.pendingOrders;
-                    document.getElementById('totalClients').textContent = data.totalClients;
-                }
-            } catch(e) {
-                console.error("Error al cargar dashboard", e);
-                document.getElementById('totalSales').textContent = 'Error';
-            }
-        }
-        
-        async function loadProducts() {
-            const tableBody = document.getElementById('productsTableBody');
-            tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
-                allProducts = await res.json();
-                tableBody.innerHTML = allProducts.map(p => `
+    // Carga de Datos de Productos
+    async function loadProducts() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getProducts`);
+            const products = await response.json();
+            const tableBody = document.getElementById('products-table-body');
+            tableBody.innerHTML = '';
+            products.forEach(p => {
+                tableBody.innerHTML += `
                     <tr>
-                        <td><img src="${p.imagen}" style="width: 50px; height: 50px; object-fit: cover;"></td>
+                        <td><img src="${p.imagen}" alt="${p.nombre}" width="50"></td>
                         <td>${p.nombre}</td>
-                        <td>$${p.precio.toLocaleString()}</td>
+                        <td>${p.descripcion}</td>
+                        <td>$${p.precio}</td>
                         <td>
-                            <button class="btn btn-sm btn-warning" onclick="editProduct('${p.id}')">Editar</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>
+                            <button class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
-                `).join('');
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error al cargar productos</td></tr>';
-            }
-        }
-        
-        async function loadSales() {
-            const tableBody = document.getElementById('salesTableBody');
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getSales`);
-                allSales = await res.json();
-                const filteredSales = filterSales(allSales);
-                renderSalesTable(filteredSales);
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar ventas</td></tr>';
-            }
-        }
-
-        function filterSales(sales) {
-            const mesFiltro = document.getElementById('filtroMesVentas').value;
-            if (!mesFiltro) return sales;
-            return sales.filter(s => {
-                const saleDate = new Date(s.fecha);
-                return (saleDate.getMonth() + 1).toString() === mesFiltro;
+                `;
             });
+        } catch (error) {
+            console.error('Error loading products:', error);
         }
-        
-        function renderSalesTable(sales) {
-            const tableBody = document.getElementById('salesTableBody');
-            if (sales.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No hay ventas para este mes</td></tr>';
-                return;
-            }
-            tableBody.innerHTML = sales.map(s => `
-                <tr>
-                    <td>${new Date(s.fecha).toLocaleDateString()}</td>
-                    <td>${s.cliente}</td>
-                    <td>${s.pedido}</td>
-                    <td>$${s.total.toLocaleString()}</td>
-                    <td><span class="badge ${s.estado === 'En preparación' ? 'bg-warning' : 'bg-success'}">${s.estado}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="editSale('${s.id}')">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSale('${s.id}')">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+    }
 
-        async function loadClients() {
-            const tableBody = document.getElementById('clientsTableBody');
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getClients`);
-                allClients = await res.json();
-                tableBody.innerHTML = allClients.map(c => `
+    // Carga de Datos de Ventas
+    async function loadSales() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getSales`);
+            const sales = await response.json();
+            const tableBody = document.getElementById('sales-table-body');
+            tableBody.innerHTML = '';
+            sales.forEach(s => {
+                const estadoClass = s.estado.replace(/\s/g, '-');
+                tableBody.innerHTML += `
                     <tr>
+                        <td>${s.id}</td>
+                        <td>${new Date(s.fecha).toLocaleString()}</td>
+                        <td>${s.cliente}</td>
+                        <td>${s.pedido}</td>
+                        <td>$${s.total}</td>
+                        <td>
+                            <select class="form-select form-select-sm" onchange="updateSaleStatus(${s.id}, this.value)">
+                                <option value="Pedido" ${s.estado === 'Pedido' ? 'selected' : ''}>Pedido</option>
+                                <option value="En Preparación" ${s.estado === 'En Preparación' ? 'selected' : ''}>En Preparación</option>
+                                <option value="Entregado" ${s.estado === 'Entregado' ? 'selected' : ''}>Entregado</option>
+                            </select>
+                        </td>
+                        <td>
+                             <button class="btn btn-sm btn-info me-2" onclick="editSale(${s.id})"><i class="fas fa-edit"></i></button>
+                             <button class="btn btn-sm btn-danger" onclick="deleteSale(${s.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error('Error loading sales:', error);
+        }
+    }
+
+    async function updateSaleStatus(id, estado) {
+        try {
+            await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'updateSaleStatus', data: { id, estado } }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            // Recargar la tabla para ver el cambio
+            loadSales();
+            loadDashboard(); // Actualizar el dashboard
+        } catch (error) {
+            console.error('Error al actualizar estado:', error);
+        }
+    }
+
+    // Funciones para Editar y Eliminar (ahora con ID correcto)
+    function editSale(id) {
+        alert(`Editar venta con ID: ${id}`);
+        // Aquí se implementaría la lógica para cargar el formulario de edición
+    }
+    function deleteSale(id) {
+        alert(`Eliminar venta con ID: ${id}`);
+        // Aquí se implementaría la lógica para eliminar la venta
+    }
+    function editClient(id) {
+        alert(`Editar cliente con ID: ${id}`);
+    }
+    function deleteClient(id) {
+        alert(`Eliminar cliente con ID: ${id}`);
+    }
+
+    // Carga de Datos de Clientes
+    async function loadClients() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getClients`);
+            const clients = await response.json();
+            const tableBody = document.getElementById('clients-table-body');
+            tableBody.innerHTML = '';
+            clients.forEach(c => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${c.id}</td>
+                        <td>...${c.documento}</td>
                         <td>${c.nombre}</td>
-                        <td>${c.documento}</td>
-                        <td>${c.telefono}</td>
                         <td>${c.direccion}</td>
+                        <td>${c.telefono}</td>
                         <td>${c.compras}</td>
                         <td>
-                            <button class="btn btn-sm btn-warning" onclick="editClient('${c.id}')">Editar</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteClient('${c.id}')">Eliminar</button>
+                             <button class="btn btn-sm btn-info me-2" onclick="editClient(${c.id})"><i class="fas fa-edit"></i></button>
+                             <button class="btn btn-sm btn-danger" onclick="deleteClient(${c.id})"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>
-                `).join('');
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar clientes</td></tr>';
-            }
-        }
-
-        function loadUsers() {
-            // La tabla de usuarios es estática en este ejemplo, no se necesita una llamada a la API
-        }
-
-        function editProduct(id) { alert(`Editar producto con ID: ${id}`); }
-        function deleteProduct(id) { alert(`Eliminar producto con ID: ${id}`); }
-        function editSale(id) { alert(`Editar venta con ID: ${id}`); }
-        function deleteSale(id) { alert(`Eliminar venta con ID: ${id}`); }
-        function editClient(id) { alert(`Editar cliente con ID: ${id}`); }
-        function deleteClient(id) { alert(`Eliminar cliente con ID: ${id}`); }
-
-        document.getElementById('filtroMesVentas').addEventListener('change', () => renderSalesTable(filterSales(allSales)));
-
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = {
-                nombre: document.getElementById('productName').value,
-                descripcion: document.getElementById('productDescription').value,
-                precio: document.getElementById('productPrice').value,
-                imagen: document.getElementById('productImage').value,
-            };
-            const res = await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'createProduct', data: data })
+                `;
             });
-            const json = await res.json();
-            if (json.success) {
-                alert('Producto guardado!');
-                loadProducts();
-            } else {
-                alert('Error al guardar el producto');
-            }
-            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+        } catch (error) {
+            console.error('Error loading clients:', error);
+        }
+    }
+
+    // Carga de datos de Usuarios
+    function renderUsersTable(usersData) {
+        const tableBody = document.getElementById('users-table-body');
+        tableBody.innerHTML = '';
+        usersData.forEach(u => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${u.usuario}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.rol}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info me-2"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `;
         });
-    </script>
+    }
+
+    // Funciones de Creación
+    document.getElementById('formCrearProducto').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('action', 'createProduct');
+        formData.append('nombre', document.getElementById('nombreProducto').value);
+        formData.append('descripcion', document.getElementById('descripcionProducto').value);
+        formData.append('precio', document.getElementById('precioProducto').value);
+        formData.append('file', document.getElementById('imagenProducto').files[0]);
+
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.success ? 'Producto creado con éxito.' : `Error: ${result.error}`);
+            if (result.success) {
+                loadProducts();
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearProducto')).hide();
+                document.getElementById('formCrearProducto').reset();
+            }
+        } catch (error) {
+            alert('Error al crear el producto.');
+            console.error('Error creating product:', error);
+        }
+    });
+
+    document.getElementById('formCrearCliente').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clientData = {
+            nombre: document.getElementById('nombreCliente').value,
+            direccion: document.getElementById('direccionCliente').value,
+            telefono: document.getElementById('telefonoCliente').value
+        };
+
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'createClient', data: clientData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.success ? 'Cliente creado con éxito.' : `Error: ${result.error}`);
+            if (result.success) {
+                loadClients();
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearCliente')).hide();
+                document.getElementById('formCrearCliente').reset();
+            }
+        } catch (error) {
+            alert('Error al crear el cliente.');
+            console.error('Error creating client:', error);
+        }
+    });
+
+    document.getElementById('formCrearUsuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userData = {
+            usuario: document.getElementById('usuarioNombre').value,
+            contrasena: document.getElementById('usuarioContrasena').value,
+            nombre: document.getElementById('usuarioNombreCompleto').value,
+            rol: document.getElementById('usuarioRol').value
+        };
+
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'createUser', data: userData }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.success ? 'Usuario creado con éxito.' : `Error: ${result.error}`);
+            if (result.success) {
+                loadUsers();
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearUsuario')).hide();
+                document.getElementById('formCrearUsuario').reset();
+            }
+        } catch (error) {
+            alert('Error al crear el usuario.');
+            console.error('Error creating user:', error);
+        }
+    });
+    
+    // Gráficos de Estadísticas (usando Chart.js)
+    let ventasChart, productosChart;
+
+    async function loadStats() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getHistoricalData`);
+            const data = await response.json();
+            if (data.success) {
+                renderVentasPorMesChart(data.monthlySales);
+                renderProductosMasPedidosChart(data.mostOrderedProducts);
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    }
+
+    function renderVentasPorMesChart(data) {
+        const ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+        if (ventasChart) ventasChart.destroy();
+        ventasChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.month),
+                datasets: [{
+                    label: 'Ventas por Mes',
+                    data: data.map(d => d.total),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function renderProductosMasPedidosChart(data) {
+        const ctx = document.getElementById('productosMasPedidosChart').getContext('2d');
+        if (productosChart) productosChart.destroy();
+        productosChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: data.map(d => d.product),
+                datasets: [{
+                    label: 'Productos más Pedidos',
+                    data: data.map(d => d.count),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Top Productos más Pedidos'
+                    }
+                }
+            }
+        });
+    }
+
+    // Notificaciones de Pedidos
+    let notifications = [];
+
+    async function checkPendingOrders() {
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getSales`);
+            const sales = await response.json();
+            const pending = sales.filter(s => s.estado === 'Pedido');
+            
+            notifications = pending.map(p => `Nuevo pedido de ${p.cliente} (${new Date(p.fecha).toLocaleTimeString()})`);
+            
+            const badge = document.getElementById('notificaciones-badge');
+            const list = document.getElementById('notificaciones-list');
+            
+            badge.textContent = notifications.length;
+            list.innerHTML = '';
+            
+            if (notifications.length > 0) {
+                notifications.forEach(n => {
+                    list.innerHTML += `<li><a class="dropdown-item" href="#">${n}</a></li>`;
+                });
+            } else {
+                list.innerHTML = `<li><span class="dropdown-item">No hay notificaciones</span></li>`;
+            }
+
+            // Alerta visual
+            if (pending.length > 0) {
+                // Podríamos mostrar un `toast` o una alerta más visible aquí.
+                // alert(`¡ATENCIÓN! Hay ${pending.length} pedidos pendientes.`);
+            }
+
+        } catch (error) {
+            console.error('Error checking pending orders:', error);
+        }
+    }
+
+    // Intervalo para las notificaciones (cada 5 minutos)
+    setInterval(checkPendingOrders, 5 * 60 * 1000);
+    checkPendingOrders(); // Primera carga al iniciar
+</script>
 </body>
 </html>
