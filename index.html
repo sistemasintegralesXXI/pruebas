@@ -1,760 +1,225 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login y Panel de Administración - Carnes al Barril</title>
-    <link rel="icon" type="image/png" href="https://png.pngtree.com/png-clipart/20230810/original/pngtree-cartoon-art-logo-icon-of-a-master-chef-character-with-kitchen-utensils-vector-picture-image_10231625.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <style>
-        /* CSS del Login */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-        :root {
-            --primary-color: #2fa35f;
-            --secondary-color: #04b330;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f8fafc;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f59e0b, #1f2937, #04b330 80%, #10b981, #ef4444);
-            background-attachment: fixed;
-            flex-direction: column;
-            padding: 20px;
-        }
-        .login-wrapper {
-            position: relative;
-            width: 400px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .login-wrapper:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 35px 55px rgba(0, 0, 0, 0.2);
-        }
-        .login-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .login-logo h1 {
-            font-size: 32px;
-            color: #fff;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        .login-logo p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .login-wrapper h2 {
-            font-size: 24px;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-        .input-group {
-            position: relative;
-            margin: 25px 0;
-            width: 100%;
-        }
-        .input-group input {
-            width: 100%;
-            height: 50px;
-            font-size: 16px;
-            color: #fff;
-            padding: 0 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-group input:focus {
-            border-color: #667eea;
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        .login-button {
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-size: 16px;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 25px;
-            border: none;
-            outline: none;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .login-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-        .login-button:active {
-            transform: translateY(0);
-        }
-        .forgot-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .forgot-link p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-        }
-        .forgot-link p a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .forgot-link p a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        /* CSS del Panel de Administración */
-        #adminPanel {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-        .navbar {
-            background: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-        }
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-            transform: translateY(-2px);
-        }
-        .container-fluid {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-            border: none;
-            border-radius: 25px;
-        }
-        .form-control, .form-select {
-            border-radius: 15px;
-            border: 2px solid #e5e7eb;
-            transition: all 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .module-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .module-card:hover {
-            transform: scale(1.05);
-        }
-        .module-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .user-info {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 0.5rem 1rem;
-            color: white;
-        }
-        .table {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .table th {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            border: none;
-            font-weight: 600;
-        }
-        .status-badge {
-            white-space: nowrap;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            line-height: 1;
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .status-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-        .status-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .hidden { display: none; }
-        .text-white a { color: white !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carnes al Barril - Pedidos Online</title>
+  <link rel="icon" type="image/png" href="https://png.pngtree.com/png-clipart/20230810/original/pngtree-cartoon-art-logo-icon-of-a-master-chef-character-with-kitchen-utensils-vector-picture-image_10231625.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f59e0b, #1f2937, #04b330 80%, #10b981, #ef4444);
+        background-attachment: fixed;
+    }
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    .card-img-top {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        height: 200px;
+        object-fit: cover;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #2fa35f 0%, #04b330 100%);
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+    }
+    .modal-content {
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    .form-control, .form-select {
+        border-radius: 15px;
+    }
+    .header-info {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-
-    <div id="loginContainer" class="login-wrapper">
-        <div class="login-logo">
-            <h1>🍖 Carnes al Barril</h1>
-            <p>Sistema de Administración de Ventas</p>
+    <div class="container py-5">
+        <div class="text-center header-info mb-5">
+            <h1 class="display-4 fw-bold">🍖 Carnes al Barril </h1>
+            <p class="lead">Disfruta de nuestros cortes más frescos y deliciosos. Haz tu pedido ahora!</p>
+            <a href="admin.html" class="btn btn-secondary mt-3">Panel de Admin</a>
         </div>
-        <form id="loginForm">
-            <h2>Iniciar Sesión</h2>
-            <div class="input-group">
-                <input type="text" id="usuario" placeholder="Usuario" required>
+        
+        <div id="productos-container" class="row g-4">
             </div>
-            <div class="input-group">
-                <input type="password" id="contrasena" placeholder="Contraseña" required>
-            </div>
-            <button type="submit" class="login-button">Ingresar</button>
-            <div class="forgot-link text-white">
-                <p>¿Olvidaste tu contraseña? <a href="https://wa.me/573133118664?text=JOEL%20SE%20ME%20OLVIDO%20LA%20CONTRASE%C3%91A%20AYUDAME" target="_blank">Click aquí</a></p>
-            </div>
-            <div class="forgot-link text-white">
-                <a href="index.html" style="text-decoration: none; font-weight: bold;">
-                    🥩 Página de Compras
-                </a>
-            </div>
-        </form>
+
     </div>
 
-    <div id="adminContainer" class="hidden">
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Admin Ventas</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link active" href="#" onclick="showModule('dashboard')"><i class="fas fa-home me-1"></i>Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('products')"><i class="fas fa-utensils me-1"></i>Productos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('sales')"><i class="fas fa-dollar-sign me-1"></i>Ventas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('clients')"><i class="fas fa-users me-1"></i>Clientes</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" onclick="showModule('users')"><i class="fas fa-user-shield me-1"></i>Usuarios</a></li>
-                    </ul>
-                    <div class="d-flex align-items-center">
-                        <div class="user-info me-3"><i class="fas fa-user me-2"></i><span id="currentUser">Usuario</span></div>
-                        <button class="btn btn-outline-light btn-sm" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt me-1"></i>Salir</button>
-                    </div>
+    <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="pedidoModalLabel">Realizar Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-        </nav>
-
-        <div class="container-fluid">
-            <div id="dashboardModule" class="fade-in">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card text-center p-4">
-                            <h1 class="mb-3">📊 Panel de Estadísticas</h1>
-                            <p class="lead">Visión general de tu negocio de Carnes al Barril</p>
-                            <hr>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('sales')">
-                            <div class="module-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <h4>Ventas Totales</h4>
-                            <p class="text-muted" id="totalSales">Cargando...</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('sales')">
-                            <div class="module-icon"><i class="fas fa-shopping-basket"></i></div>
-                            <h4>Pedidos Pendientes</h4>
-                            <p class="text-muted" id="pendingOrders">Cargando...</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card module-card text-center p-4" onclick="showModule('clients')">
-                            <div class="module-icon"><i class="fas fa-users"></i></div>
-                            <h4>Clientes Registrados</h4>
-                            <p class="text-muted" id="totalClients">Cargando...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="productsModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="mb-0"><i class="fas fa-utensils me-2"></i>Gestión de Productos</h3>
-                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productModal"><i class="fas fa-plus me-1"></i>Crear Producto</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Imagen</th>
-                                    <th>Nombre</th>
-                                    <th>Precio</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <tr><td colspan="4" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="salesModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Gestión de Ventas</h3>
-                        <div class="input-group w-50">
-                            <label class="input-group-text">Filtrar por Mes</label>
-                            <select id="filtroMesVentas" class="form-select">
-                                <option value="">Todos los meses</option>
-                                <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-                                <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-                                <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-                                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                <div class="modal-body">
+                    <form id="pedidoForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Cliente</label>
+                            <select id="tipoCliente" class="form-select">
+                                <option value="nuevo">Cliente Nuevo</option>
+                                <option value="antiguo">Cliente Antiguo</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Pedido</th>
-                                    <th>Total</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="salesTableBody">
-                                <tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="clientsModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <h3 class="mb-3"><i class="fas fa-users me-2"></i>Gestión de Clientes</h3>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Documento (4 digitos)</th>
-                                    <th>Teléfono</th>
-                                    <th>Dirección</th>
-                                    <th># Compras</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientsTableBody">
-                                <tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="usersModule" style="display: none;" class="fade-in">
-                <div class="card p-4">
-                    <h3 class="mb-3"><i class="fas fa-user-shield me-2"></i>Gestión de Usuarios</h3>
-                    <p>Usuarios de sistema para el login de administrador.</p>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Usuario</th>
-                                    <th>Nombre</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <tr>
-                                    <td>zuleima</td><td>Zuleima</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>directora</td><td>Rosana</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>pastor</td><td>Pastor</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>0678</td><td>Admin</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                                <tr>
-                                    <td>asegurador</td><td>Joel</td><td><button class="btn btn-sm btn-danger">Eliminar</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="productModalLabel">Crear/Editar Producto</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="productForm">
+                        <div id="clienteNuevo" class="p-3 border rounded mb-3">
+                            <h6 class="mb-3">Datos del Cliente Nuevo</h6>
                             <div class="mb-3">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="productName" required>
+                                <input type="text" class="form-control" id="nombreCliente" placeholder="Nombre completo" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                                <input type="text" class="form-control" id="docCliente" placeholder="Documento de Identidad" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Precio</label>
-                                <input type="number" class="form-control" id="productPrice" required>
+                                <input type="text" class="form-control" id="dirCliente" placeholder="Dirección" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">URL de Imagen</label>
-                                <input type="text" class="form-control" id="productImage">
+                                <input type="tel" class="form-control" id="telCliente" placeholder="Número de Teléfono" required>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div id="clienteAntiguo" class="p-3 border rounded mb-3" style="display: none;">
+                            <h6 class="mb-3">Datos del Cliente Antiguo</h6>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="ultimos4Doc" placeholder="Últimos 4 digitos del documento" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Producto Seleccionado</label>
+                            <input type="text" class="form-control" id="productoNombre" readonly>
+                            <input type="hidden" id="productoPrecio">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // ¡ACTUALIZA CON TU URL!
-
-        const loginContainer = document.getElementById('loginContainer');
-        const adminContainer = document.getElementById('adminContainer');
-
-        let allSales = [];
-        let allClients = [];
-        let allProducts = [];
-        const usuariosValidos = [
-            { usuario: 'zuleima', contrasena: 'zuleima', nombre: 'Zuleima' },
-            { usuario: 'directora', contrasena: 'directora', nombre: 'Rosana' },
-            { usuario: 'pastor', contrasena: 'pastor', nombre: 'Pastor' },
-            { usuario: '0678', contrasena: '0678', nombre: 'Admin' },
-            { usuario: 'asegurador', contrasena: 'asegurador', nombre: 'Joel' }
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec''; // ¡ACTUALIZA CON TU URL!
+        const productos = [
+            { id: 1, nombre: 'Porción de Carnes', descripcion: 'Porción de 20.000', precio: 20000, imagen: 'https://actualidadporcina.com/wp-content/uploads/2023/11/WEB-3.jpg' },
+            { id: 2, nombre: 'Porción de Longaniza', descripcion: 'Con papa y ají a 6.000', precio: 6000, imagen: 'https://alquincho.cl/wp-content/uploads/2020/10/IMG_3037_1.jpg' },
+            { id: 3, nombre: 'Porción de Chicharrón', descripcion: '250gr con yuca y pichaque a 25.000', precio: 25000, imagen: 'https://cdn.pixabay.com/photo/2017/01/17/08/04/pork-rind-1911674_1280.jpg' },
+            { id: 4, nombre: 'Libra de Carne', descripcion: 'Libras de cerdo, res o longaniza', precio: 38000, imagen: 'https://cdn.pixabay.com/photo/2016/03/05/19/02/food-1238475_1280.jpg' },
+            { id: 5, nombre: 'Kilo de Carne', descripcion: 'Kilo de cerdo, res o longaniza', precio: 75000, imagen: 'https://cdn.pixabay.com/photo/2017/05/29/18/00/meat-2354924_1280.jpg' },
         ];
 
-        window.addEventListener('load', function() {
-            if (sessionStorage.getItem('autenticado') === 'true') {
-                mostrarPanelAdmin();
-            } else {
-                mostrarLogin();
-            }
+        window.addEventListener('load', () => {
+            renderizarProductos();
         });
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            iniciarSesion();
-        });
-
-        function mostrarLogin() {
-            loginContainer.classList.remove('hidden');
-            adminContainer.classList.add('hidden');
-        }
-
-        function mostrarPanelAdmin() {
-            loginContainer.classList.add('hidden');
-            adminContainer.classList.remove('hidden');
-            const user = sessionStorage.getItem('usuario') || 'Admin';
-            document.getElementById('currentUser').textContent = user;
-            loadDashboard();
-        }
-
-        function iniciarSesion() {
-            const user = document.getElementById("usuario").value.trim().toLowerCase();
-            const pass = document.getElementById("contrasena").value.trim();
-            const encontrado = usuariosValidos.find(u => u.usuario === user && u.contrasena === pass);
-            
-            if (encontrado) {
-                sessionStorage.setItem('autenticado', 'true');
-                sessionStorage.setItem('usuario', encontrado.nombre);
-                sessionStorage.setItem('ultimoAcceso', Date.now().toString());
-                
-                const button = document.querySelector('.login-button');
-                button.innerHTML = 'Iniciando...';
-                button.disabled = true;
-                
-                setTimeout(() => {
-                    mostrarPanelAdmin();
-                }, 1000);
-            } else {
-                alert("❌ Usuario o contraseña incorrectos");
-            }
-        }
-
-        function cerrarSesion() {
-            sessionStorage.clear();
-            location.reload();
-        }
-
-        function showModule(module) {
-            document.querySelectorAll('#adminContainer > .container-fluid > div').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(module + 'Module').style.display = 'block';
-            document.querySelector(`[onclick="showModule('${module}')"]`).classList.add('active');
-
-            if (module === 'dashboard') loadDashboard();
-            if (module === 'products') loadProducts();
-            if (module === 'sales') loadSales();
-            if (module === 'clients') loadClients();
-            if (module === 'users') loadUsers();
-        }
-        
-        async function loadDashboard() {
-            document.getElementById('totalSales').textContent = '...'
-            document.getElementById('pendingOrders').textContent = '...'
-            document.getElementById('totalClients').textContent = '...'
-            
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getDashboardData`);
-                const data = await res.json();
-                if(data.success) {
-                    document.getElementById('totalSales').textContent = `$${data.totalSales.toLocaleString()}`;
-                    document.getElementById('pendingOrders').textContent = data.pendingOrders;
-                    document.getElementById('totalClients').textContent = data.totalClients;
-                }
-            } catch(e) {
-                console.error("Error al cargar dashboard", e);
-                document.getElementById('totalSales').textContent = 'Error';
-            }
-        }
-        
-        async function loadProducts() {
-            const tableBody = document.getElementById('productsTableBody');
-            tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getProducts`);
-                allProducts = await res.json();
-                tableBody.innerHTML = allProducts.map(p => `
-                    <tr>
-                        <td><img src="${p.imagen}" style="width: 50px; height: 50px; object-fit: cover;"></td>
-                        <td>${p.nombre}</td>
-                        <td>$${p.precio.toLocaleString()}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" onclick="editProduct('${p.id}')">Editar</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error al cargar productos</td></tr>';
-            }
-        }
-        
-        async function loadSales() {
-            const tableBody = document.getElementById('salesTableBody');
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getSales`);
-                allSales = await res.json();
-                const filteredSales = filterSales(allSales);
-                renderSalesTable(filteredSales);
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar ventas</td></tr>';
-            }
-        }
-
-        function filterSales(sales) {
-            const mesFiltro = document.getElementById('filtroMesVentas').value;
-            if (!mesFiltro) return sales;
-            return sales.filter(s => {
-                const saleDate = new Date(s.fecha);
-                return (saleDate.getMonth() + 1).toString() === mesFiltro;
-            });
-        }
-        
-        function renderSalesTable(sales) {
-            const tableBody = document.getElementById('salesTableBody');
-            if (sales.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">No hay ventas para este mes</td></tr>';
-                return;
-            }
-            tableBody.innerHTML = sales.map(s => `
-                <tr>
-                    <td>${new Date(s.fecha).toLocaleDateString()}</td>
-                    <td>${s.cliente}</td>
-                    <td>${s.pedido}</td>
-                    <td>$${s.total.toLocaleString()}</td>
-                    <td><span class="badge ${s.estado === 'En preparación' ? 'bg-warning' : 'bg-success'}">${s.estado}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="editSale('${s.id}')">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSale('${s.id}')">Eliminar</button>
-                    </td>
-                </tr>
+        function renderizarProductos() {
+            const container = document.getElementById('productos-container');
+            container.innerHTML = productos.map(p => `
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}">
+                        <div class="card-body">
+                            <h5 class="card-title">${p.nombre}</h5>
+                            <p class="card-text">${p.descripcion}</p>
+                            <h4 class="card-text text-success">$${p.precio.toLocaleString()}</h4>
+                            <button class="btn btn-primary w-100" onclick="abrirModalPedido('${p.nombre}', ${p.precio})">Pedir</button>
+                        </div>
+                    </div>
+                </div>
             `).join('');
         }
 
-        async function loadClients() {
-            const tableBody = document.getElementById('clientsTableBody');
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Cargando...</td></tr>';
-            try {
-                const res = await fetch(`${APPS_SCRIPT_URL}?action=getClients`);
-                allClients = await res.json();
-                tableBody.innerHTML = allClients.map(c => `
-                    <tr>
-                        <td>${c.nombre}</td>
-                        <td>${c.documento}</td>
-                        <td>${c.telefono}</td>
-                        <td>${c.direccion}</td>
-                        <td>${c.compras}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning" onclick="editClient('${c.id}')">Editar</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteClient('${c.id}')">Eliminar</button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (e) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Error al cargar clientes</td></tr>';
-            }
+        function abrirModalPedido(nombre, precio) {
+            document.getElementById('productoNombre').value = nombre;
+            document.getElementById('productoPrecio').value = precio;
+            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('pedidoModal'));
+            modal.show();
         }
 
-        function loadUsers() {
-            // La tabla de usuarios es estática en este ejemplo, no se necesita una llamada a la API
-        }
+        document.getElementById('tipoCliente').addEventListener('change', (e) => {
+            document.getElementById('clienteNuevo').style.display = e.target.value === 'nuevo' ? 'block' : 'none';
+            document.getElementById('clienteAntiguo').style.display = e.target.value === 'antiguo' ? 'block' : 'none';
+        });
 
-        function editProduct(id) { alert(`Editar producto con ID: ${id}`); }
-        function deleteProduct(id) { alert(`Eliminar producto con ID: ${id}`); }
-        function editSale(id) { alert(`Editar venta con ID: ${id}`); }
-        function deleteSale(id) { alert(`Eliminar venta con ID: ${id}`); }
-        function editClient(id) { alert(`Editar cliente con ID: ${id}`); }
-        function deleteClient(id) { alert(`Eliminar cliente con ID: ${id}`); }
-
-        document.getElementById('filtroMesVentas').addEventListener('change', () => renderSalesTable(filterSales(allSales)));
-
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
+        document.getElementById('pedidoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = {
-                nombre: document.getElementById('productName').value,
-                descripcion: document.getElementById('productDescription').value,
-                precio: document.getElementById('productPrice').value,
-                imagen: document.getElementById('productImage').value,
-            };
-            const res = await fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'createProduct', data: data })
-            });
-            const json = await res.json();
-            if (json.success) {
-                alert('Producto guardado!');
-                loadProducts();
+            const tipoCliente = document.getElementById('tipoCliente').value;
+            let clienteData = {};
+
+            if (tipoCliente === 'nuevo') {
+                clienteData = {
+                    nombre: document.getElementById('nombreCliente').value,
+                    documento: document.getElementById('docCliente').value,
+                    direccion: document.getElementById('dirCliente').value,
+                    telefono: document.getElementById('telCliente').value,
+                };
             } else {
-                alert('Error al guardar el producto');
+                clienteData = {
+                    ultimos4: document.getElementById('ultimos4Doc').value,
+                };
             }
-            bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+
+            const pedidoData = {
+                producto: document.getElementById('productoNombre').value,
+                precio: document.getElementById('productoPrecio').value,
+            };
+
+            const payload = {
+                action: 'crearPedido',
+                cliente: clienteData,
+                pedido: pedidoData,
+            };
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain' }, // Importante para Google Apps Script
+                });
+                const json = await res.json();
+                if(json.success) {
+                    alert('✅ Pedido realizado con éxito! Nos comunicaremos contigo por WhatsApp para confirmar.');
+                } else {
+                    alert('❌ Error al realizar el pedido: ' + json.error);
+                }
+            } catch (error) {
+                alert('❌ Ocurrió un error en la conexión. Intenta de nuevo.');
+            } finally {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('pedidoModal'));
+                modal.hide();
+                e.target.reset();
+            }
         });
     </script>
 </body>
