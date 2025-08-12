@@ -125,12 +125,26 @@
         .estado-pedido.Pedido {
             background-color: #0d6efd;
         }
-        .estado-pedido.En-Preparación {
+        .estado-pedido.En-Preparacion {
             background-color: #ffc107;
             color: #000;
         }
         .estado-pedido.Entregado {
             background-color: #198754;
+        }
+        .rating .star {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ccc;
+        }
+        .rating .star.selected {
+            color: #ffcc00;
+        }
+        .review-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid #ffcc00;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -163,6 +177,22 @@
 <footer class="footer">
     <p>&copy; 2024 SISTEMA DE VENTAS. Todos los derechos reservados.</p>
 </footer>
+
+<div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customAlertModalLabel"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="customAlertModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="verPedidoModal" tabindex="-1" aria-labelledby="verPedidoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -228,27 +258,98 @@
 </div>
 
 <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="productDetailsModalLabel">Detalles del Producto</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body text-center">
-                <img id="productImageModal" src="" class="img-fluid rounded mb-3" alt="Imagen del producto">
-                <p id="productDescriptionModal"></p> 
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <img id="productImageModal" src="" class="img-fluid rounded mb-3" alt="Imagen del producto">
+                    </div>
+                    <div class="col-md-6">
+                        <h4 id="productNameModal"></h4>
+                        <p id="productDescriptionModal"></p>
+                    </div>
+                </div>
+                <hr>
+                <h5>Opiniones y Comentarios</h5>
+                <div id="productReviewsContainer">
+                    <p class="text-center">No hay opiniones para este producto aún.</p>
+                </div>
             </div>
         </div>
-    </div> 
+    </div>
 </div>
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Realizar Pedido</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="orderProductName"></h6>
+                <p>Precio: <span id="orderProductPrice" class="fw-bold text-warning"></span></p>
+                
+                <div id="clientTypeSelection">
+                    <p>¿Eres un cliente nuevo o antiguo?</p>
+                    <button class="btn btn-primary w-100 mb-2" onclick="showNewClientForm()">Soy un cliente nuevo</button>
+                    <button class="btn btn-outline-light w-100" onclick="showExistingClientForm()">Soy un cliente antiguo</button>
+                </div>
+
+                <form id="newClientForm" style="display: none;">
+                    <div class="mb-3">
+                        <label for="newClientDocumento" class="form-label">Documento de Identidad</label>
+                        <input type="text" class="form-control" id="newClientDocumento" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newClientName" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="newClientName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newClientAddress" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="newClientAddress" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newClientPhone" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="newClientPhone" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
+                </form>
+
+                <form id="existingClientForm" style="display: none;">
+                    <div class="mb-3">
+                        <label for="existingClientDoc" class="form-label">Ingresa los últimos 4 dígitos de tu documento</label>
+                        <input type="text" class="form-control" id="existingClientDoc" required maxlength="4">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Confirmar Pedido</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbwmEkp5JAYLgNuRyRooLJs6v2J52uo5ump6Dt5N_37IR3UjntRXvnkwRAtLPUlyfts/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
+    const SPREADSHEET_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec'; // **REEMPLAZA ESTA URL CON LA TUYA**
+    let selectedProduct = null;
+    const customAlertModal = new bootstrap.Modal(document.getElementById('customAlertModal'));
 
-    document.addEventListener('DOMContentLoaded', () => { 
-        loadProducts(); 
-    }); 
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+    });
+
+    // Función para mostrar el modal de alerta personalizado
+    function showCustomAlert(title, message) {
+        document.getElementById('customAlertModalLabel').textContent = title;
+        document.getElementById('customAlertModalBody').innerHTML = message;
+        customAlertModal.show();
+    }
 
     async function loadProducts() {
         const productsContainer = document.getElementById('products-container');
@@ -271,15 +372,15 @@
         const col = document.createElement('div');
         col.className = 'col-md-6 col-lg-4';
         col.innerHTML = `
-            <div class="card product-card">
+            <div class="card product-card h-100">
                 <img src="${product.imagen}" class="card-img-top" alt="${product.nombre}">
                 <div class="card-body">
                     <h5 class="card-title">${product.nombre}</h5>
-                    <p class="card-text">${product.descripcion.substring(0, 50)}...</p>
+                    <p class="card-text">${product.descripcion.substring(0, 100)}...</p>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <span class="fs-4 text-warning fw-bold">$${product.precio}</span>
                         <div>
-                            <button class="btn btn-sm btn-outline-light me-2" onclick="showProductDetails('${product.imagen}', '${product.descripcion}')">Ver más</button>
+                            <button class="btn btn-sm btn-outline-light me-2" onclick="showProductDetails('${product.nombre}', '${product.imagen}', '${product.descripcion}')">Ver más</button>
                             <button class="btn btn-primary btn-sm" onclick="showOrderForm('${product.nombre}', '${product.precio}')">Pedir</button>
                         </div>
                     </div>
@@ -289,20 +390,131 @@
         return col;
     }
 
-    function showProductDetails(image, description) {
+    async function showProductDetails(name, image, description) {
         const productDetailsModal = new bootstrap.Modal(document.getElementById('productDetailsModal'));
+        document.getElementById('productNameModal').textContent = name;
         document.getElementById('productImageModal').src = image;
         document.getElementById('productDescriptionModal').textContent = description;
+        
+        const reviewsContainer = document.getElementById('productReviewsContainer');
+        reviewsContainer.innerHTML = '<p class="text-center">Cargando opiniones...</p>';
+
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=getProductRatings&productName=${encodeURIComponent(name)}`);
+            const result = await response.json();
+            
+            reviewsContainer.innerHTML = '';
+            if (result.success && result.ratings.length > 0) {
+                result.ratings.forEach(r => {
+                    const stars = '⭐'.repeat(r.rating);
+                    reviewsContainer.innerHTML += `
+                        <div class="review-card">
+                            <p class="mb-1"><strong>${r.cliente}</strong> <span class="float-end">${stars}</span></p>
+                            <p class="mb-0">${r.comment}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                reviewsContainer.innerHTML = '<p class="text-center">No hay opiniones para este producto aún.</p>';
+            }
+        } catch (error) {
+            reviewsContainer.innerHTML = '<p class="text-danger text-center">Error al cargar las opiniones.</p>';
+            console.error('Error loading product ratings:', error);
+        }
         productDetailsModal.show();
     }
 
     function showOrderForm(productName, productPrice) {
-        // Lógica para mostrar un formulario de pedido, omitido para brevedad.
-        // Se puede reutilizar el modal de ver pedido o crear uno nuevo.
-        alert(`Has seleccionado ${productName} por $${productPrice}. Por favor, contáctanos.`);
+        selectedProduct = { productName, productPrice };
+        const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+        document.getElementById('orderProductName').textContent = productName;
+        document.getElementById('orderProductPrice').textContent = `$${productPrice}`;
+
+        document.getElementById('clientTypeSelection').style.display = 'block';
+        document.getElementById('newClientForm').style.display = 'none';
+        document.getElementById('existingClientForm').style.display = 'none';
+        document.getElementById('newClientForm').reset();
+        document.getElementById('existingClientForm').reset();
+
+        orderModal.show();
     }
 
-    // Funcionalidad para "Ver estado de mi pedido"
+    function showNewClientForm() {
+        document.getElementById('clientTypeSelection').style.display = 'none';
+        document.getElementById('newClientForm').style.display = 'block';
+    }
+
+    function showExistingClientForm() {
+        document.getElementById('clientTypeSelection').style.display = 'none';
+        document.getElementById('existingClientForm').style.display = 'block';
+    }
+
+    document.getElementById('newClientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clientData = {
+            isNew: true,
+            documento: document.getElementById('newClientDocumento').value,
+            nombre: document.getElementById('newClientName').value,
+            direccion: document.getElementById('newClientAddress').value,
+            telefono: document.getElementById('newClientPhone').value
+        };
+        await sendOrder(clientData, selectedProduct);
+    });
+
+    document.getElementById('existingClientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const documento = document.getElementById('existingClientDoc').value;
+        try {
+            const response = await fetch(`${SPREADSHEET_URL}?action=checkClient&documento=${documento}`);
+            const result = await response.json();
+
+            if (result.success && result.exists) {
+                const clientData = {
+                    isNew: false,
+                    ultimos4: documento,
+                    documento: result.data.documento,
+                    nombre: result.data.nombre
+                };
+                await sendOrder(clientData, selectedProduct);
+            } else {
+                showCustomAlert('Error', 'No se encontró un cliente con esos 4 dígitos. Por favor, regístrate como cliente nuevo.');
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error al verificar el cliente. Intenta de nuevo.');
+            console.error('Error checking client:', error);
+        }
+    });
+
+    async function sendOrder(clientData, product) {
+        try {
+            const response = await fetch(SPREADSHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'crearPedido',
+                    cliente: clientData,
+                    pedido: {
+                        producto: product.productName,
+                        precio: product.productPrice
+                    }
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            if (result.success) {
+                showCustomAlert('Pedido Exitoso', 'Tu pedido ha sido realizado con éxito. ¡Te contactaremos pronto!');
+                bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+                document.getElementById('newClientForm').reset();
+                document.getElementById('existingClientForm').reset();
+            } else {
+                showCustomAlert('Error', `Error al realizar el pedido: ${result.error}`);
+            }
+        } catch (error) {
+            showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
+            console.error('Error creating order:', error);
+        }
+    }
+
+
     document.getElementById('form-ver-pedido').addEventListener('submit', async (e) => {
         e.preventDefault();
         const documento = document.getElementById('documentoCliente').value;
@@ -311,7 +523,7 @@
 
         const pedidosEnCursoList = document.querySelector('#pedidosEnCurso ul');
         const pedidosAnterioresList = document.querySelector('#pedidosAnteriores ul');
-        pedidosEnCursoList.innerHTML = '<li class="list-group-item">Buscando pedidos...</li>';
+        pedidosEnCursoList.innerHTML = '<li class="list-group-item text-dark">Buscando pedidos...</li>';
         pedidosAnterioresList.innerHTML = '';
 
         try {
@@ -328,16 +540,16 @@
                 if (pedidosEnCurso.length > 0) {
                     pedidosEnCurso.forEach(p => pedidosEnCursoList.appendChild(createPedidoItem(p, 'curso')));
                 } else {
-                    pedidosEnCursoList.innerHTML = '<li class="list-group-item">No tienes pedidos en curso.</li>';
+                    pedidosEnCursoList.innerHTML = '<li class="list-group-item text-dark">No tienes pedidos en curso.</li>';
                 }
 
                 if (pedidosAnteriores.length > 0) {
                     pedidosAnteriores.forEach(p => pedidosAnterioresList.appendChild(createPedidoItem(p, 'anterior')));
                 } else {
-                    pedidosAnterioresList.innerHTML = '<li class="list-group-item">No tienes pedidos anteriores.</li>';
+                    pedidosAnterioresList.innerHTML = '<li class="list-group-item text-dark">No tienes pedidos anteriores.</li>';
                 }
             } else {
-                pedidosEnCursoList.innerHTML = '<li class="list-group-item">No se encontraron pedidos.</li>';
+                pedidosEnCursoList.innerHTML = `<li class="list-group-item text-dark">${result.error || 'No se encontraron pedidos.'}</li>`;
             }
         } catch (error) {
             pedidosEnCursoList.innerHTML = '<li class="list-group-item text-danger">Error al consultar los pedidos.</li>';
@@ -356,8 +568,11 @@
                 <strong>Estado:</strong> <span class="estado-pedido ${estadoClass}">${pedido.estado}</span>
             </div>
         `;
-        if (tipo === 'anterior') {
+        if (tipo === 'anterior' && !pedido.rating) {
             item.innerHTML += `<button class="btn btn-sm btn-outline-success" onclick="showCalificacionModal(${pedido.id})">Calificar</button>`;
+        } else if (tipo === 'anterior' && pedido.rating) {
+            const stars = '⭐'.repeat(pedido.rating);
+            item.innerHTML += `<div>Calificado: ${stars}</div>`;
         }
         return item;
     }
@@ -384,10 +599,10 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             const result = await response.json();
-            alert(result.success ? 'Gracias por tu calificación!' : 'Error al guardar la calificación.');
+            showCustomAlert(result.success ? 'Éxito' : 'Error', result.message || 'Error al guardar la calificación.');
             bootstrap.Modal.getInstance(document.getElementById('calificacionModal')).hide();
         } catch (error) {
-            alert('Error de conexión. Intenta de nuevo.');
+            showCustomAlert('Error', 'Error de conexión. Intenta de nuevo.');
             console.error('Error al calificar:', error);
         }
     });
