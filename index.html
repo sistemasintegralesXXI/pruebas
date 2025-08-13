@@ -3,29 +3,36 @@
 <head>
     <base target="_top">
     <title>Carnes al Barril - Sistema de Pedidos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:wght@400;700&display=swap');
+        :root {
+            --primary-color: #ffcc80;
+            --secondary-color: #4a2828;
+            --dark-bg: #2c0e0e;
+            --text-color: #f5f5dc;
+        }
         body {
             font-family: 'Merriweather', serif;
-            background: #2c0e0e;
-            color: #f5f5dc;
+            background: var(--dark-bg);
+            color: var(--text-color);
             padding-bottom: 100px;
         }
         .navbar {
-            background-color: #4a2828 !important;
+            background-color: var(--secondary-color) !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .navbar-brand, .nav-link, .nav-link-btn {
             font-family: 'Bebas Neue', sans-serif;
-            color: #ffcc80 !important;
+            color: var(--primary-color) !important;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Bebas Neue', sans-serif;
-            color: #ffcc80;
+            color: var(--primary-color);
         }
         .container {
             max-width: 1100px;
@@ -44,7 +51,7 @@
             background-size: cover;
             position: relative;
             color: white;
-            border-bottom: 4px solid #ffcc80;
+            border-bottom: 4px solid var(--primary-color);
         }
         .header-section::before {
             content: '';
@@ -61,8 +68,8 @@
             z-index: 2;
         }
         .product-card {
-            background: #4a2828;
-            border: 2px solid #ffcc80;
+            background: var(--secondary-color);
+            border: 2px solid var(--primary-color);
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -79,22 +86,15 @@
             height: 200px;
             object-fit: cover;
             width: 100%;
-            border-bottom: 2px solid #ffcc80;
-        }
-        .product-card .card-body {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            color: #f5f5dc;
+            border-bottom: 2px solid var(--primary-color);
         }
         .cart-summary {
             position: fixed;
             bottom: 20px;
             right: 20px;
             width: 350px;
-            background: #4a2828;
-            border: 2px solid #ffcc80;
+            background: var(--secondary-color);
+            border: 2px solid var(--primary-color);
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -150,7 +150,7 @@
             flex-direction: column;
         }
         .spinner-border {
-            color: #ffcc80 !important;
+            color: var(--primary-color) !important;
         }
         #success-animation {
             color: #5cb85c;
@@ -163,36 +163,36 @@
             100% { transform: scale(1); }
         }
         .modal-content {
-            background-color: #4a2828;
-            color: #f5f5dc;
-            border: 2px solid #ffcc80;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: 2px solid var(--primary-color);
         }
         .modal-header {
-            border-bottom: 1px solid #ffcc80;
+            border-bottom: 1px solid var(--primary-color);
         }
         .modal-footer {
-            border-top: 1px solid #ffcc80;
+            border-top: 1px solid var(--primary-color);
         }
         .form-control, .form-select {
-            background-color: #2c0e0e;
-            color: #f5f5dc;
-            border: 1px solid #ffcc80;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            border: 1px solid var(--primary-color);
         }
         .form-control:focus, .form-select:focus {
-            background-color: #2c0e0e;
-            color: #f5f5dc;
-            border-color: #ffcc80;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(255, 204, 128, 0.25);
         }
         .btn-primary {
-            background-color: #ffcc80;
-            border-color: #ffcc80;
-            color: #2c0e0e;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--dark-bg);
         }
         .btn-primary:hover {
             background-color: #e6b873;
             border-color: #e6b873;
-            color: #2c0e0e;
+            color: var(--dark-bg);
         }
         .btn-success {
             background-color: #5cb85c;
@@ -226,7 +226,7 @@
             width: 100%;
             height: 250px;
             border-radius: 8px;
-            border: 2px solid #ffcc80;
+            border: 2px solid var(--primary-color);
             transition: transform 0.3s ease;
         }
         .gallery-image:hover {
@@ -245,7 +245,7 @@
             width: 100%;
             height: 100%;
             border-radius: 8px;
-            border: 2px solid #ffcc80;
+            border: 2px solid var(--primary-color);
         }
         .toast {
             position: fixed;
@@ -254,7 +254,6 @@
             z-index: 1100;
         }
         
-        /* Estilos para el calendario de ventas */
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -263,8 +262,8 @@
         }
         .calendar-day {
             padding: 10px;
-            background-color: #4a2828;
-            border: 1px solid #ffcc80;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--primary-color);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -281,11 +280,25 @@
             grid-column: 1 / -1;
             font-size: 1.5rem;
             margin-bottom: 15px;
-            color: #ffcc80;
+            color: var(--primary-color);
         }
         .weekday {
             font-weight: bold;
-            color: #ffcc80;
+            color: var(--primary-color);
+        }
+        @media (max-width: 1000px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            .header-section {
+                padding: 30px 0;
+            }
+            .header-section h1 {
+                font-size: 2.5rem;
+            }
+            .header-section p {
+                font-size: 1rem;
+            }
         }
         @media (max-width: 768px) {
             .cart-summary {
@@ -295,12 +308,23 @@
                 border-radius: 0;
                 bottom: 0;
                 padding-bottom: 70px;
+                border: none;
+                border-top: 2px solid var(--primary-color);
             }
             .cart-summary.minimized {
                 width: 60px;
                 height: 60px;
                 right: 20px;
                 left: auto;
+                bottom: 20px;
+                border-radius: 50%;
+                border: 2px solid var(--primary-color);
+            }
+            .product-card img {
+                height: 180px;
+            }
+            .gallery-image {
+                height: 180px;
             }
         }
     </style>
@@ -309,7 +333,8 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="./admin.html">Carnes al Barril</a>
+            <a class="navbar-brand d-lg-none" href="./admin.html">Carnes al Barril</a>
+            <a class="navbar-brand d-none d-lg-block" href="./admin.html">Barril Norteño el Mono</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -381,22 +406,22 @@
         <div id="gallery-section" class="section">
             <h1 class="text-center my-4">Galería de Sabores</h1>
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <img src="https://www.eldiario.com.co/wp-content/uploads/2025/04/R1-2-1068x1065.jpg" alt="Carne al barril 1" class="img-fluid gallery-image">
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692" class="img-fluid gallery-image">
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <img src="https://homecitycolombia.com/cdn/shop/products/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.jpg?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
                 </div>
-                              <div class="col-md-4">
+                              <div class="col-12 col-md-4">
                     <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164" alt="Carne al barril 1" class="img-fluid gallery-image">
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <img src="https://i.ytimg.com/vi/6srE1KklzW8/sddefault.jpg" class="img-fluid gallery-image">
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <img src="https://i.ytimg.com/vi/6eI0gsy-TR8/maxresdefault.jpg" alt="Carne al barril 3" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 mt-5">
@@ -428,7 +453,7 @@
                         Cesta vacía
                     </li>
                 </ul>
-                <hr style="border-color: #ffcc80;">
+                <hr style="border-color: var(--primary-color);">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <strong>Total:</strong>
                     <span id="cart-total">$0.00</span>
@@ -450,7 +475,6 @@
         </div>
       </div>
     </div>
-
 
     <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -604,10 +628,10 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <img id="producto-info-img" src="" alt="Imagen del Producto" class="img-fluid rounded">
               </div>
-              <div class="col-md-6">
+              <div class="col-12 col-md-6">
                 <h4 id="producto-info-nombre"></h4>
                 <p class="text-warning fw-bold" id="producto-info-precio"></p>
                 <p id="producto-info-descripcion"></p>
@@ -616,7 +640,7 @@
                 </a>
               </div>
             </div>
-            <hr style="border-color: #ffcc80;">
+            <hr style="border-color: var(--primary-color);">
             <h6>Reseñas del Producto</h6>
             <div id="producto-info-resenas">
               </div>
@@ -681,7 +705,6 @@
                 cartSummary.classList.toggle('minimized');
             }
 
-            // Maneja el cambio de secciones sin recargar la página y cierra el menú hamburguesa
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const sectionId = button.dataset.section;
@@ -691,7 +714,6 @@
                     if (sectionId) {
                         document.getElementById(`${sectionId}-section`).classList.add('active');
                     }
-                    // Cierra el menú hamburguesa si está abierto
                     if (navbarCollapse.classList.contains('show')) {
                         const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
                         bsCollapse.hide();
@@ -744,17 +766,16 @@
                 allProducts = products;
                 productsList.innerHTML = '';
                 products.forEach(product => {
-                    // Usamos la URL de miniatura de Drive con un tamaño específico para que cargue rápido
-                    const imageUrl = `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512`;
+                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://via.placeholder.com/512x200?text=No+Imagen';
                     const productHtml = `
-                        <div class="col-md-4 mb-4">
+                        <div class="col-6 col-md-4 mb-4">
                             <div class="card product-card">
                                 <img src="${imageUrl}" class="card-img-top" alt="${product.nombre}">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.nombre}</h5>
                                     <p class="card-text">$${product.precio}</p>
-                                    <div class="d-flex justify-content-between">
-                                        <button class="btn btn-info btn-sm" onclick="showProductInfo('${product.id}')">Más info</button>
+                                    <div class="d-flex justify-content-between flex-column flex-md-row">
+                                        <button class="btn btn-info btn-sm mb-2 mb-md-0" onclick="showProductInfo('${product.id}')">Más info</button>
                                         <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir al carrito</button>
                                     </div>
                                 </div>
@@ -1022,14 +1043,12 @@
                     const product = response.data.product;
                     const reviews = response.data.reviews;
                     
-                    // URL de la imagen de alta calidad para el modal
-                    const highQualityImageUrl = `https://drive.google.com/uc?id=${product.fileId}`;
+                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://via.placeholder.com/800x600?text=No+Imagen';
                     
                     document.getElementById('producto-info-img').src = highQualityImageUrl;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
                     document.getElementById('producto-info-descripcion').innerText = product.descripcion;
                     document.getElementById('producto-info-precio').innerText = `$${product.precio}`;
-                    // Enlaza el botón de descarga a la URL de la imagen de alta calidad
                     document.getElementById('download-image-btn').href = highQualityImageUrl;
                     document.getElementById('download-image-btn').download = `${product.nombre}.jpg`;
 
@@ -1111,7 +1130,7 @@
                 const currentYear = today.getFullYear();
                 const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
                 
-                const salesDays = [0, 5, 6]; // Domingo (0), Viernes (5), Sábado (6)
+                const salesDays = [0, 5, 6]; 
                 
                 salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
                 daysOfWeek.forEach(day => {
