@@ -330,6 +330,13 @@
     </style>
 </head>
 <body>
+    <audio id="fire-sound" preload="auto">
+      <source src="https://www.soundjay.com/fire-sound-effects.html" type="audio/mpeg">
+    </audio>
+
+    <audio id="success-sound" preload="auto">
+      <source src="https://www.soundjay.com/success-sound.html" type="audio/mpeg">
+    </audio>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -684,6 +691,9 @@
             const allReviewsList = document.getElementById('all-reviews-list');
             const btnConfirmarPedido = document.getElementById('btn-confirmar-pedido');
             const liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
+            
+            const fireSound = document.getElementById('fire-sound');
+            const successSound = document.getElementById('success-sound');
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -729,14 +739,28 @@
                 if (isSuccess) {
                     successAnimation.classList.remove('d-none');
                     successText.innerText = message;
+                    // Tocar sonido de éxito
+                    successSound.play();
                 } else {
                     pedidoAnimation.classList.remove('d-none');
                     loadingText.innerText = message;
+                    // Tocar sonido de fuego al cargar, solo si es la carga inicial
+                    if (message === 'Cargando productos...') {
+                       fireSound.play();
+                       setTimeout(() => {
+                            if (!loadingOverlay.classList.contains('d-none')) {
+                                fireSound.pause();
+                                fireSound.currentTime = 0;
+                            }
+                       }, 5000); // Detener después de 5 segundos
+                    }
                 }
             }
 
             function hideLoading() {
                 loadingOverlay.classList.add('d-none');
+                fireSound.pause();
+                fireSound.currentTime = 0;
             }
             
             window.showTypeSelection = function() {
@@ -766,7 +790,7 @@
                 allProducts = products;
                 productsList.innerHTML = '';
                 products.forEach(product => {
-                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://via.placeholder.com/512x200?text=No+Imagen';
+                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://via.placeholder.com/512x200.png?text=No+Imagen';
                     const productHtml = `
                         <div class="col-6 col-md-4 mb-4">
                             <div class="card product-card">
@@ -1043,7 +1067,7 @@
                     const product = response.data.product;
                     const reviews = response.data.reviews;
                     
-                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://via.placeholder.com/800x600?text=No+Imagen';
+                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://via.placeholder.com/800x600.png?text=No+Imagen';
                     
                     document.getElementById('producto-info-img').src = highQualityImageUrl;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
