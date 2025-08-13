@@ -108,6 +108,7 @@
             background: #fff;
             padding: 20px;
             border-radius: 10px;
+            position: relative;
         }
 
         .table {
@@ -215,13 +216,20 @@
         </div>
 
         <div id="dashboard" class="panel-section active">
-            <div class="row g-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4>Dashboard</h4>
+                <div class="d-flex align-items-center">
+                    <label for="mes-selector" class="form-label me-2 mb-0">Mes:</label>
+                    <select class="form-select form-select-sm" id="mes-selector"></select>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
                 <div class="col-md-6 col-lg-3">
                     <div class="card text-white bg-primary">
                         <div class="card-body">
                             <i class="fas fa-dollar-sign fa-3x mb-2"></i>
                             <h5 class="card-title">Ventas Totales</h5>
-                            <h3 id="total-sales">$0</h3>
+                            <h3 id="total-sales-mes">$0</h3>
                         </div>
                     </div>
                 </div>
@@ -230,7 +238,7 @@
                         <div class="card-body">
                             <i class="fas fa-hourglass-start fa-3x mb-2"></i>
                             <h5 class="card-title">Pedidos Pendientes</h5>
-                            <h3 id="pending-orders">0</h3>
+                            <h3 id="pending-orders-mes">0</h3>
                         </div>
                     </div>
                 </div>
@@ -239,7 +247,7 @@
                         <div class="card-body">
                             <i class="fas fa-motorcycle fa-3x mb-2"></i>
                             <h5 class="card-title">En Preparación</h5>
-                            <h3 id="in-preparation-orders">0</h3>
+                            <h3 id="in-preparation-orders-mes">0</h3>
                         </div>
                     </div>
                 </div>
@@ -248,7 +256,31 @@
                         <div class="card-body">
                             <i class="fas fa-check-circle fa-3x mb-2"></i>
                             <h5 class="card-title">Pedidos Entregados</h5>
-                            <h3 id="delivered-orders">0</h3>
+                            <h3 id="delivered-orders-mes">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <div class="card p-4">
+                        <h4>Ventas por Mes</h4>
+                        <div id="monthly-sales-chart"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h4>Producto más comprado</h4>
+                        <div id="most-bought-product-info">
+                            <p>Cargando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h4>Cliente con más pedidos</h4>
+                        <div id="top-client-info">
+                            <p>Cargando...</p>
                         </div>
                     </div>
                 </div>
@@ -258,9 +290,17 @@
         <div id="productos" class="panel-section d-none">
             <div class="d-flex justify-content-between mb-3">
                 <h4>Productos</h4>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearProducto">Crear Producto</button>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="search-products" class="form-control me-2" placeholder="Buscar productos...">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearProducto">Crear Producto</button>
+                </div>
             </div>
             <div class="table-responsive">
+                <div id="products-loading" class="text-center p-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -272,8 +312,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="products-table-body">
-                    </tbody>
+                    <tbody id="products-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -283,10 +322,39 @@
                 <h4>Ventas</h4>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearVenta">Crear Venta</button>
             </div>
+            <div class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <input type="text" id="search-sales" class="form-control" placeholder="Buscar ventas...">
+                </div>
+                <div class="col-md-2">
+                    <select id="filter-sales-month" class="form-select">
+                        <option value="all">Filtrar por Mes</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="filter-sales-product" class="form-select">
+                        <option value="all">Filtrar por Producto</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="filter-sales-status" class="form-select">
+                        <option value="all">Filtrar por Estado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Preparación">En Preparación</option>
+                        <option value="Entregado">Entregado</option>
+                    </select>
+                </div>
+            </div>
             <div class="table-responsive">
+                <div id="sales-loading" class="text-center p-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID_VENTAS</th>
                             <th>Fecha</th>
                             <th>Cliente</th>
                             <th>Pedido</th>
@@ -298,8 +366,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="sales-table-body">
-                    </tbody>
+                    <tbody id="sales-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -307,9 +374,17 @@
         <div id="clientes" class="panel-section d-none">
             <div class="d-flex justify-content-between mb-3">
                 <h4>Clientes</h4>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCliente">Crear Cliente</button>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="search-clients" class="form-control me-2" placeholder="Buscar clientes...">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearCliente">Crear Cliente</button>
+                </div>
             </div>
             <div class="table-responsive">
+                <div id="clients-loading" class="text-center p-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -322,8 +397,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="clients-table-body">
-                    </tbody>
+                    <tbody id="clients-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -331,9 +405,17 @@
         <div id="usuarios" class="panel-section d-none">
             <div class="d-flex justify-content-between mb-3">
                 <h4>Usuarios</h4>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">Crear Usuario</button>
+                <div class="d-flex align-items-center">
+                    <input type="text" id="search-users" class="form-control me-2" placeholder="Buscar usuarios...">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">Crear Usuario</button>
+                </div>
             </div>
             <div class="table-responsive">
+                <div id="users-loading" class="text-center p-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -343,15 +425,22 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="users-table-body">
-                    </tbody>
+                    <tbody id="users-table-body"></tbody>
                 </table>
             </div>
         </div>
 
         <div id="historial" class="panel-section d-none">
-            <h4>Historial de Acciones</h4>
+            <div class="d-flex justify-content-between mb-3">
+                <h4>Historial de Acciones</h4>
+                <input type="text" id="search-historial" class="form-control w-50" placeholder="Buscar en historial...">
+            </div>
             <div class="table-responsive">
+                <div id="historial-loading" class="text-center p-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -361,8 +450,7 @@
                             <th>Usuario</th>
                         </tr>
                     </thead>
-                    <tbody id="historial-table-body">
-                    </tbody>
+                    <tbody id="historial-table-body"></tbody>
                 </table>
             </div>
         </div>
@@ -370,16 +458,16 @@
 </div>
 
 <div class="modal fade" id="modalCrearProducto" tabindex="-1" aria-labelledby="modalCrearProductoLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearProductoLabel">Crear Producto</h5>
+                <h5 class="modal-title" id="modalCrearProductoLabel">Crear Nuevo Producto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="formCrearProducto">
                     <div class="mb-3">
-                        <label for="nombreProducto" class="form-label">Nombre del Producto</label>
+                        <label for="nombreProducto" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="nombreProducto" required>
                     </div>
                     <div class="mb-3">
@@ -394,192 +482,15 @@
                         <label for="imagenProducto" class="form-label">Imagen</label>
                         <input type="file" class="form-control" id="imagenProducto" accept="image/*" required>
                     </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Producto</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="crearProducto()">Crear</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalEditarProductoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarProductoLabel">Editar Producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formEditarProducto">
-                    <input type="hidden" id="edit-producto-id">
-                    <div class="mb-3">
-                        <label for="editNombreProducto" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="editNombreProducto" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDescripcionProducto" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="editDescripcionProducto" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editPrecioProducto" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="editPrecioProducto" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="actualizarProducto()">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearClienteLabel">Crear Cliente</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formCrearCliente">
-                    <div class="mb-3">
-                        <label for="documentoCliente" class="form-label">Documento</label>
-                        <input type="text" class="form-control" id="documentoCliente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nombreCliente" class="form-label">Nombre del Cliente</label>
-                        <input type="text" class="form-control" id="nombreCliente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="direccionCliente" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="direccionCliente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefonoCliente" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="telefonoCliente" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="crearCliente()">Crear</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalEditarCliente" tabindex="-1" aria-labelledby="modalEditarClienteLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarClienteLabel">Editar Cliente</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formEditarCliente">
-                    <input type="hidden" id="edit-cliente-documento">
-                    <div class="mb-3">
-                        <label for="editNombreCliente" class="form-label">Nombre del Cliente</label>
-                        <input type="text" class="form-control" id="editNombreCliente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDireccionCliente" class="form-label">Dirección</label>
-                        <input type="text" class="form-control" id="editDireccionCliente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editTelefonoCliente" class="form-label">Teléfono</label>
-                        <input type="tel" class="form-control" id="editTelefonoCliente" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="actualizarCliente()">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCrearUsuarioLabel">Crear Usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formCrearUsuario">
-                    <div class="mb-3">
-                        <label for="usuarioNombreUsuario" class="form-label">Nombre de Usuario</label>
-                        <input type="text" class="form-control" id="usuarioNombreUsuario" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nombreUsuario" class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombreUsuario" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="passwordUsuario" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="passwordUsuario" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rolUsuario" class="form-label">Rol</label>
-                        <select class="form-select" id="rolUsuario" required>
-                            <option value="Admin">Admin</option>
-                            <option value="Vendedor">Vendedor</option>
-                            <option value="Usuario">Usuario</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="crearUsuario()">Crear</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalEditarUsuarioLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditarUsuarioLabel">Editar Usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formEditarUsuario">
-                    <input type="hidden" id="edit-usuario-usuario">
-                    <div class="mb-3">
-                        <label for="editNombreUsuario" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="editNombreUsuario" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editPasswordUsuario" class="form-label">Contraseña (dejar en blanco para no cambiar)</label>
-                        <input type="password" class="form-control" id="editPasswordUsuario">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editRolUsuario" class="form-label">Rol</label>
-                        <select class="form-select" id="editRolUsuario" required>
-                            <option value="Admin">Admin</option>
-                            <option value="Vendedor">Vendedor</option>
-                            <option value="Usuario">Usuario</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="actualizarUsuario()">Guardar Cambios</button>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalCrearVenta" tabindex="-1" aria-labelledby="modalCrearVentaLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalCrearVentaLabel">Crear Nueva Venta</h5>
@@ -589,560 +500,799 @@
                 <form id="formCrearVenta">
                     <div class="mb-3">
                         <label for="clienteVenta" class="form-label">Cliente</label>
-                        <input type="text" class="form-control" id="clienteVenta" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pedidoVenta" class="form-label">Pedido (Ej: [ { "nombre": "Pizza", "cantidad": 2, "precio": 15 } ])</label>
-                        <textarea class="form-control" id="pedidoVenta" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="totalVenta" class="form-label">Total</label>
-                        <input type="number" class="form-control" id="totalVenta" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="estadoVenta" class="form-label">Estado</label>
-                        <select class="form-select" id="estadoVenta" required>
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="En Preparacion">En Preparación</option>
-                            <option value="Entregado">Entregado</option>
+                        <select class="form-select" id="clienteVenta" required>
+                            <option value="">Seleccione un cliente</option>
                         </select>
                     </div>
+                    <hr>
+                    <h6 class="mb-3">Pedido</h6>
+                    <div id="productos-list-container">
+                        <p class="text-center">Cargando productos...</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6>Total</h6>
+                        <h4 id="totalVenta">$0</h4>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Venta</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="crearVenta()">Crear</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalEliminarConfirmacion" tabindex="-1" aria-labelledby="modalEliminarConfirmacionLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+<div class="modal fade" id="modalEditarVenta" tabindex="-1" aria-labelledby="modalEditarVentaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalEliminarConfirmacionLabel">Confirmar Eliminación</h5>
+                <h5 class="modal-title" id="modalEditarVentaLabel">Editar Venta</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro que deseas eliminar este registro?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+                <form id="formEditarVenta">
+                    <input type="hidden" id="edit-sale-id">
+                    <div class="mb-3">
+                        <label for="edit-sale-status" class="form-label">Estado</label>
+                        <select class="form-select" id="edit-sale-status" required>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Preparación">En Preparación</option>
+                            <option value="Entregado">Entregado</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-sale-abonos" class="form-label">Abonos</label>
+                        <input type="number" class="form-control" id="edit-sale-abonos" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Actualizar Venta</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalAlerta" tabindex="-1" aria-labelledby="modalAlertaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+<div class="modal fade" id="modalEliminarVenta" tabindex="-1" aria-labelledby="modalEliminarVentaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalAlertaLabel">Alerta</h5>
+                <h5 class="modal-title" id="modalEliminarVentaLabel">Confirmar Eliminación</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="modalAlertaBody">
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta venta con ID: <span id="delete-sale-id"></span>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarVentaBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearClienteLabel">Crear Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrearCliente">
+                    <div class="mb-3">
+                        <label for="documentoCliente" class="form-label">Documento</label>
+                        <input type="text" class="form-control" id="documentoCliente" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombreCliente" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombreCliente" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccionCliente" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccionCliente" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefonoCliente" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefonoCliente" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Cliente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-labelledby="modalCrearUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearUsuarioLabel">Crear Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrearUsuario">
+                    <div class="mb-3">
+                        <label for="usuario" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="usuario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contrasena" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="contrasena" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rol" class="form-label">Rol</label>
+                        <select class="form-select" id="rol" required>
+                            <option value="Admin">Admin</option>
+                            <option value="Empleado">Empleado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Usuario</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ** REEMPLAZA CON LA URL DE TU SCRIPT DESPLEGADO **
-        // Asegúrate de que esta URL sea la correcta y la hayas desplegado
-        // como una aplicación web.
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
+    // URL del Apps Script (REEMPLAZA CON LA TUYA)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
+    
+    // Variables globales para almacenar datos
+    let allSales = [];
+    let allProducts = [];
+    let allClients = [];
 
-        const loginScreen = document.getElementById('login-screen');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginForm = document.getElementById('login-form');
-        const logoutBtn = document.getElementById('logout-btn');
-        const sidebarLinks = document.querySelectorAll('.sidebar .components a');
-        const panelSections = document.querySelectorAll('.panel-section');
-
-        let idToDelete = null;
-        let tipoToDelete = null;
-        let currentUser = null;
-
-        function showAlert(message) {
-            document.getElementById('modalAlertaBody').innerText = message;
-            const modal = new bootstrap.Modal(document.getElementById('modalAlerta'));
-            modal.show();
+    // Estado del UI
+    const ui = {
+        showLoading: (elementId) => {
+            document.getElementById(elementId).classList.remove('d-none');
+        },
+        hideLoading: (elementId) => {
+            document.getElementById(elementId).classList.add('d-none');
         }
+    };
 
-        async function sendData(action, data) {
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify({ action, data }),
-                });
-                return await response.json();
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Error de conexión con el servidor. Revisa tu script de Apps Script.');
-                return { success: false };
-            }
-        }
-
-        function showSection(sectionId) {
-            panelSections.forEach(section => {
-                section.classList.add('d-none');
-            });
-            document.getElementById(sectionId).classList.remove('d-none');
-        }
-
-        function updateUserInfo(user) {
-            document.getElementById('user-name').innerText = user.nombre;
-            document.getElementById('user-role').innerText = user.rol;
-            document.getElementById('welcome-name').innerText = user.nombre;
-        }
-
-        function handleLogin(user) {
-            currentUser = user;
-            localStorage.setItem('user', JSON.stringify(currentUser));
-            loginScreen.classList.add('d-none');
-            adminPanel.classList.remove('d-none');
-            updateUserInfo(currentUser);
-            getDashboardData(); // Cargar datos iniciales
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('user');
-            currentUser = null;
-            loginScreen.classList.remove('d-none');
-            adminPanel.classList.add('d-none');
-        }
-
-        // Event Listeners
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Previene el envío del formulario nativo
-
-            try {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                const response = await sendData('login', { usuario: username, contrasena: password });
-                
-                if (response.success) {
-                    handleLogin(response.data);
-                } else {
-                    showAlert('Usuario o contraseña incorrectos.');
-                }
-            } catch (error) {
-                console.error('Error al manejar el login:', error);
-                showAlert('Ocurrió un error inesperado al intentar iniciar sesión.');
-            }
+    // Peticiones al Apps Script
+    async function sendToAppsScript(action, data = {}) {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, data })
         });
+        return response.json();
+    }
 
-        logoutBtn.addEventListener('click', handleLogout);
-
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                sidebarLinks.forEach(item => item.classList.remove('active'));
-                e.target.classList.add('active');
-                const section = e.target.dataset.section;
-                showSection(section);
-
-                switch (section) {
-                    case 'dashboard':
-                        getDashboardData();
-                        break;
-                    case 'productos':
-                        getProducts();
-                        break;
-                    case 'ventas':
-                        getSales();
-                        break;
-                    case 'clientes':
-                        getClients();
-                        break;
-                    case 'usuarios':
-                        getUsers();
-                        break;
-                    case 'historial':
-                        getHistorial();
-                        break;
-                }
-            });
-        });
-
-        // Comprobar si ya hay una sesión activa al cargar la página
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            handleLogin(JSON.parse(storedUser));
+    // Lógica de Autenticación
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const response = await sendToAppsScript('login', { usuario: username, contrasena: password });
+        if (response.success) {
+            sessionStorage.setItem('user', JSON.stringify(response.data));
+            showAdminPanel(response.data);
+        } else {
+            alert(response.error);
         }
+    });
 
-        // Dashboard
-        async function getDashboardData() {
-            const response = await sendData('getDashboardData');
-            if (response.success) {
-                document.getElementById('total-sales').innerText = `$${response.data.totalSales.toFixed(2)}`;
-                document.getElementById('pending-orders').innerText = response.data.pendingOrders;
-                document.getElementById('in-preparation-orders').innerText = response.data.inPreparationOrders;
-                document.getElementById('delivered-orders').innerText = response.data.deliveredOrders;
-            }
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        sessionStorage.removeItem('user');
+        window.location.reload();
+    });
+
+    function checkLogin() {
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        if (user) {
+            showAdminPanel(user);
         }
+    }
 
-        // Productos
-        async function getProducts() {
-            const response = await sendData('getProducts', {});
-            if (response.success) {
-                const tableBody = document.getElementById('products-table-body');
-                tableBody.innerHTML = '';
-                response.data.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.id}</td>
-                        <td>${product.nombre}</td>
-                        <td>${product.descripcion}</td>
-                        <td>${product.precio}</td>
-                        <td><a href="${product.imagenUrl}" target="_blank">Ver imagen</a></td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="mostrarModalEditarProducto(${product.id}, '${product.nombre}', '${product.descripcion}', ${product.precio})">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="mostrarModalEliminar(${product.id}, 'producto')">Eliminar</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                showAlert(response.error);
-            }
-        }
-
-        window.crearProducto = async function() {
-            const nombre = document.getElementById('nombreProducto').value;
-            const descripcion = document.getElementById('descripcionProducto').value;
-            const precio = parseFloat(document.getElementById('precioProducto').value);
-            const imagenInput = document.getElementById('imagenProducto');
-            const file = imagenInput.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onloadend = async () => {
-                    const base64Image = reader.result;
-                    const data = { nombre, descripcion, precio, imagenBase64: base64Image };
-                    const response = await sendData('createProduct', data);
-                    if (response.success) {
-                        showAlert('Producto creado exitosamente');
-                        bootstrap.Modal.getInstance(document.getElementById('modalCrearProducto')).hide();
-                        getProducts();
-                    } else {
-                        showAlert(response.error);
-                    }
-                };
-                reader.readAsDataURL(file);
-            } else {
-                showAlert('Por favor, selecciona una imagen.');
-            }
-        };
-
-        window.mostrarModalEditarProducto = function(id, nombre, descripcion, precio) {
-            document.getElementById('edit-producto-id').value = id;
-            document.getElementById('editNombreProducto').value = nombre;
-            document.getElementById('editDescripcionProducto').value = descripcion;
-            document.getElementById('editPrecioProducto').value = precio;
-            new bootstrap.Modal(document.getElementById('modalEditarProducto')).show();
-        };
-
-        window.actualizarProducto = async function() {
-            const id = document.getElementById('edit-producto-id').value;
-            const nombre = document.getElementById('editNombreProducto').value;
-            const descripcion = document.getElementById('editDescripcionProducto').value;
-            const precio = parseFloat(document.getElementById('editPrecioProducto').value);
-            const data = { id, nombre, descripcion, precio };
-            const response = await sendData('updateProduct', data);
-            if (response.success) {
-                showAlert('Producto actualizado exitosamente');
-                bootstrap.Modal.getInstance(document.getElementById('modalEditarProducto')).hide();
-                getProducts();
-            } else {
-                showAlert(response.error);
-            }
-        };
-
-        // Ventas
-        async function getSales() {
-            const response = await sendData('getSales', {});
-            if (response.success) {
-                const tableBody = document.getElementById('sales-table-body');
-                tableBody.innerHTML = '';
-                response.data.forEach(sale => {
-                    let pedidoText = '';
-                    if (Array.isArray(sale.pedido)) {
-                        pedidoText = sale.pedido.map(item => `${item.nombre} (x${item.cantidad})`).join(', ');
-                    } else {
-                        pedidoText = JSON.stringify(sale.pedido); // En caso de que no sea un array
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(sale.fecha).toLocaleString()}</td>
-                        <td>${sale.cliente}</td>
-                        <td>${pedidoText}</td>
-                        <td>$${sale.total}</td>
-                        <td>
-                            <select class="form-select estado-venta" data-cliente="${sale.cliente}">
-                                <option value="Pendiente" ${sale.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                                <option value="En Preparacion" ${sale.estado === 'En Preparacion' ? 'selected' : ''}>En Preparación</option>
-                                <option value="Entregado" ${sale.estado === 'Entregado' ? 'selected' : ''}>Entregado</option>
-                            </select>
-                        </td>
-                        <td>$${sale.abonos}</td>
-                        <td>${sale.rating}</td>
-                        <td>${sale.comentario}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="mostrarModalEliminar('${sale.cliente}', 'venta')">Eliminar</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-                document.querySelectorAll('.estado-venta').forEach(select => {
-                    select.addEventListener('change', async (e) => {
-                        const cliente = e.target.dataset.cliente;
-                        const status = e.target.value;
-                        const response = await sendData('updateSaleStatus', { cliente: cliente, status });
-                        if (response.success) {
-                            showAlert('Estado de venta actualizado.');
-                        } else {
-                            showAlert(response.error);
-                        }
-                    });
-                });
-            } else {
-                showAlert(response.error);
-            }
-        }
-
-        window.crearVenta = async function() {
-            const cliente = document.getElementById('clienteVenta').value;
-            const pedidoString = document.getElementById('pedidoVenta').value;
-            const total = parseFloat(document.getElementById('totalVenta').value);
-            const estado = document.getElementById('estadoVenta').value;
-
-            try {
-                const pedido = JSON.parse(pedidoString);
-                const data = { cliente, pedido, total, estado, abonos: 0, rating: '', comentario: '' };
-                const response = await sendData('createSale', data);
-                if (response.success) {
-                    showAlert('Venta creada exitosamente');
-                    bootstrap.Modal.getInstance(document.getElementById('modalCrearVenta')).hide();
-                    getSales();
-                } else {
-                    showAlert(response.error);
-                }
-            } catch (e) {
-                showAlert('Error al crear la venta. Asegúrate de que el formato del pedido sea JSON válido (ejemplo: [ { "nombre": "Producto", "cantidad": 1, "precio": 10 } ] )');
-            }
-        };
-
-        // Clientes
-        async function getClients() {
-            const response = await sendData('getClients', {});
-            if (response.success) {
-                const tableBody = document.getElementById('clients-table-body');
-                tableBody.innerHTML = '';
-                response.data.forEach(client => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(client.fechaRegistro).toLocaleDateString()}</td>
-                        <td>${client.documento}</td>
-                        <td>${client.nombre}</td>
-                        <td>${client.direccion}</td>
-                        <td>${client.telefono}</td>
-                        <td>${client.compras}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="mostrarModalEditarCliente('${client.documento}', '${client.nombre}', '${client.direccion}', '${client.telefono}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="mostrarModalEliminar('${client.documento}', 'cliente')">Eliminar</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                showAlert(response.error);
-            }
-        }
-        
-        window.crearCliente = async function() {
-            const documento = document.getElementById('documentoCliente').value;
-            const nombre = document.getElementById('nombreCliente').value;
-            const direccion = document.getElementById('direccionCliente').value;
-            const telefono = document.getElementById('telefonoCliente').value;
-            const data = { documento, nombre, direccion, telefono };
-            const response = await sendData('createClient', data);
-            if (response.success) {
-                showAlert('Cliente creado exitosamente');
-                bootstrap.Modal.getInstance(document.getElementById('modalCrearCliente')).hide();
-                getClients();
-            } else {
-                showAlert(response.error);
-            }
-        };
-
-        window.mostrarModalEditarCliente = function(documento, nombre, direccion, telefono) {
-            document.getElementById('edit-cliente-documento').value = documento;
-            document.getElementById('editNombreCliente').value = nombre;
-            document.getElementById('editDireccionCliente').value = direccion;
-            document.getElementById('editTelefonoCliente').value = telefono;
-            new bootstrap.Modal(document.getElementById('modalEditarCliente')).show();
-        };
-
-        window.actualizarCliente = async function() {
-            const documento = document.getElementById('edit-cliente-documento').value;
-            const nombre = document.getElementById('editNombreCliente').value;
-            const direccion = document.getElementById('editDireccionCliente').value;
-            const telefono = document.getElementById('editTelefonoCliente').value;
-            const data = { documento, nombre, direccion, telefono };
-            const response = await sendData('updateClient', data);
-            if (response.success) {
-                showAlert('Cliente actualizado exitosamente');
-                bootstrap.Modal.getInstance(document.getElementById('modalEditarCliente')).hide();
-                getClients();
-            } else {
-                showAlert(response.error);
-            }
-        };
-
-        // Usuarios
-        async function getUsers() {
-            const response = await sendData('getUsers', {});
-            if (response.success) {
-                const tableBody = document.getElementById('users-table-body');
-                tableBody.innerHTML = '';
-                response.data.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${user.usuario}</td>
-                        <td>${user.nombre}</td>
-                        <td>${user.rol}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="mostrarModalEditarUsuario('${user.usuario}', '${user.nombre}', '${user.contrasena}', '${user.rol}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="mostrarModalEliminar('${user.usuario}', 'usuario')">Eliminar</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                showAlert(response.error);
-            }
-        }
-        
-        window.crearUsuario = async function() {
-            const usuario = document.getElementById('usuarioNombreUsuario').value;
-            const contrasena = document.getElementById('passwordUsuario').value;
-            const nombre = document.getElementById('nombreUsuario').value;
-            const rol = document.getElementById('rolUsuario').value;
-            const data = { usuario, contrasena, nombre, rol };
-            const response = await sendData('createUser', data);
-            if (response.success) {
-                showAlert('Usuario creado exitosamente');
-                bootstrap.Modal.getInstance(document.getElementById('modalCrearUsuario')).hide();
-                getUsers();
-            } else {
-                showAlert(response.error);
-            }
-        };
-
-        window.mostrarModalEditarUsuario = function(usuario, nombre, contrasena, rol) {
-            document.getElementById('edit-usuario-usuario').value = usuario;
-            document.getElementById('editNombreUsuario').value = nombre;
-            document.getElementById('editPasswordUsuario').value = '';
-            document.getElementById('editRolUsuario').value = rol;
-            new bootstrap.Modal(document.getElementById('modalEditarUsuario')).show();
-        };
-
-        window.actualizarUsuario = async function() {
-            const usuario = document.getElementById('edit-usuario-usuario').value;
-            const nombre = document.getElementById('editNombreUsuario').value;
-            const contrasena = document.getElementById('editPasswordUsuario').value;
-            const rol = document.getElementById('editRolUsuario').value;
-            const data = { usuario, nombre, contrasena, rol };
-            const response = await sendData('updateUser', data);
-            if (response.success) {
-                showAlert('Usuario actualizado exitosamente');
-                bootstrap.Modal.getInstance(document.getElementById('modalEditarUsuario')).hide();
-                getUsers();
-            } else {
-                showAlert(response.error);
-            }
-        };
-
-        // Historial
-        async function getHistorial() {
-            const response = await sendData('getHistorial', {});
-            if (response.success) {
-                const tableBody = document.getElementById('historial-table-body');
-                tableBody.innerHTML = '';
-                response.data.forEach(log => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(log.fecha).toLocaleString()}</td>
-                        <td>${log.accion}</td>
-                        <td>${log.detalles}</td>
-                        <td>${log.usuario}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                showAlert(response.error);
-            }
-        }
-
-        window.mostrarModalEliminar = function(id, tipo) {
-            idToDelete = id;
-            tipoToDelete = tipo;
-            new bootstrap.Modal(document.getElementById('modalEliminarConfirmacion')).show();
-        };
-        
-        document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
-            let action = '';
-            let data = {};
-            switch(tipoToDelete) {
-                case 'producto':
-                    action = 'deleteProduct';
-                    data = { id: idToDelete };
-                    break;
-                case 'cliente':
-                    action = 'deleteClient';
-                    data = { documento: idToDelete };
-                    break;
-                case 'usuario':
-                    action = 'deleteUser';
-                    data = { usuario: idToDelete };
-                    break;
-                case 'venta':
-                    action = 'deleteSale'; 
-                    data = { cliente: idToDelete };
-                    break;
-            }
+    function showAdminPanel(user) {
+        document.getElementById('login-screen').classList.add('d-none');
+        document.getElementById('admin-panel').classList.remove('d-none');
+        document.getElementById('user-name').textContent = user.nombre;
+        document.getElementById('user-role').textContent = user.rol;
+        document.getElementById('welcome-name').textContent = user.nombre;
+        loadAllData();
+        checkNewOrders();
+        setInterval(checkNewOrders, 60000); // Revisa cada 1 minuto
+    }
+    
+    // Lógica de Navegación
+    document.querySelectorAll('.sidebar ul li a').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.panel-section').forEach(section => section.classList.add('d-none'));
+            document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
             
-            if (action) {
-                const response = await sendData(action, data);
-                if (response.success) {
-                    showAlert('Registro eliminado exitosamente');
-                    bootstrap.Modal.getInstance(document.getElementById('modalEliminarConfirmacion')).hide();
-                    switch(tipoToDelete) {
-                        case 'producto': getProducts(); break;
-                        case 'cliente': getClients(); break;
-                        case 'usuario': getUsers(); break;
-                        case 'venta': getSales(); break;
-                    }
-                } else {
-                    showAlert(response.error);
-                }
+            const section = e.target.closest('a').dataset.section;
+            document.getElementById(section).classList.remove('d-none');
+            e.target.closest('a').classList.add('active');
+
+            // Cargar datos al cambiar de sección
+            if (section === 'dashboard') {
+                loadDashboardData();
+                loadMonthlySales();
+                loadMostBoughtProduct();
+                loadTopClient();
+            } else if (section === 'productos') {
+                loadProducts();
+            } else if (section === 'ventas') {
+                loadSales();
+            } else if (section === 'clientes') {
+                loadClients();
+            } else if (section === 'usuarios') {
+                loadUsers();
+            } else if (section === 'historial') {
+                loadHistorial();
             }
         });
     });
 
+    async function loadAllData() {
+        await loadDashboardData();
+        await loadProducts();
+        await loadSales();
+        await loadClients();
+        await loadUsers();
+        await loadHistorial();
+        await loadMonthlySales();
+        await loadMostBoughtProduct();
+        await loadTopClient();
+    }
+
+    // Funciones de carga de datos
+    async function loadDashboardData() {
+        const mesSelector = document.getElementById('mes-selector');
+        const now = new Date();
+        const mes = mesSelector.value || now.getMonth() + 1;
+        const anio = now.getFullYear();
+
+        const response = await sendToAppsScript('getDashboardData', { mes, anio });
+        if (response.success) {
+            document.getElementById('total-sales-mes').textContent = `$${response.data.totalSales.toFixed(2)}`;
+            document.getElementById('pending-orders-mes').textContent = response.data.pendingOrders;
+            document.getElementById('in-preparation-orders-mes').textContent = response.data.inPreparationOrders;
+            document.getElementById('delivered-orders-mes').textContent = response.data.deliveredOrders;
+        } else {
+            alert(response.error);
+        }
+    }
+
+    async function loadProducts() {
+        const tableBody = document.getElementById('products-table-body');
+        ui.showLoading('products-loading');
+        tableBody.innerHTML = '';
+        const response = await sendToAppsScript('getProducts');
+        ui.hideLoading('products-loading');
+        if (response.success) {
+            allProducts = response.data;
+            displayProducts(allProducts);
+            populateSalesFilters(allProducts);
+        } else {
+            alert(response.error);
+        }
+    }
+
+    function displayProducts(products) {
+        const tableBody = document.getElementById('products-table-body');
+        tableBody.innerHTML = '';
+        products.forEach(product => {
+            const row = `
+                <tr>
+                    <td>${product.id}</td>
+                    <td>${product.nombre}</td>
+                    <td>${product.descripcion}</td>
+                    <td>$${product.precio}</td>
+                    <td><a href="${product.imagenUrl}" target="_blank">Ver</a></td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-edit-product" data-id="${product.id}" data-bs-toggle="modal" data-bs-target="#modalEditarProducto"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-delete-product" data-id="${product.id}" data-bs-toggle="modal" data-bs-target="#modalEliminarProducto"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    async function loadSales(filters = {}) {
+        const tableBody = document.getElementById('sales-table-body');
+        ui.showLoading('sales-loading');
+        tableBody.innerHTML = '';
+        const response = await sendToAppsScript('getSalesByFilters', filters);
+        ui.hideLoading('sales-loading');
+        if (response.success) {
+            allSales = response.data;
+            displaySales(allSales);
+        } else {
+            alert(response.error);
+        }
+    }
+
+    function displaySales(sales) {
+        const tableBody = document.getElementById('sales-table-body');
+        tableBody.innerHTML = '';
+        sales.forEach(sale => {
+            const pedidoHTML = Array.isArray(sale.pedido) 
+                ? sale.pedido.map(item => `${item.nombre} x${item.cantidad}`).join('<br>')
+                : sale.pedido;
+            const estadoClass = `estado-venta-${sale.estado.replace(' ', '-')}`;
+            const row = `
+                <tr>
+                    <td>${sale.id}</td>
+                    <td>${new Date(sale.fecha).toLocaleString()}</td>
+                    <td>${sale.cliente}</td>
+                    <td>${pedidoHTML}</td>
+                    <td>$${sale.total.toFixed(2)}</td>
+                    <td><span class="${estadoClass}">${sale.estado}</span></td>
+                    <td>$${sale.abonos.toFixed(2)}</td>
+                    <td>${sale.rating || 'N/A'}</td>
+                    <td>${sale.comentario || 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-edit-sale" data-id="${sale.id}" data-status="${sale.estado}" data-abonos="${sale.abonos}" data-bs-toggle="modal" data-bs-target="#modalEditarVenta"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-delete-sale" data-id="${sale.id}" data-bs-toggle="modal" data-bs-target="#modalEliminarVenta"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    async function loadClients() {
+        const tableBody = document.getElementById('clients-table-body');
+        ui.showLoading('clients-loading');
+        tableBody.innerHTML = '';
+        const response = await sendToAppsScript('getClients');
+        ui.hideLoading('clients-loading');
+        if (response.success) {
+            allClients = response.data;
+            displayClients(allClients);
+            populateClientSelector(allClients);
+        } else {
+            alert(response.error);
+        }
+    }
+
+    function displayClients(clients) {
+        const tableBody = document.getElementById('clients-table-body');
+        tableBody.innerHTML = '';
+        clients.forEach(client => {
+            const row = `
+                <tr>
+                    <td>${new Date(client.fechaRegistro).toLocaleDateString()}</td>
+                    <td>${client.documento}</td>
+                    <td>${client.nombre}</td>
+                    <td>${client.direccion}</td>
+                    <td>${client.telefono}</td>
+                    <td>${client.compras}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-edit-client" data-documento="${client.documento}" data-bs-toggle="modal" data-bs-target="#modalEditarCliente"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-delete-client" data-documento="${client.documento}" data-bs-toggle="modal" data-bs-target="#modalEliminarCliente"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    async function loadUsers() {
+        const tableBody = document.getElementById('users-table-body');
+        ui.showLoading('users-loading');
+        tableBody.innerHTML = '';
+        const response = await sendToAppsScript('getUsers');
+        ui.hideLoading('users-loading');
+        if (response.success) {
+            const users = response.data;
+            users.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>${user.usuario}</td>
+                        <td>${user.nombre}</td>
+                        <td>${user.rol}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning btn-edit-user" data-usuario="${user.usuario}" data-bs-toggle="modal" data-bs-target="#modalEditarUsuario"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger btn-delete-user" data-usuario="${user.usuario}" data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            alert(response.error);
+        }
+    }
+
+    async function loadHistorial() {
+        const tableBody = document.getElementById('historial-table-body');
+        ui.showLoading('historial-loading');
+        tableBody.innerHTML = '';
+        const response = await sendToAppsScript('getHistorial');
+        ui.hideLoading('historial-loading');
+        if (response.success) {
+            const historial = response.data;
+            historial.forEach(item => {
+                const row = `
+                    <tr>
+                        <td>${new Date(item.fecha).toLocaleString()}</td>
+                        <td>${item.accion}</td>
+                        <td>${item.detalles}</td>
+                        <td>${item.usuario}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } else {
+            alert(response.error);
+        }
+    }
+    
+    // Filtros y Búsquedas
+    document.getElementById('search-products').addEventListener('keyup', (e) => filterTable(e.target.value, 'products-table-body'));
+    document.getElementById('search-sales').addEventListener('keyup', (e) => filterTable(e.target.value, 'sales-table-body'));
+    document.getElementById('search-clients').addEventListener('keyup', (e) => filterTable(e.target.value, 'clients-table-body'));
+    document.getElementById('search-users').addEventListener('keyup', (e) => filterTable(e.target.value, 'users-table-body'));
+    document.getElementById('search-historial').addEventListener('keyup', (e) => filterTable(e.target.value, 'historial-table-body'));
+
+    document.getElementById('filter-sales-month').addEventListener('change', () => applySalesFilters());
+    document.getElementById('filter-sales-product').addEventListener('change', () => applySalesFilters());
+    document.getElementById('filter-sales-status').addEventListener('change', () => applySalesFilters());
+
+    function filterTable(searchText, tableId) {
+        const tableBody = document.getElementById(tableId);
+        const rows = tableBody.getElementsByTagName('tr');
+        const filter = searchText.toLowerCase();
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let cells = row.getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    function applySalesFilters() {
+        const mes = document.getElementById('filter-sales-month').value;
+        const producto = document.getElementById('filter-sales-product').value;
+        const estado = document.getElementById('filter-sales-status').value;
+
+        const filtered = allSales.filter(sale => {
+            const date = new Date(sale.fecha);
+            const saleMonth = date.getMonth() + 1;
+            const saleProducts = Array.isArray(sale.pedido) ? sale.pedido.map(p => p.nombre) : [];
+            
+            const monthMatch = mes === 'all' || saleMonth == mes;
+            const productMatch = producto === 'all' || saleProducts.includes(producto);
+            const statusMatch = estado === 'all' || sale.estado === estado;
+
+            return monthMatch && productMatch && statusMatch;
+        });
+
+        displaySales(filtered);
+    }
+
+    function populateSalesFilters(products) {
+        const productFilter = document.getElementById('filter-sales-product');
+        productFilter.innerHTML = '<option value="all">Filtrar por Producto</option>';
+        products.forEach(product => {
+            productFilter.innerHTML += `<option value="${product.nombre}">${product.nombre}</option>`;
+        });
+        
+        const monthFilter = document.getElementById('filter-sales-month');
+        monthFilter.innerHTML = '<option value="all">Filtrar por Mes</option>';
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        months.forEach((month, index) => {
+            monthFilter.innerHTML += `<option value="${index + 1}">${month}</option>`;
+        });
+    }
+
+    // Modal Crear Venta Lógica
+    async function populateClientSelector(clients) {
+        const selector = document.getElementById('clienteVenta');
+        selector.innerHTML = '<option value="">Seleccione un cliente</option>';
+        clients.forEach(client => {
+            selector.innerHTML += `<option value="${client.documento}" data-nombre="${client.nombre}" data-direccion="${client.direccion}" data-telefono="${client.telefono}">${client.nombre} (${client.documento})</option>`;
+        });
+    }
+
+    function populateProductListForSale(products) {
+        const container = document.getElementById('productos-list-container');
+        container.innerHTML = '';
+        products.forEach(product => {
+            const productHtml = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>${product.nombre} - $${product.precio}</span>
+                    <div class="d-flex align-items-center">
+                        <button type="button" class="btn btn-sm btn-outline-secondary me-2 minus-btn" data-id="${product.id}">-</button>
+                        <span class="product-quantity" data-id="${product.id}">0</span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2 plus-btn" data-id="${product.id}">+</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += productHtml;
+        });
+        
+        // Agregar listeners a los botones +/-
+        container.querySelectorAll('.plus-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const quantitySpan = container.querySelector(`.product-quantity[data-id="${id}"]`);
+                let quantity = parseInt(quantitySpan.textContent);
+                quantity++;
+                quantitySpan.textContent = quantity;
+                updateSaleTotal();
+            });
+        });
+
+        container.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const quantitySpan = container.querySelector(`.product-quantity[data-id="${id}"]`);
+                let quantity = parseInt(quantitySpan.textContent);
+                if (quantity > 0) {
+                    quantity--;
+                    quantitySpan.textContent = quantity;
+                    updateSaleTotal();
+                }
+            });
+        });
+    }
+
+    function updateSaleTotal() {
+        const productQuantities = document.querySelectorAll('.product-quantity');
+        let total = 0;
+        productQuantities.forEach(span => {
+            const id = span.dataset.id;
+            const quantity = parseInt(span.textContent);
+            const product = allProducts.find(p => p.id == id);
+            if (product) {
+                total += product.precio * quantity;
+            }
+        });
+        document.getElementById('totalVenta').textContent = `$${total.toFixed(2)}`;
+    }
+
+    document.getElementById('formCrearVenta').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const clienteSelector = document.getElementById('clienteVenta');
+        const selectedOption = clienteSelector.options[clienteSelector.selectedIndex];
+        
+        if (!selectedOption || !selectedOption.value) {
+            alert("Por favor, seleccione un cliente.");
+            return;
+        }
+
+        const cliente = {
+            documento: selectedOption.value,
+            nombre: selectedOption.dataset.nombre,
+            direccion: selectedOption.dataset.direccion,
+            telefono: selectedOption.dataset.telefono
+        };
+        
+        const pedido = [];
+        const productQuantities = document.querySelectorAll('.product-quantity');
+        productQuantities.forEach(span => {
+            const id = span.dataset.id;
+            const quantity = parseInt(span.textContent);
+            if (quantity > 0) {
+                const product = allProducts.find(p => p.id == id);
+                if (product) {
+                    pedido.push({ nombre: product.nombre, cantidad: quantity });
+                }
+            }
+        });
+
+        if (pedido.length === 0) {
+            alert("Por favor, agregue al menos un producto al pedido.");
+            return;
+        }
+        
+        const total = parseFloat(document.getElementById('totalVenta').textContent.replace('$', ''));
+        const data = {
+            documento: cliente.documento,
+            nombre: cliente.nombre,
+            direccion: cliente.direccion,
+            telefono: cliente.telefono,
+            pedido,
+            total
+        };
+
+        const response = await sendToAppsScript('createOrderFromExistingClient', data);
+        if (response.success) {
+            alert(response.message);
+            document.getElementById('modalCrearVenta').querySelector('.btn-close').click();
+            loadSales();
+            loadClients();
+            loadDashboardData();
+        } else {
+            alert(response.error);
+        }
+    });
+
+    document.getElementById('modalCrearVenta').addEventListener('show.bs.modal', async () => {
+        // Limpiar formulario y cargar datos al abrir
+        document.getElementById('formCrearVenta').reset();
+        document.getElementById('totalVenta').textContent = '$0';
+        const productListContainer = document.getElementById('productos-list-container');
+        productListContainer.innerHTML = `<p class="text-center">Cargando productos...</p>`;
+        
+        const productsResponse = await sendToAppsScript('getProducts');
+        if (productsResponse.success) {
+            allProducts = productsResponse.data;
+            populateProductListForSale(allProducts);
+        } else {
+            alert("Error al cargar los productos.");
+        }
+
+        const clientsResponse = await sendToAppsScript('getClients');
+        if (clientsResponse.success) {
+            allClients = clientsResponse.data;
+            populateClientSelector(allClients);
+        } else {
+            alert("Error al cargar los clientes.");
+        }
+    });
+
+
+    // Lógica para editar y eliminar ventas
+    document.getElementById('sales-table-body').addEventListener('click', (e) => {
+        if (e.target.closest('.btn-edit-sale')) {
+            const btn = e.target.closest('.btn-edit-sale');
+            const id = btn.dataset.id;
+            const status = btn.dataset.status;
+            const abonos = btn.dataset.abonos;
+            
+            document.getElementById('edit-sale-id').value = id;
+            document.getElementById('edit-sale-status').value = status;
+            document.getElementById('edit-sale-abonos').value = abonos;
+        }
+        if (e.target.closest('.btn-delete-sale')) {
+            const id = e.target.closest('.btn-delete-sale').dataset.id;
+            document.getElementById('delete-sale-id').textContent = id;
+            document.getElementById('confirmarEliminarVentaBtn').dataset.id = id;
+        }
+    });
+
+    document.getElementById('formEditarVenta').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-sale-id').value;
+        const estado = document.getElementById('edit-sale-status').value;
+        const abonos = document.getElementById('edit-sale-abonos').value;
+        
+        const response = await sendToAppsScript('updateSaleStatus', { id, estado, abonos: parseFloat(abonos) });
+        if (response.success) {
+            alert(response.message);
+            document.getElementById('modalEditarVenta').querySelector('.btn-close').click();
+            loadSales();
+        } else {
+            alert(response.error);
+        }
+    });
+
+    document.getElementById('confirmarEliminarVentaBtn').addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        const response = await sendToAppsScript('deleteSale', { id });
+        if (response.success) {
+            alert(response.message);
+            document.getElementById('modalEliminarVenta').querySelector('.btn-close').click();
+            loadSales();
+        } else {
+            alert(response.error);
+        }
+    });
+    
+    // Lógica para el Dashboard
+    async function loadMonthlySales() {
+        const response = await sendToAppsScript('getMonthlySales');
+        if (response.success) {
+            const months = Object.keys(response.data);
+            const sales = Object.values(response.data);
+            const ctx = document.createElement('canvas');
+            document.getElementById('monthly-sales-chart').innerHTML = '';
+            document.getElementById('monthly-sales-chart').appendChild(ctx);
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        data: sales,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    async function loadMostBoughtProduct() {
+        const response = await sendToAppsScript('getMostBoughtProduct');
+        const container = document.getElementById('most-bought-product-info');
+        if (response.success && response.data.name) {
+            container.innerHTML = `<p class="fs-4">${response.data.name}</p><p class="text-muted">(${response.data.count} unidades vendidas)</p>`;
+        } else {
+            container.innerHTML = `<p class="text-muted">No hay datos disponibles.</p>`;
+        }
+    }
+
+    async function loadTopClient() {
+        const response = await sendToAppsScript('getTopClient');
+        const container = document.getElementById('top-client-info');
+        if (response.success && response.data.name) {
+            container.innerHTML = `<p class="fs-4">${response.data.name}</p><p class="text-muted">(${response.data.orders} pedidos)</p>`;
+        } else {
+            container.innerHTML = `<p class="text-muted">No hay datos disponibles.</p>`;
+        }
+    }
+
+    // Lógica para Notificaciones
+    let previousPendingOrdersCount = 0;
+    async function checkNewOrders() {
+        const response = await sendToAppsScript('getPendingOrders');
+        if (response.success) {
+            const pendingOrders = response.data;
+            const badge = document.getElementById('notificaciones-badge');
+            const list = document.getElementById('notificaciones-list');
+            badge.textContent = pendingOrders.length;
+            
+            if (pendingOrders.length > previousPendingOrdersCount) {
+                // Nuevo pedido detectado, mostrar alerta
+                const newOrder = pendingOrders[0];
+                alert(`¡Nuevo pedido recibido! ID: ${newOrder.id}`);
+            }
+            previousPendingOrdersCount = pendingOrders.length;
+
+            list.innerHTML = '';
+            if (pendingOrders.length > 0) {
+                pendingOrders.forEach(order => {
+                    list.innerHTML += `<li><span class="dropdown-item">Pedido #${order.id} de ${order.cliente}</span></li>`;
+                });
+            } else {
+                list.innerHTML = '<li><span class="dropdown-item">No hay notificaciones</span></li>';
+            }
+        }
+    }
+    
+    // Inicialización del select de meses del dashboard
+    (function setupMonthSelector() {
+        const mesSelector = document.getElementById('mes-selector');
+        const now = new Date();
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        months.forEach((month, index) => {
+            const option = document.createElement('option');
+            option.value = index + 1;
+            option.textContent = month;
+            if (index === now.getMonth()) {
+                option.selected = true;
+            }
+            mesSelector.appendChild(option);
+        });
+        mesSelector.addEventListener('change', loadDashboardData);
+    })();
+
+
+    checkLogin();
 </script>
 </body>
 </html>
