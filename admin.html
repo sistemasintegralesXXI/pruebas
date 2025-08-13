@@ -114,7 +114,7 @@
             border-radius: 5px;
         }
 
-        .estado-venta-En-Preparacion {
+        .estado-venta-En-Preparación {
             background-color: #ffc107;
             color: #000;
             padding: 5px 10px;
@@ -278,6 +278,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <i class="fas fa-motorcycle fa-3x mb-2"></i>
+                            <h5 class="card-title">En Preparación</h5>
+                            <h3 id="in-preparation-orders">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-3x mb-2"></i>
+                            <h5 class="card-title">Pedidos Entregados</h5>
+                            <h3 id="delivered-orders">0</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row g-4">
                 <div class="col-md-12">
@@ -409,6 +427,7 @@
                             <th>Tipo</th>
                             <th>Productos</th>
                             <th>Valor</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="investments-table-body"></tbody>
@@ -691,6 +710,53 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalEditarInversion" tabindex="-1" aria-labelledby="modalEditarInversionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarInversionLabel">Editar Inversión</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarInversion">
+                    <input type="hidden" id="edit-investment-id">
+                    <div class="mb-3">
+                        <label for="edit-tipoInversion" class="form-label">Tipo de Gasto</label>
+                        <input type="text" class="form-control" id="edit-tipoInversion" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-productosInversion" class="form-label">Productos Comprados</label>
+                        <textarea class="form-control" id="edit-productosInversion" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-valorInversion" class="form-label">Valor</label>
+                        <input type="number" class="form-control" id="edit-valorInversion" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Actualizar Inversión</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEliminarInversion" tabindex="-1" aria-labelledby="modalEliminarInversionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarInversionLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta inversión?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminarInversionBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalCrearCliente" tabindex="-1" aria-labelledby="modalCrearClienteLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -880,6 +946,7 @@
     let allProducts = [];
     let allClients = [];
     let allInvestments = [];
+    let allUsers = [];
     let activeNotifications = [];
 
     // UI elements
@@ -997,18 +1064,37 @@
 
         const response = await sendToAppsScript('getDashboardData', { mes, anio });
         if (response.success) {
+            // Updated IDs for dashboard stats
             document.getElementById('total-investments-mes').textContent = `$${response.data.totalInvestments.toFixed(2)}`;
             document.getElementById('total-sales-mes').textContent = `$${response.data.totalSales.toFixed(2)}`;
-            document.getElementById('total-balance-mes').textContent = `$${response.data.totalBalance.toFixed(2)}`;
-            document.getElementById('pending-orders-mes').textContent = response.data.pendingOrders;
-            document.getElementById('in-preparation-orders-mes').textContent = response.data.inPreparationOrders;
-            document.getElementById('delivered-orders-mes').textContent = response.data.deliveredOrders;
+            document.getElementById('pending-orders-mes').innerText = response.data.pendingOrders;
+            document.getElementById('in-preparation-orders').innerText = response.data.inPreparationOrders;
+            document.getElementById('delivered-orders').innerText = response.data.deliveredOrders;
         } else {
             ui.showToast('Error en el Dashboard', response.error);
         }
         await loadMonthlySalesChart();
         await loadMostBoughtProduct();
         await loadTopClient();
+        await loadTotalBalance(); // Load total balance separately
+    }
+
+    async function loadTotalBalance() {
+        const salesResponse = await sendToAppsScript('getSales');
+        const investmentsResponse = await sendToAppsScript('getInvestments');
+
+        let totalSales = 0;
+        if (salesResponse.success) {
+            totalSales = salesResponse.data.reduce((sum, sale) => sum + sale.total, 0);
+        }
+
+        let totalInvestments = 0;
+        if (investmentsResponse.success) {
+            totalInvestments = investmentsResponse.data.reduce((sum, inv) => sum + inv.valor, 0);
+        }
+
+        const totalBalance = totalSales - totalInvestments;
+        document.getElementById('total-balance-mes').textContent = `$${totalBalance.toFixed(2)}`;
     }
 
     async function loadMonthlySalesChart() {
@@ -1016,7 +1102,16 @@
         if (response.success) {
             const months = Object.keys(response.data);
             const sales = Object.values(response.data);
-            const ctx = document.getElementById('monthly-sales-chart').querySelector('canvas');
+            
+            const ctxContainer = document.getElementById('monthly-sales-chart');
+            // Ensure there's a canvas element to draw on
+            let canvas = ctxContainer.querySelector('canvas');
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                ctxContainer.appendChild(canvas);
+            }
+            const ctx = canvas.getContext('2d');
+            
             if (monthlySalesChart) monthlySalesChart.destroy();
             monthlySalesChart = new Chart(ctx, {
                 type: 'bar',
@@ -1060,7 +1155,7 @@
             container.innerHTML = `<p class="text-muted">No hay datos disponibles.</p>`;
         }
     }
-
+    
     // Products
     async function loadProducts() {
         const tableBody = document.getElementById('products-table-body');
@@ -1167,6 +1262,10 @@
                     <td>${investment.tipo}</td>
                     <td>${investment.productos}</td>
                     <td>$${investment.valor.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-edit-investment" data-id="${investment.id}" data-bs-toggle="modal" data-bs-target="#modalEditarInversion"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger btn-delete-investment" data-id="${investment.id}" data-bs-toggle="modal" data-bs-target="#modalEliminarInversion"><i class="fas fa-trash"></i></button>
+                    </td>
                 </tr>
             `;
             tableBody.innerHTML += row;
@@ -1219,8 +1318,8 @@
         const response = await sendToAppsScript('getUsers');
         ui.hideLoading('users-loading');
         if (response.success) {
-            const users = response.data;
-            users.forEach(user => {
+            allUsers = response.data;
+            allUsers.forEach(user => {
                 const row = `
                     <tr>
                         <td>${user.usuario}</td>
@@ -1329,7 +1428,37 @@
         });
     }
 
-    // Modals and Forms
+// Modals and Forms
+document.getElementById('formCrearProducto').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombreProducto').value;
+    const descripcion = document.getElementById('descripcionProducto').value;
+    const precio = parseFloat(document.getElementById('precioProducto').value);
+    const imagenFile = document.getElementById('imagenProducto').files[0];
+
+    if (!imagenFile) {
+        ui.showToast('Error', 'Por favor, selecciona una imagen.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        const base64Image = event.target.result; // No necesitas el .split(',')[1] si el Apps Script lo maneja
+        
+        // CORRECCIÓN CLAVE: Usamos 'imagenBase64' en lugar de 'imagenUrl'
+        const response = await sendToAppsScript('createProduct', { nombre, descripcion, precio, imagenBase64: base64Image });
+        if (response.success) {
+            ui.showToast('Producto Creado', response.message);
+            document.getElementById('modalCrearProducto').querySelector('.btn-close').click();
+            document.getElementById('formCrearProducto').reset();
+            loadProducts();
+        } else {
+            ui.showToast('Error', response.error);
+        }
+    };
+    reader.readAsDataURL(imagenFile);
+});
+
     document.getElementById('formCrearVenta').addEventListener('submit', async (e) => {
         e.preventDefault();
         const clienteSelector = document.getElementById('clienteVenta');
@@ -1453,6 +1582,56 @@
         }
     });
 
+    // Investments Edit/Delete
+    document.getElementById('investments-table-body').addEventListener('click', (e) => {
+        if (e.target.closest('.btn-edit-investment')) {
+            const btn = e.target.closest('.btn-edit-investment');
+            const id = btn.dataset.id;
+            const investment = allInvestments.find(i => i.id == id);
+            if (investment) {
+                document.getElementById('edit-investment-id').value = id;
+                document.getElementById('edit-tipoInversion').value = investment.tipo;
+                document.getElementById('edit-productosInversion').value = investment.productos;
+                document.getElementById('edit-valorInversion').value = investment.valor;
+            }
+        }
+        if (e.target.closest('.btn-delete-investment')) {
+            const id = e.target.closest('.btn-delete-investment').dataset.id;
+            document.getElementById('confirmarEliminarInversionBtn').dataset.id = id;
+        }
+    });
+
+    document.getElementById('formEditarInversion').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-investment-id').value;
+        const tipo = document.getElementById('edit-tipoInversion').value;
+        const productos = document.getElementById('edit-productosInversion').value;
+        const valor = parseFloat(document.getElementById('edit-valorInversion').value);
+        const response = await sendToAppsScript('updateInvestment', { id, tipo, productos, valor });
+        if (response.success) {
+            ui.showToast('Inversión Actualizada', response.message);
+            document.getElementById('modalEditarInversion').querySelector('.btn-close').click();
+            loadInvestments();
+            loadDashboardData();
+        } else {
+            ui.showToast('Error', response.error);
+        }
+    });
+
+    document.getElementById('confirmarEliminarInversionBtn').addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        const response = await sendToAppsScript('deleteInvestment', { id });
+        if (response.success) {
+            ui.showToast('Inversión Eliminada', response.message);
+            document.getElementById('modalEliminarInversion').querySelector('.btn-close').click();
+            loadInvestments();
+            loadDashboardData();
+        } else {
+            ui.showToast('Error', response.error);
+        }
+    });
+
+
     // History Actions
     document.getElementById('btn-delete-all-history').addEventListener('click', async () => {
         if (confirm('¿Estás seguro de que quieres borrar todo el historial de forma permanente?')) {
@@ -1513,6 +1692,25 @@
             ui.showToast('Error', response.error);
         }
     });
+    
+    // Create client form handler
+    document.getElementById('formCrearCliente').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const documento = document.getElementById('documentoCliente').value;
+        const nombre = document.getElementById('nombreCliente').value;
+        const direccion = document.getElementById('direccionCliente').value;
+        const telefono = document.getElementById('telefonoCliente').value;
+
+        const response = await sendToAppsScript('createClient', { documento, nombre, direccion, telefono });
+        if (response.success) {
+            ui.showToast('Cliente Creado', response.message);
+            document.getElementById('modalCrearCliente').querySelector('.btn-close').click();
+            document.getElementById('formCrearCliente').reset();
+            loadClients();
+        } else {
+            ui.showToast('Error', response.error);
+        }
+    });
 
     // Edit/Delete Client Handlers
     document.getElementById('clients-table-body').addEventListener('click', (e) => {
@@ -1564,12 +1762,32 @@
         }
     });
 
+    // Create user form handler
+    document.getElementById('formCrearUsuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const usuario = document.getElementById('usuario').value;
+        const contrasena = document.getElementById('contrasena').value;
+        const nombre = document.getElementById('nombre').value;
+        const rol = document.getElementById('rol').value;
+
+        const response = await sendToAppsScript('createUser', { usuario, contrasena, nombre, rol });
+        if (response.success) {
+            ui.showToast('Usuario Creado', response.message);
+            document.getElementById('modalCrearUsuario').querySelector('.btn-close').click();
+            document.getElementById('formCrearUsuario').reset();
+            loadUsers();
+        } else {
+            ui.showToast('Error', response.error);
+        }
+    });
+
+
     // Edit/Delete User Handlers
     document.getElementById('users-table-body').addEventListener('click', (e) => {
         if (e.target.closest('.btn-edit-user')) {
             const btn = e.target.closest('.btn-edit-user');
             const usuario = btn.dataset.usuario;
-            const user = allUsers.find(u => u.usuario == usuario);
+            const user = allUsers.find(u => u.usuario === usuario);
             if (user) {
                 document.getElementById('edit-usuario-usuario').value = usuario;
                 document.getElementById('edit-usuario-nombre').value = user.nombre;
