@@ -247,6 +247,62 @@
             border-radius: 8px;
             border: 2px solid #ffcc80;
         }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+        
+        /* Estilos para el calendario de ventas */
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .calendar-day {
+            padding: 10px;
+            background-color: #4a2828;
+            border: 1px solid #ffcc80;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .calendar-day.venta {
+            background-color: #5cb85c;
+            border-color: #198754;
+            color: white;
+            font-weight: bold;
+        }
+        .calendar-header {
+            grid-column: 1 / -1;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffcc80;
+        }
+        .weekday {
+            font-weight: bold;
+            color: #ffcc80;
+        }
+        @media (max-width: 768px) {
+            .cart-summary {
+                width: 100%;
+                right: 0;
+                left: 0;
+                border-radius: 0;
+                bottom: 0;
+                padding-bottom: 70px;
+            }
+            .cart-summary.minimized {
+                width: 60px;
+                height: 60px;
+                right: 20px;
+                left: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -286,13 +342,11 @@
     <div class="container">
         <div id="about-section" class="section active mt-4">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-4">
                     <h2>Nuestra Historia</h2>
                     <p>En Barril Norteño el Mono , transformamos la experiencia de comer carne en un arte. Nuestra pasión es el sabor ahumado y único que se consigue con la cocción lenta al barril. Cada plato es preparado con los mejores cortes, seleccionados cuidadosamente para deleitar tu paladar.</p>
                     <p>Somos un emprendimiento familiar con el objetivo de llevar el sabor auténtico de la parrilla a tu mesa. Ven y disfruta de una experiencia gastronómica inigualable.</p>
-                </div>
-                <div class="col-md-6">
-                    <h2>Contacto</h2>
+                    <h4 class="mt-4">Contacto</h4>
                     <ul class="list-unstyled">
                         <li><i class="fas fa-map-marker-alt"></i> Cerro Norte, El Plan</li>
                         <li><i class="fas fa-envelope"></i> Email: contacto@carnesalbarril.com</li>
@@ -307,6 +361,12 @@
                         <a href="#" class="btn btn-primary me-2"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/573133118664" class="btn btn-primary"><i class="fab fa-whatsapp"></i></a>
                     </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h2>Días de Venta</h2>
+                    <p>Estos son los días en los que estamos disponibles para atenderte. ¡Haz tu pedido!</p>
+                    <div id="sales-calendar" class="calendar">
+                        </div>
                 </div>
             </div>
         </div>
@@ -352,7 +412,7 @@
             </div>
         </div>
 
-        <div class="cart-summary" id="cart-summary">
+        <div class="cart-summary minimized" id="cart-summary">
             <button class="cart-toggle-btn btn btn-primary" onclick="toggleCart()">
                 <i class="fas fa-shopping-cart"></i>
             </button>
@@ -373,11 +433,24 @@
                     <strong>Total:</strong>
                     <span id="cart-total">$0.00</span>
                 </div>
-                <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalConfirmarPedido" id="btn-confirmar-pedido">Confirmar Pedido</button>
+                <button class="btn btn-success w-100" id="btn-confirmar-pedido">Confirmar Pedido</button>
                 <button class="btn btn-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
             </div>
         </div>
     </div>
+    
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast text-bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-bg-warning">
+          <strong class="me-auto">Aviso</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Debes agregar al menos un producto para confirmar un pedido.
+        </div>
+      </div>
+    </div>
+
 
     <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -416,6 +489,7 @@
                             </div>
                             <button type="submit" class="btn btn-success w-100">Confirmar y Enviar Pedido</button>
                         </div>
+                        <button type="button" class="btn btn-link mt-3" onclick="showTypeSelection()">Volver</button>
                     </form>
 
                     <form id="formClienteNuevo" class="d-none">
@@ -437,6 +511,7 @@
                             <input type="tel" class="form-control" id="telefonoNuevo" required>
                         </div>
                         <button type="submit" class="btn btn-success w-100">Registrar y Confirmar</button>
+                        <button type="button" class="btn btn-link mt-3" onclick="showTypeSelection()">Volver</button>
                     </form>
                 </div>
             </div>
@@ -536,6 +611,9 @@
                 <h4 id="producto-info-nombre"></h4>
                 <p class="text-warning fw-bold" id="producto-info-precio"></p>
                 <p id="producto-info-descripcion"></p>
+                <a id="download-image-btn" href="#" download class="btn btn-primary mt-3 w-100">
+                    <i class="fas fa-download"></i> Descargar Imagen
+                </a>
               </div>
             </div>
             <hr style="border-color: #ffcc80;">
@@ -567,7 +645,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Reemplaza 'TU_URL_DE_APPS_SCRIPT' con la URL de tu despliegue
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
             
             const productsList = document.getElementById('products-list');
@@ -582,6 +659,7 @@
             const successText = document.getElementById('success-text');
             const allReviewsList = document.getElementById('all-reviews-list');
             const btnConfirmarPedido = document.getElementById('btn-confirmar-pedido');
+            const liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -591,6 +669,7 @@
             const confirmTypeSelection = document.getElementById('confirm-type-selection');
             const clienteAntiguoInfo = document.getElementById('cliente-antiguo-info');
             const cartSummary = document.getElementById('cart-summary');
+            const navbarCollapse = document.getElementById('navbarNav');
 
             const sections = document.querySelectorAll('.section');
             const navButtons = document.querySelectorAll('.nav-link-btn');
@@ -602,7 +681,7 @@
                 cartSummary.classList.toggle('minimized');
             }
 
-            // Maneja el cambio de secciones sin recargar la página
+            // Maneja el cambio de secciones sin recargar la página y cierra el menú hamburguesa
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const sectionId = button.dataset.section;
@@ -611,6 +690,11 @@
                     });
                     if (sectionId) {
                         document.getElementById(`${sectionId}-section`).classList.add('active');
+                    }
+                    // Cierra el menú hamburguesa si está abierto
+                    if (navbarCollapse.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                        bsCollapse.hide();
                     }
                 });
             });
@@ -632,6 +716,13 @@
             function hideLoading() {
                 loadingOverlay.classList.add('d-none');
             }
+            
+            window.showTypeSelection = function() {
+                confirmTypeSelection.classList.remove('d-none');
+                formClienteAntiguo.classList.add('d-none');
+                formClienteNuevo.classList.add('d-none');
+                clienteAntiguoInfo.classList.add('d-none');
+            }
 
             async function sendData(action, data) {
                 try {
@@ -645,8 +736,7 @@
                     return await response.json();
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error de conexión con el servidor.');
-                    return { success: false, error: 'Error de conexión.' };
+                    return { success: false, error: 'Error de conexión con el servidor.' };
                 }
             }
 
@@ -654,15 +744,17 @@
                 allProducts = products;
                 productsList.innerHTML = '';
                 products.forEach(product => {
+                    // Usamos la URL de miniatura de Drive con un tamaño específico para que cargue rápido
+                    const imageUrl = `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512`;
                     const productHtml = `
                         <div class="col-md-4 mb-4">
                             <div class="card product-card">
-                                <img src="${product.imagenUrl}" class="card-img-top" alt="${product.nombre}">
+                                <img src="${imageUrl}" class="card-img-top" alt="${product.nombre}">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.nombre}</h5>
                                     <p class="card-text">$${product.precio}</p>
                                     <div class="d-flex justify-content-between">
-                                        <button class="btn btn-info btn-sm" onclick="showProductInfo(${product.id})">Más info</button>
+                                        <button class="btn btn-info btn-sm" onclick="showProductInfo('${product.id}')">Más info</button>
                                         <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir al carrito</button>
                                     </div>
                                 </div>
@@ -689,7 +781,7 @@
                                 <div>${item.nombre} (x${item.cantidad})</div>
                                 <div class="d-flex align-items-center">
                                     <span class="me-2 text-warning">$${itemTotal.toFixed(2)}</span>
-                                    <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">
+                                    <button class="btn btn-danger btn-sm" onclick="removeFromCart('${item.id}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -727,12 +819,14 @@
                 }
                 renderCart();
             }
-
-            // Evento para validar el carrito antes de abrir el modal
+            
             btnConfirmarPedido.addEventListener('click', function(e) {
                 if (cart.length === 0) {
                     e.preventDefault();
-                    alert('Por favor, agrega productos a tu carrito antes de confirmar el pedido.');
+                    liveToast.show(); 
+                } else {
+                    const modal = new bootstrap.Modal(document.getElementById('modalConfirmarPedido'));
+                    modal.show();
                 }
             });
 
@@ -788,7 +882,7 @@
                 const telefono = document.getElementById('telefonoAntiguo').value;
 
                 if (cart.length === 0) {
-                    alert('Tu canasta está vacía. Agrega productos para continuar.');
+                    liveToast.show();
                     return;
                 }
                 
@@ -827,7 +921,7 @@
                 };
 
                 if (cart.length === 0) {
-                    alert('Tu canasta está vacía. Agrega productos para continuar.');
+                    liveToast.show();
                     return;
                 }
                 
@@ -928,10 +1022,16 @@
                     const product = response.data.product;
                     const reviews = response.data.reviews;
                     
-                    document.getElementById('producto-info-img').src = product.imagenUrl;
+                    // URL de la imagen de alta calidad para el modal
+                    const highQualityImageUrl = `https://drive.google.com/uc?id=${product.fileId}`;
+                    
+                    document.getElementById('producto-info-img').src = highQualityImageUrl;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
                     document.getElementById('producto-info-descripcion').innerText = product.descripcion;
                     document.getElementById('producto-info-precio').innerText = `$${product.precio}`;
+                    // Enlaza el botón de descarga a la URL de la imagen de alta calidad
+                    document.getElementById('download-image-btn').href = highQualityImageUrl;
+                    document.getElementById('download-image-btn').download = `${product.nombre}.jpg`;
 
                     const resenasContainer = document.getElementById('producto-info-resenas');
                     resenasContainer.innerHTML = '';
@@ -1003,8 +1103,37 @@
                     allReviewsList.innerHTML = `<div class="p-3 text-center"><p class="text-muted mb-0">Aún no hay reseñas de clientes.</p></div>`;
                 }
             }
+            
+            function renderSalesCalendar() {
+                const salesCalendar = document.getElementById('sales-calendar');
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+                const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                
+                const salesDays = [0, 5, 6]; // Domingo (0), Viernes (5), Sábado (6)
+                
+                salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
+                daysOfWeek.forEach(day => {
+                    salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
+                });
+                
+                const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+                for (let i = 0; i < firstDay; i++) {
+                    salesCalendar.innerHTML += `<div></div>`;
+                }
+                
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayDate = new Date(currentYear, currentMonth, day);
+                    const isSaleDay = salesDays.includes(dayDate.getDay());
+                    const dayClass = isSaleDay ? 'calendar-day venta' : 'calendar-day';
+                    const text = isSaleDay ? day : day; 
+                    salesCalendar.innerHTML += `<div class="${dayClass}">${text}</div>`;
+                }
+            }
 
-            // Carga las reseñas cuando el modal se muestra
+
             const modalResenas = document.getElementById('modalResenas');
             modalResenas.addEventListener('show.bs.modal', function () {
                 loadAllReviews();
@@ -1019,15 +1148,16 @@
                     }
                 });
             }
-
-            loadProducts();
-
+            
             productsList.addEventListener('click', (e) => {
                 if (e.target.classList.contains('add-to-cart')) {
                     const id = e.target.dataset.id;
                     addToCart(id);
                 }
             });
+
+            loadProducts();
+            renderSalesCalendar();
         });
     </script>
 </body>
