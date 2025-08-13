@@ -483,6 +483,23 @@
       </div>
     </div>
 
+        <div class="modal fade" id="modalPolitica" tabindex="-1" aria-labelledby="modalPoliticaLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPoliticaLabel">Aviso de Privacidad y Seguridad de Datos</h5>
+                </div>
+                <div class="modal-body">
+                    <p>En Barril Norteño El Mono, nos comprometemos con la protección y seguridad de tus datos personales. La información que proporcionas está resguardada y es tratada con la máxima confidencialidad, cumpliendo con las normas ISO y nuestra política de datos. 
+                        Al hacer clic en <strong>Aceptar</strong>, confirmas que estás de acuerdo con nuestra gestión de datos para procesar tus pedidos.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn-aceptar-politica">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -694,6 +711,8 @@
             
             const fireSound = document.getElementById('fire-sound');
             const successSound = document.getElementById('success-sound');
+            const btnAceptarPolitica = document.getElementById('btn-aceptar-politica');
+            const modalPolitica = new bootstrap.Modal(document.getElementById('modalPolitica'));
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -1182,12 +1201,18 @@
                 loadAllReviews();
             });
 
+            btnAceptarPolitica.addEventListener('click', () => {
+                modalPolitica.hide();
+                fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
+            });
+
             function loadProducts() {
                 showLoading('Cargando productos...');
                 sendData('getProducts').then(response => {
                     hideLoading();
                     if (response.success) {
                         renderProducts(response.data);
+                        modalPolitica.show();
                     }
                 });
             }
