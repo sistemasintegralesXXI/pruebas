@@ -20,6 +20,10 @@
             color: var(--text-color);
             padding-bottom: 100px;
         }
+        li a {
+            color: inherit;
+            text-decoration: none;
+        }
         .navbar {
             background-color: var(--secondary-color) !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -380,13 +384,9 @@
                     <p>Somos un emprendimiento familiar con el objetivo de llevar el sabor auténtico de la parrilla a tu mesa. Ven y disfruta de una experiencia gastronómica inigualable.</p>
                     <h4 class="mt-4">Contacto</h4>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-map-marker-alt"></i> Cerro Norte, El Plan</li>
-                        <li><i class="fas fa-envelope"></i> Email: contacto@carnesalbarril.com</li>
-                        <li>
-                          <a href="tel:+573133118664" style="text-decoration: none; color: inherit;">
-                            <i class="fas fa-phone-alt"></i> Teléfono: +57 313 311 8664
-                          </a>
-                       </li>
+                        <li><i class="fas fa-map-marker-alt"></i><a href="https://maps.app.goo.gl/Z12bgNUcCCz6frvB6" target="_blank" rel="noopener noreferrer"> Cerro Norte, El Plan</a></li>
+                        <li><i class="fas fa-envelope"></i> Email: <a href="mailto:joelstevenpinedarincon20@gmail.com">joelstevenpinedarincon20@gmail.com</a></li>
+                        <li><a href="tel:+573133118664" style="text-decoration: none; color: inherit;"><i class="fas fa-phone-alt"></i> Teléfono: +57 313 311 8664</a></li>
                     </ul>
                     <div class="mt-3">
                         <a href="#" class="btn btn-primary me-2"><i class="fab fa-facebook-f"></i></a>
@@ -1166,34 +1166,58 @@
                 }
             }
             
-            function renderSalesCalendar() {
-                const salesCalendar = document.getElementById('sales-calendar');
-                const today = new Date();
-                const currentMonth = today.getMonth();
-                const currentYear = today.getFullYear();
-                const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-                
-                const salesDays = [0, 5, 6]; 
-                
-                salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
-                daysOfWeek.forEach(day => {
-                    salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
-                });
-                
-                const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-                for (let i = 0; i < firstDay; i++) {
-                    salesCalendar.innerHTML += `<div></div>`;
-                }
-                
-                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const dayDate = new Date(currentYear, currentMonth, day);
-                    const isSaleDay = salesDays.includes(dayDate.getDay());
-                    const dayClass = isSaleDay ? 'calendar-day venta' : 'calendar-day';
-                    const text = isSaleDay ? day : day; 
-                    salesCalendar.innerHTML += `<div class="${dayClass}">${text}</div>`;
-                }
-            }
+function renderSalesCalendar() {
+    const salesCalendar = document.getElementById('sales-calendar');
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    // Festivos en Colombia para 2025
+    const festivosColombia2025 = [
+        '2025-01-01', '2025-01-06', '2025-03-24', '2025-04-13', '2025-04-17',
+        '2025-04-18', '2025-05-01', '2025-06-02', '2025-06-23', '2025-06-30',
+        '2025-07-20', '2025-08-07', '2025-08-18', '2025-10-13', '2025-11-03',
+        '2025-11-17', '2025-12-08', '2025-12-25'
+    ];
+
+    const isFestivo = (date) => {
+        const iso = date.toISOString().split('T')[0];
+        return festivosColombia2025.includes(iso);
+    };
+
+    const isDomingoQuincena = (date) => {
+        const day = date.getDate();
+        const isSunday = date.getDay() === 0;
+        return isSunday && (day === 15 || day === 30 || (day === 28 && date.getMonth() === 1));
+    };
+
+    // Cabecera
+    salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
+
+    // Días de la semana
+    daysOfWeek.forEach(day => {
+        salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
+    });
+
+    // Espacios en blanco antes del primer día
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    for (let i = 0; i < firstDay; i++) {
+        salesCalendar.innerHTML += `<div></div>`;
+    }
+
+    // Días del mes
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentYear, currentMonth, day);
+        const isSunday = date.getDay() === 0;
+
+        const esVenta = isSunday || isFestivo(date) || isDomingoQuincena(date);
+        const clase = esVenta ? 'calendar-day venta' : 'calendar-day';
+
+        salesCalendar.innerHTML += `<div class="${clase}">${day}</div>`;
+    }
+}
 
 
             const modalResenas = document.getElementById('modalResenas');
