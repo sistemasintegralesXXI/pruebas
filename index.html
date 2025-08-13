@@ -331,11 +331,11 @@
 </head>
 <body>
     <audio id="fire-sound" preload="auto">
-      <source src="https://www.soundjay.com/fire-sound-effects.html" type="audio/mpeg">
+      <source src="https://www.soundjay.com/sounds/fire-sound-effect-1.mp3" type="audio/mpeg">
     </audio>
 
     <audio id="success-sound" preload="auto">
-      <source src="https://www.soundjay.com/success-sound.html" type="audio/mpeg">
+      <source src="https://www.soundjay.com/sounds/success-sound.mp3" type="audio/mpeg">
     </audio>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -420,7 +420,7 @@
                     <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
-                    <img src="https://homecitycolombia.com/cdn/shop/products/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.jpg?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
+                    <img src="https://homecitycolombia.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176344.webp?v=1715116164" alt="Carne al barril 3" class="img-fluid gallery-image">
                 </div>
                               <div class="col-12 col-md-4">
                     <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164" alt="Carne al barril 1" class="img-fluid gallery-image">
@@ -481,6 +481,22 @@
           Debes agregar al menos un producto para confirmar un pedido.
         </div>
       </div>
+    </div>
+    
+    <div class="modal fade" id="modalPolitica" tabindex="-1" aria-labelledby="modalPoliticaLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPoliticaLabel">Aviso de Privacidad y Seguridad de Datos</h5>
+                </div>
+                <div class="modal-body">
+                    <p>En **Carnes al Barril**, nos comprometemos con la protección y seguridad de tus datos personales. La información que proporcionas está resguardada y es tratada con la máxima confidencialidad, cumpliendo con las normas ISO y nuestra política de datos. Al hacer clic en "Aceptar", confirmas que estás de acuerdo con nuestra gestión de datos para procesar tus pedidos.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn-aceptar-politica">Aceptar</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
@@ -694,6 +710,8 @@
             
             const fireSound = document.getElementById('fire-sound');
             const successSound = document.getElementById('success-sound');
+            const btnAceptarPolitica = document.getElementById('btn-aceptar-politica');
+            const modalPolitica = new bootstrap.Modal(document.getElementById('modalPolitica'));
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -739,28 +757,15 @@
                 if (isSuccess) {
                     successAnimation.classList.remove('d-none');
                     successText.innerText = message;
-                    // Tocar sonido de éxito
                     successSound.play();
                 } else {
                     pedidoAnimation.classList.remove('d-none');
                     loadingText.innerText = message;
-                    // Tocar sonido de fuego al cargar, solo si es la carga inicial
-                    if (message === 'Cargando productos...') {
-                       fireSound.play();
-                       setTimeout(() => {
-                            if (!loadingOverlay.classList.contains('d-none')) {
-                                fireSound.pause();
-                                fireSound.currentTime = 0;
-                            }
-                       }, 5000); // Detener después de 5 segundos
-                    }
                 }
             }
 
             function hideLoading() {
                 loadingOverlay.classList.add('d-none');
-                fireSound.pause();
-                fireSound.currentTime = 0;
             }
             
             window.showTypeSelection = function() {
@@ -790,7 +795,7 @@
                 allProducts = products;
                 productsList.innerHTML = '';
                 products.forEach(product => {
-                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://via.placeholder.com/512x200.png?text=No+Imagen';
+                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
                     const productHtml = `
                         <div class="col-6 col-md-4 mb-4">
                             <div class="card product-card">
@@ -1067,7 +1072,7 @@
                     const product = response.data.product;
                     const reviews = response.data.reviews;
                     
-                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://via.placeholder.com/800x600.png?text=No+Imagen';
+                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
                     
                     document.getElementById('producto-info-img').src = highQualityImageUrl;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
@@ -1181,6 +1186,11 @@
             modalResenas.addEventListener('show.bs.modal', function () {
                 loadAllReviews();
             });
+            
+            btnAceptarPolitica.addEventListener('click', () => {
+                modalPolitica.hide();
+                fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
+            });
 
             function loadProducts() {
                 showLoading('Cargando productos...');
@@ -1188,6 +1198,9 @@
                     hideLoading();
                     if (response.success) {
                         renderProducts(response.data);
+                        modalPolitica.show();
+                    } else {
+                        alert("Error al cargar productos: " + response.error);
                     }
                 });
             }
