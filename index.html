@@ -351,6 +351,9 @@
                         <button class="nav-link btn btn-link nav-link-btn" data-section="menu">Menú</button>
                     </li>
                     <li class="nav-item">
+                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
+                    </li>
+                    <li class="nav-item">
                         <button class="nav-link btn btn-link nav-link-btn" data-section="gallery">Galería</button>
                     </li>
                     <li class="nav-item">
@@ -726,6 +729,24 @@
             window.toggleCart = function() {
                 cartSummary.classList.toggle('minimized');
             }
+            
+            function showMenuSection() {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('menu-section').classList.add('active');
+            }
+            
+            const modalVerPedidos = document.getElementById('modalVerPedidos');
+            const modalResenas = document.getElementById('modalResenas');
+            
+            modalVerPedidos.addEventListener('hidden.bs.modal', function () {
+                showMenuSection();
+            });
+            
+            modalResenas.addEventListener('hidden.bs.modal', function () {
+                showMenuSection();
+            });
 
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -1128,12 +1149,16 @@
                 showLoading("Enviando tu reseña...");
                 const data = { documento, fecha, rating, comentario };
                 const response = await sendData('submitReview', data);
-                hideLoading();
+                
                 if (response.success) {
-                    alert('Reseña enviada exitosamente.');
-                    bootstrap.Modal.getInstance(document.getElementById('modalResena')).hide();
-                    document.getElementById('btnBuscarPedidos').click(); 
+                    showLoading("¡Reseña enviada exitosamente!", true);
+                    setTimeout(() => {
+                        hideLoading();
+                        bootstrap.Modal.getInstance(document.getElementById('modalResena')).hide();
+                        document.getElementById('btnBuscarPedidos').click(); 
+                    }, 2000);
                 } else {
+                    hideLoading();
                     alert(response.error);
                 }
             };
@@ -1229,21 +1254,21 @@ function renderSalesCalendar() {
     }
 }
 
-            const modalResenas = document.getElementById('modalResenas');
+            const modalReseñas = document.getElementById('modalResenas');
             modalResenas.addEventListener('show.bs.modal', function () {
                 loadAllReviews();
-            });
+            });  
 
-            btnAceptarPolitica.addEventListener('click', () => {
+            btnAceptarPolitica.addEventListener('click', () => { 
                 modalPolitica.hide();
                 fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
             });
-
+  
             function loadProducts() { 
                 showLoading('Cargando productos...');
                 sendData('getProducts').then(response => {
                     hideLoading();
-                    if (response.success) {
+                    if (response.success) { 
                         renderProducts(response.data);
                         modalPolitica.show();
                     }
