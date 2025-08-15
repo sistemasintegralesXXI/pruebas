@@ -1,54 +1,73 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <base target="_top">
     <title>Carnes al Barril - Sistema de Pedidos</title>
-    <link rel="icon" href="https://e7.pngegg.com/pngimages/471/385/png-clipart-meat-industry-fish-cool-store-food-beef-food-beef.png">
+    <link rel="icon"
+        href="https://e7.pngegg.com/pngimages/914/939/png-clipart-roasted-beef-food-beef.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:wght@400;700&display=swap');
+
         :root {
             --primary-color: #ffcc80;
             --secondary-color: #4a2828;
             --dark-bg: #2c0e0e;
             --text-color: #f5f5dc;
         }
+
         body {
             font-family: 'Merriweather', serif;
             background: var(--dark-bg);
             color: var(--text-color);
             padding-bottom: 100px;
         }
+
         li a {
             color: inherit;
             text-decoration: none;
         }
+
         .navbar {
             background-color: var(--secondary-color) !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .navbar-brand, .nav-link, .nav-link-btn {
+
+        .navbar-brand,
+        .nav-link,
+        .nav-link-btn {
             font-family: 'Bebas Neue', sans-serif;
             color: var(--primary-color) !important;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
-        h1, h2, h3, h4, h5, h6 {
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'Bebas Neue', sans-serif;
             color: var(--primary-color);
         }
+
         .container {
             max-width: 1100px;
             margin-top: 30px;
         }
+
         .section {
             display: none;
         }
+
         .section.active {
             display: block;
         }
+
         .header-section {
             text-align: center;
             padding: 50px 0;
@@ -58,6 +77,7 @@
             color: white;
             border-bottom: 4px solid var(--primary-color);
         }
+
         .header-section::before {
             content: '';
             position: absolute;
@@ -68,10 +88,12 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: 1;
         }
+
         .header-content {
             position: relative;
             z-index: 2;
         }
+
         .product-card {
             background: var(--secondary-color);
             border: 2px solid var(--primary-color);
@@ -83,10 +105,12 @@
             flex-direction: column;
             overflow: hidden;
         }
+
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
+
         .product-image-container {
             height: 200px;
             width: 100%;
@@ -94,6 +118,7 @@
             background-position: center;
             border-bottom: 2px solid var(--primary-color);
         }
+
         .cart-summary {
             position: fixed;
             bottom: 20px;
@@ -107,6 +132,7 @@
             z-index: 1050;
             transition: all 0.3s ease;
         }
+
         .cart-summary.minimized {
             width: 60px;
             height: 60px;
@@ -115,13 +141,16 @@
             border-radius: 50%;
             cursor: pointer;
         }
+
         .cart-summary.minimized .cart-content,
         .cart-summary.minimized .cart-header {
             display: none;
         }
+
         .cart-summary .cart-toggle-btn {
             display: none;
         }
+
         .cart-count {
             position: absolute;
             top: -5px;
@@ -132,6 +161,7 @@
             padding: 3px 8px;
             font-size: 12px;
         }
+
         #loading-overlay {
             position: fixed;
             top: 0;
@@ -146,78 +176,116 @@
             text-align: center;
             flex-direction: column;
         }
+
         .spinner-border {
             color: var(--primary-color) !important;
         }
+
         #success-animation {
             color: #5cb85c;
             font-size: 5rem;
             animation: pulse 1s infinite;
         }
+
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         .modal-content {
             background-color: var(--secondary-color);
             color: var(--text-color);
             border: 2px solid var(--primary-color);
         }
+
         .modal-header {
             border-bottom: 1px solid var(--primary-color);
         }
+
         .modal-footer {
             border-top: 1px solid var(--primary-color);
         }
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             background-color: var(--dark-bg);
             color: var(--text-color);
             border: 1px solid var(--primary-color);
         }
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             background-color: var(--dark-bg);
             color: var(--text-color);
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(255, 204, 128, 0.25);
         }
+
         .btn-primary {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
             color: var(--dark-bg);
         }
+
         .btn-primary:hover {
             background-color: #e6b873;
             border-color: #e6b873;
             color: var(--dark-bg);
         }
+
         .btn-success {
             background-color: #5cb85c;
             border-color: #5cb85c;
             color: white;
         }
+
         .btn-success:hover {
             background-color: #4cae4c;
             border-color: #4cae4c;
         }
+
         .btn-warning {
             background-color: #f0ad4e;
             border-color: #f0ad4e;
             color: white;
         }
+
         .btn-warning:hover {
             background-color: #ec971f;
             border-color: #ec971f;
         }
+
         .status-badge {
             font-size: 0.8rem;
             padding: 5px 10px;
             border-radius: 50px;
             font-weight: bold;
         }
-        .status-pedido { background-color: #0d6efd; color: white; }
-        .status-preparacion { background-color: #ffc107; color: black; }
-        .status-entregado { background-color: #198754; color: white; }
+
+        .status-pedido {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .status-preparacion {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .status-entregado {
+            background-color: #198754;
+            color: white;
+        }
+
         .gallery-image {
             object-fit: cover;
             width: 100%;
@@ -226,15 +294,19 @@
             border: 2px solid var(--primary-color);
             transition: transform 0.3s ease;
         }
+
         .gallery-image:hover {
             transform: scale(1.05);
         }
+
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
+            /* 16:9 Aspect Ratio */
             height: 0;
         }
+
         .video-container iframe {
             position: absolute;
             top: 0;
@@ -244,19 +316,21 @@
             border-radius: 8px;
             border: 2px solid var(--primary-color);
         }
+
         .toast {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1100;
         }
-        
+
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
             text-align: center;
         }
+
         .calendar-day {
             padding: 10px;
             background-color: var(--secondary-color);
@@ -267,36 +341,48 @@
             justify-content: center;
             align-items: center;
         }
+
         .calendar-day.venta {
             background-color: #5cb85c;
             border-color: #198754;
             color: white;
             font-weight: bold;
         }
+
         .calendar-header {
             grid-column: 1 / -1;
             font-size: 1.5rem;
             margin-bottom: 15px;
             color: var(--primary-color);
         }
+
         .weekday {
             font-weight: bold;
             color: var(--primary-color);
         }
+
+        .custom-placeholder::placeholder {
+            color: var(--secondary-color);
+        }
+
         @media (max-width: 1000px) {
             .navbar-brand {
                 font-size: 1.25rem;
             }
+
             .header-section {
                 padding: 30px 0;
             }
+
             .header-section h1 {
                 font-size: 2.5rem;
             }
+
             .header-section p {
                 font-size: 1rem;
             }
         }
+
         @media (max-width: 768px) {
             .cart-summary {
                 width: 100%;
@@ -308,6 +394,7 @@
                 border: none;
                 border-top: 2px solid var(--primary-color);
             }
+
             .cart-summary.minimized {
                 width: 60px;
                 height: 60px;
@@ -317,29 +404,33 @@
                 border-radius: 50%;
                 border: 2px solid var(--primary-color);
             }
+
             .product-image-container {
                 height: 180px;
             }
+
             .gallery-image {
                 height: 180px;
             }
         }
     </style>
 </head>
+
 <body>
     <audio id="fire-sound" preload="auto">
-      <source src="./fuego.mp3" type="audio/mpeg">
+        <source src="./fuego.mp3" type="audio/mpeg">
     </audio>
 
     <audio id="success-sound" preload="auto">
-      <source src="./exitoso.mp3" type="audio/mpeg">
+        <source src="./exitoso.mp3" type="audio/mpeg">
     </audio>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand d-lg-none" href="./admin.html">Carnes al Barril</a>
             <a class="navbar-brand d-none d-lg-block" href="./admin.html">Barril Norteño el Mono</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -351,13 +442,15 @@
                         <button class="nav-link btn btn-link nav-link-btn" data-section="menu">Menú</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
+                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal"
+                            data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link btn btn-link nav-link-btn" data-section="gallery">Galería</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal" data-bs-target="#modalResenas">Reseñas de Clientes</button>
+                        <button class="nav-link btn btn-link nav-link-btn" data-bs-toggle="modal"
+                            data-bs-target="#modalResenas">Reseñas de Clientes</button>
                     </li>
                 </ul>
             </div>
@@ -376,13 +469,20 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <h2>Nuestra Historia</h2>
-                    <p>En Barril Norteño el Mono , transformamos la experiencia de comer carne en un arte. Nuestra pasión es el sabor ahumado y único que se consigue con la cocción lenta al barril. Cada plato es preparado con los mejores cortes, seleccionados cuidadosamente para deleitar tu paladar.</p>
-                    <p>Somos un emprendimiento familiar con el objetivo de llevar el sabor auténtico de la parrilla a tu mesa. Ven y disfruta de una experiencia gastronómica inigualable.</p>
+                    <p>En Barril Norteño el Mono , transformamos la experiencia de comer carne en un arte. Nuestra
+                        pasión es el sabor ahumado y único que se consigue con la cocción lenta al barril. Cada plato es
+                        preparado con los mejores cortes, seleccionados cuidadosamente para deleitar tu paladar.</p>
+                    <p>Somos un emprendimiento familiar con el objetivo de llevar el sabor auténtico de la parrilla a tu
+                        mesa. Ven y disfruta de una experiencia gastronómica inigualable.</p>
                     <h4 class="mt-4">Contacto</h4>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-map-marker-alt"></i><a href="https://maps.app.goo.gl/Z12bgNUcCCz6frvB6" target="_blank" rel="noopener noreferrer"> Cerro Norte, El Plan</a></li>
-                        <li><i class="fas fa-envelope"></i> Email: <a href="mailto:joelstevenpinedarincon20@gmail.com">joelstevenpinedarincon20@gmail.com</a></li>
-                        <li><a href="tel:+573133118664" style="text-decoration: none; color: inherit;"><i class="fas fa-phone-alt"></i> Teléfono: +57 313 311 8664</a></li>
+                        <li><i class="fas fa-map-marker-alt"></i><a href="https://maps.app.goo.gl/Z12bgNUcCCz6frvB6"
+                                target="_blank" rel="noopener noreferrer"> Cerro Norte, El Plan</a></li>
+                        <li><i class="fas fa-envelope"></i> Email: <a
+                                href="mailto:joelstevenpinedarincon20@gmail.com">joelstevenpinedarincon20@gmail.com</a>
+                        </li>
+                        <li><a href="tel:+573133118664" style="text-decoration: none; color: inherit;"><i
+                                    class="fas fa-phone-alt"></i> Teléfono: +57 313 311 8664</a></li>
                     </ul>
                     <div class="mt-3">
                         <a href="#" class="btn btn-primary me-2"><i class="fab fa-facebook-f"></i></a>
@@ -394,7 +494,7 @@
                     <h2>Días de Venta</h2>
                     <p>Estos son los días en los que estamos disponibles para atenderte. ¡Haz tu pedido!</p>
                     <div id="sales-calendar" class="calendar">
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -403,38 +503,41 @@
         <div id="menu-section" class="section">
             <h1 class="text-center my-4">Nuestro Menú</h1>
             <div class="row" id="products-list">
-                </div>
+            </div>
         </div>
 
         <div id="gallery-section" class="section">
             <h1 class="text-center my-4">Galería de Sabores</h1>
             <div class="row g-4">
                 <div class="col-12 col-md-4">
-                    <img src="https://www.eldiario.com.co/wp-content/uploads/2025/04/R1-2-1068x1065.jpg" alt="Carne al barril 1" class="img-fluid gallery-image">
+                    <img src="https://www.eldiario.com.co/wp-content/uploads/2025/04/R1-2-1068x1065.jpg"
+                        alt="Carne al barril 1" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
-                    <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692" class="img-fluid gallery-image">
+                    <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692"
+                        class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
-                    <img src="https://homecitycolombia.com/cdn/shop/files/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.webp?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
+                    <img src="https://cdn.shopify.com/s/files/1/0668/1362/4613/files/Al-barril-el-mejor-asado-en-casa-2_600x600.jpg?v=1735567982"
+                        alt="Carne al barril 3" class="img-fluid gallery-image">
                 </div>
-                              <div class="col-12 col-md-4">
-                    <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164" alt="Carne al barril 1" class="img-fluid gallery-image">
+                <div class="col-12 col-md-4">
+                    <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164"
+                        alt="Carne al barril 1" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
                     <img src="https://i.ytimg.com/vi/6srE1KklzW8/sddefault.jpg" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
-                    <img src="https://i.ytimg.com/vi/6eI0gsy-TR8/maxresdefault.jpg" alt="Carne al barril 3" class="img-fluid gallery-image">
+                    <img src="https://i.ytimg.com/vi/6eI0gsy-TR8/maxresdefault.jpg" alt="Carne al barril 3"
+                        class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 mt-5">
                     <h2 class="text-center">Preparación en Video</h2>
                     <div class="video-container">
-                    <iframe width="260" height="154" 
-                            src="https://www.youtube.com/embed/LMl6bGLXrpg" 
-                            frameborder="0" 
+                        <iframe width="260" height="154" src="https://www.youtube.com/embed/LMl6bGLXrpg" frameborder="0"
                             allowfullscreen>
-                    </iframe>
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -452,7 +555,8 @@
             </div>
             <div class="cart-content">
                 <ul class="list-group mt-3" id="cart-list">
-                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white">
                         Cesta vacía
                     </li>
                 </ul>
@@ -462,32 +566,37 @@
                     <span id="cart-total">$0.00</span>
                 </div>
                 <button class="btn btn-success w-100" id="btn-confirmar-pedido">Confirmar Pedido</button>
-                <button class="btn btn-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver mis Pedidos</button>
+                <button class="btn btn-primary w-100 mt-2" data-bs-toggle="modal" data-bs-target="#modalVerPedidos">Ver
+                    mis Pedidos</button>
             </div>
         </div>
     </div>
-    
+
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div id="liveToast" class="toast text-bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-bg-warning">
-          <strong class="me-auto">Aviso</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div id="liveToast" class="toast text-bg-warning" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header text-bg-warning">
+                <strong class="me-auto">Aviso</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Debes agregar al menos un producto para confirmar un pedido.
+            </div>
         </div>
-        <div class="toast-body">
-          Debes agregar al menos un producto para confirmar un pedido.
-        </div>
-      </div>
     </div>
 
-        <div class="modal fade" id="modalPolitica" tabindex="-1" aria-labelledby="modalPoliticaLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="modalPolitica" tabindex="-1" aria-labelledby="modalPoliticaLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalPoliticaLabel">Aviso de Privacidad y Seguridad de Datos</h5>
                 </div>
                 <div class="modal-body">
-                    <p>En Barril Norteño El Mono, nos comprometemos con la protección y seguridad de tus datos personales. La información que proporcionas está resguardada y es tratada con la máxima confidencialidad, cumpliendo con las normas ISO y nuestra política de datos. 
-                        Al hacer clic en <strong>Aceptar</strong>, confirmas que estás de acuerdo con nuestra gestión de datos para procesar tus pedidos.</p>
+                    <p>En Barril Norteño El Mono, nos comprometemos con la protección y seguridad de tus datos
+                        personales. La información que proporcionas está resguardada y es tratada con la máxima
+                        confidencialidad, cumpliendo con las normas ISO y nuestra política de datos.
+                        Al hacer clic en <strong>Aceptar</strong>, confirmas que estás de acuerdo con nuestra gestión de
+                        datos para procesar tus pedidos.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="btn-aceptar-politica">Aceptar</button>
@@ -496,12 +605,14 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel" aria-hidden="true">
+    <div class="modal fade" id="modalConfirmarPedido" tabindex="-1" aria-labelledby="modalConfirmarPedidoLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalConfirmarPedidoLabel">Confirmar Pedido</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="confirm-type-selection">
@@ -516,7 +627,8 @@
                             <label for="docAntiguo" class="form-label">Número de Documento</label>
                             <input type="text" class="form-control" id="docAntiguo" required>
                         </div>
-                        <button type="button" class="btn btn-info w-100 mb-3" id="btn-validar-cliente-antiguo">Validar</button>
+                        <button type="button" class="btn btn-info w-100 mb-3"
+                            id="btn-validar-cliente-antiguo">Validar</button>
                         <div id="cliente-antiguo-info" class="d-none">
                             <h6 class="text-success">Datos del Cliente Encontrado</h6>
                             <div class="mb-3">
@@ -562,22 +674,26 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalVerPedidos" tabindex="-1" aria-labelledby="modalVerPedidosLabel" aria-hidden="true">
+    <div class="modal fade" id="modalVerPedidos" tabindex="-1" aria-labelledby="modalVerPedidosLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalVerPedidosLabel">Ver Mis Pedidos</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted">Ingresa tu número de documento para validar la información de tus pedidos.</p>
+                    <p class="text" style="color: white;">Ingresa tu número de documento para validar la información de
+                        tus pedidos.</p>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Número de Documento" id="documentoBusquedaPedidos">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Número de Documento"
+                            id="documentoBusquedaPedidos">
                         <button class="btn btn-primary" type="button" id="btnBuscarPedidos">Buscar</button>
                     </div>
                     <hr>
                     <div id="historial-pedidos-body">
-                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -591,7 +707,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalResenaLabel">Califica y Comenta</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formResena">
@@ -626,11 +743,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalResenasLabel">Reseñas de Clientes</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="all-reviews-list">
-                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -639,37 +757,39 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalProductoInfo" tabindex="-1" aria-labelledby="modalProductoInfoLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalProductoInfoLabel">Detalles del Producto</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-12 col-md-6">
-                <div id="producto-info-image-container"></div>
-              </div>
-              <div class="col-12 col-md-6">
-                <h4 id="producto-info-nombre"></h4>
-                <p class="text-warning fw-bold" id="producto-info-precio"></p>
-                <p id="producto-info-descripcion"></p>
-                <a id="download-image-btn" href="#" download class="btn btn-primary mt-3 w-100">
-                    <i class="fas fa-download"></i> Descargar Imagen
-                </a>
-              </div>
+    <div class="modal fade" id="modalProductoInfo" tabindex="-1" aria-labelledby="modalProductoInfoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProductoInfoLabel">Detalles del Producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div id="producto-info-image-container"></div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <h4 id="producto-info-nombre"></h4>
+                            <p class="text-warning fw-bold" id="producto-info-precio"></p>
+                            <p id="producto-info-descripcion"></p>
+                            <a id="download-image-btn" href="#" download class="btn btn-primary mt-3 w-100">
+                                <i class="fas fa-download"></i> Descargar Imagen
+                            </a>
+                        </div>
+                    </div>
+                    <hr style="border-color: var(--primary-color);">
+                    <h6>Reseñas del Producto</h6>
+                    <div id="producto-info-resenas">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
-            <hr style="border-color: var(--primary-color);">
-            <h6>Reseñas del Producto</h6>
-            <div id="producto-info-resenas">
-              </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          </div>
         </div>
-      </div>
     </div>
 
 
@@ -682,15 +802,15 @@
         </div>
         <div id="success-animation" class="d-none">
             <i class="fas fa-check-circle"></i>
-            <h4 class="mt-3" id="success-text">¡Pedido enviado!</h4>
+            <h4 class="mt-3" id="success-text">¡PEDIDO ENVIADO EXITOSAMENTE, NOS COMUNICAREMOS CONTIGO MUY PRONTO, GRACIAS POR COMPARTIR ESTA EXPERIENCIA!</h4>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKptINy2l2Ddc9JgBDPy0is4Z-IMG5nroRPOwRyABDJ2sIbiFwS_gEaDlC1Pjp8RQ/exec';
-            
+
             const productsList = document.getElementById('products-list');
             const cartList = document.getElementById('cart-list');
             const cartTotalSpan = document.getElementById('cart-total');
@@ -704,7 +824,7 @@
             const allReviewsList = document.getElementById('all-reviews-list');
             const btnConfirmarPedido = document.getElementById('btn-confirmar-pedido');
             const liveToast = new bootstrap.Toast(document.getElementById('liveToast'));
-            
+
             const fireSound = document.getElementById('fire-sound');
             const successSound = document.getElementById('success-sound');
             const btnAceptarPolitica = document.getElementById('btn-aceptar-politica');
@@ -722,28 +842,28 @@
 
             const sections = document.querySelectorAll('.section');
             const navButtons = document.querySelectorAll('.nav-link-btn');
-            
+
             let cart = [];
             let allProducts = [];
 
-            window.toggleCart = function() {
+            window.toggleCart = function () {
                 cartSummary.classList.toggle('minimized');
             }
-            
+
             function showMenuSection() {
                 sections.forEach(section => {
                     section.classList.remove('active');
                 });
                 document.getElementById('menu-section').classList.add('active');
             }
-            
+
             const modalVerPedidos = document.getElementById('modalVerPedidos');
             const modalResenas = document.getElementById('modalResenas');
-            
+
             modalVerPedidos.addEventListener('hidden.bs.modal', function () {
                 showMenuSection();
             });
-            
+
             modalResenas.addEventListener('hidden.bs.modal', function () {
                 showMenuSection();
             });
@@ -779,13 +899,13 @@
                     loadingText.innerText = message;
                     // Tocar sonido de fuego al cargar, solo si es la carga inicial
                     if (message === 'Cargando productos...') {
-                       fireSound.play();
-                       setTimeout(() => {
+                        fireSound.play();
+                        setTimeout(() => {
                             if (!loadingOverlay.classList.contains('d-none')) {
                                 fireSound.pause();
                                 fireSound.currentTime = 0;
                             }
-                       }, 5000); // Detener después de 5 segundos
+                        }, 5000); // Detener después de 5 segundos
                     }
                 }
             }
@@ -795,8 +915,8 @@
                 fireSound.pause();
                 fireSound.currentTime = 0;
             }
-            
-            window.showTypeSelection = function() {
+
+            window.showTypeSelection = function () {
                 confirmTypeSelection.classList.remove('d-none');
                 formClienteAntiguo.classList.add('d-none');
                 formClienteNuevo.classList.add('d-none');
@@ -818,7 +938,7 @@
                     return { success: false, error: 'Error de conexión con el servidor.' };
                 }
             }
-            
+
             function renderProducts(products) {
                 allProducts = products;
                 productsList.innerHTML = '';
@@ -829,8 +949,8 @@
                             <div class="card product-card">
                                 <div class="product-image-container" style="background-image: url('${imageUrl}');"></div>
                                 <div class="card-body">
-                                    <h5 class="card-title">${product.nombre}</h5>
-                                    <p class="card-text">$${product.precio}</p>
+                                <h5 class="card-title" style="color: white;">${product.nombre}</h5>
+                                <p class="card-text" style="color: white;">$${product.precio}</p>
                                     <div class="d-flex justify-content-between flex-column flex-md-row">
                                         <button class="btn btn-info btn-sm mb-2 mb-md-0" onclick="showProductInfo('${product.id}')">Más info</button>
                                         <button class="btn btn-primary btn-sm add-to-cart" data-id="${product.id}">Añadir al carrito</button>
@@ -872,10 +992,10 @@
                 cartItemCountSpan.innerText = itemCount;
             }
 
-            window.addToCart = function(id) {
+            window.addToCart = function (id) {
                 const product = allProducts.find(p => p.id == id);
                 if (!product) return;
-                
+
                 const existingItem = cart.find(item => item.id == id);
                 if (existingItem) {
                     existingItem.cantidad++;
@@ -885,7 +1005,7 @@
                 renderCart();
             }
 
-            window.removeFromCart = function(id) {
+            window.removeFromCart = function (id) {
                 const existingItemIndex = cart.findIndex(item => item.id == id);
                 if (existingItemIndex !== -1) {
                     const existingItem = cart[existingItemIndex];
@@ -897,11 +1017,11 @@
                 }
                 renderCart();
             }
-            
-            btnConfirmarPedido.addEventListener('click', function(e) {
+
+            btnConfirmarPedido.addEventListener('click', function (e) {
                 if (cart.length === 0) {
                     e.preventDefault();
-                    liveToast.show(); 
+                    liveToast.show();
                 } else {
                     const modal = new bootstrap.Modal(document.getElementById('modalConfirmarPedido'));
                     modal.show();
@@ -914,7 +1034,7 @@
                 formClienteAntiguo.classList.remove('d-none');
                 clienteAntiguoInfo.classList.add('d-none');
             });
-            
+
             btnClienteNuevo.addEventListener('click', () => {
                 confirmTypeSelection.classList.add('d-none');
                 formClienteAntiguo.classList.add('d-none');
@@ -930,7 +1050,7 @@
 
                 showLoading('Validando tus datos...');
                 const response = await sendData('getClientDetails', { documento });
-                
+
                 if (response.success) {
                     const client = response.data;
                     document.getElementById('nombreAntiguo').value = client.nombre;
@@ -952,7 +1072,7 @@
                 clienteAntiguoInfo.classList.add('d-none');
             }
 
-            formClienteAntiguo.addEventListener('submit', async function(e) {
+            formClienteAntiguo.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const documento = document.getElementById('docAntiguo').value;
                 const nombre = document.getElementById('nombreAntiguo').value;
@@ -963,7 +1083,7 @@
                     liveToast.show();
                     return;
                 }
-                
+
                 showLoading('En construcción de tu pedido...');
                 const response = await sendData('createOrderFromExistingClient', {
                     documento, nombre, direccion, telefono,
@@ -972,7 +1092,7 @@
                 });
 
                 if (response.success) {
-                    showLoading('¡Pedido enviado!', true);
+                    showLoading('¡PEDIDO ENVIADO EXITOSAMENTE, NOS COMUNICAREMOS CONTIGO MUY PRONTO, GRACIAS POR COMPARTIR ESTA EXPERIENCIA!', true);
                     setTimeout(() => {
                         hideLoading();
                         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
@@ -987,7 +1107,7 @@
                 }
             });
 
-            formClienteNuevo.addEventListener('submit', async function(e) {
+            formClienteNuevo.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 const data = {
                     documento: document.getElementById('docNuevo').value,
@@ -1002,11 +1122,11 @@
                     liveToast.show();
                     return;
                 }
-                
+
                 showLoading('En construcción de tu pedido...');
                 const response = await sendData('createOrderFromNewClient', data);
                 if (response.success) {
-                    showLoading('¡Pedido enviado!', true);
+                    showLoading('¡PEDIDO ENVIADO EXITOSAMENTE, NOS COMUNICAREMOS CONTIGO MUY PRONTO, GRACIAS POR COMPARTIR ESTA EXPERIENCIA!', true);
                     setTimeout(() => {
                         hideLoading();
                         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido')).hide();
@@ -1021,7 +1141,7 @@
                 }
             });
 
-            document.getElementById('btnBuscarPedidos').addEventListener('click', async function() {
+            document.getElementById('btnBuscarPedidos').addEventListener('click', async function () {
                 const documento = document.getElementById('documentoBusquedaPedidos').value;
                 if (!documento) {
                     alert('Por favor, ingresa tu número de documento.');
@@ -1030,7 +1150,7 @@
 
                 showLoading('Buscando tus pedidos...');
                 const response = await sendData('getSalesAndClientByDocument', { documento });
-                
+
                 historialPedidosBody.innerHTML = '';
                 hideLoading();
 
@@ -1054,7 +1174,7 @@
 
                         response.data.sales.forEach(sale => {
                             let pedidoText = Array.isArray(sale.pedido) ? sale.pedido.map(item => `${item.nombre} (x${item.cantidad})`).join(', ') : 'Error en el formato del pedido';
-                            
+
                             let statusClass = '';
                             if (sale.estado === 'Entregado') {
                                 statusClass = 'status-entregado';
@@ -1065,7 +1185,7 @@
                             }
 
                             const hasRated = sale.rating && sale.rating > 0;
-                            const ratingButton = hasRated 
+                            const ratingButton = hasRated
                                 ? `<span class="badge bg-success">Ya calificado</span>`
                                 : `<button class="btn btn-sm btn-warning mt-2" onclick="mostrarModalResena('${sale.cliente}', '${sale.fecha}')">Calificar y Comentar</button>`;
 
@@ -1092,20 +1212,20 @@
                 }
             });
 
-            window.showProductInfo = async function(id) {
+            window.showProductInfo = async function (id) {
                 showLoading("Cargando detalles del producto...");
                 const response = await sendData('getProductDetails', { id });
                 hideLoading();
                 if (response.success) {
                     const product = response.data.product;
                     const reviews = response.data.reviews;
-                    
+
                     // URLs de video y descarga dinámicas, construidas con el ID del producto
                     const iframeUrl = `https://drive.google.com/file/d/${product.fileId}/preview`;
                     const downloadUrl = `https://drive.google.com/uc?export=download&id=${product.fileId}`;
-                    
+
                     const iframeHtml = `<iframe src="${iframeUrl}" width="300" height="300" style="border: none;"></iframe>`;
-                    
+
                     document.getElementById('producto-info-image-container').innerHTML = iframeHtml;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
                     document.getElementById('producto-info-descripcion').innerText = product.descripcion;
@@ -1116,14 +1236,15 @@
                     const resenasContainer = document.getElementById('producto-info-resenas');
                     resenasContainer.innerHTML = '';
                     if (reviews.length > 0) {
-                        reviews.forEach(review => {
-                            resenasContainer.innerHTML += `
-                                <div class="card mb-2 p-2 bg-dark text-white">
-                                    <p><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
-                                    <p class="mb-0">${review.comentario}</p>
-                                </div>
-                            `;
-                        });
+                    reviews.forEach(review => {
+                        resenasContainer.innerHTML += `
+                            <div class="card mb-2 p-2 bg-dark text-white">
+                                <p><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
+                                <p class="mb-0"><strong>Comentario:</strong> ${review.comentario}</p>
+                                <p class="mb-0"><strong>Cliente:</strong> ${review.cliente}</p>
+                            </div>
+                        `;
+                    });
                     } else {
                         resenasContainer.innerHTML = '<p class="text-muted">No hay reseñas para este producto.</p>';
                     }
@@ -1134,28 +1255,28 @@
                 }
             };
 
-            window.mostrarModalResena = function(documento, fecha) {
+            window.mostrarModalResena = function (documento, fecha) {
                 document.getElementById('resena-documento').value = documento;
                 document.getElementById('resena-fecha').value = fecha;
                 new bootstrap.Modal(document.getElementById('modalResena')).show();
             };
 
-            window.enviarResena = async function() {
+            window.enviarResena = async function () {
                 const documento = document.getElementById('resena-documento').value;
                 const fecha = document.getElementById('resena-fecha').value;
                 const rating = document.getElementById('ratingResena').value;
                 const comentario = document.getElementById('comentarioResena').value;
-                
+
                 showLoading("Enviando tu reseña...");
                 const data = { documento, fecha, rating, comentario };
                 const response = await sendData('submitReview', data);
-                
+
                 if (response.success) {
                     showLoading("¡Reseña enviada exitosamente!", true);
                     setTimeout(() => {
                         hideLoading();
                         bootstrap.Modal.getInstance(document.getElementById('modalResena')).hide();
-                        document.getElementById('btnBuscarPedidos').click(); 
+                        document.getElementById('btnBuscarPedidos').click();
                     }, 2000);
                 } else {
                     hideLoading();
@@ -1163,11 +1284,11 @@
                 }
             };
 
-            window.loadAllReviews = async function() {
+            window.loadAllReviews = async function () {
                 showLoading("Cargando reseñas...");
                 const response = await sendData('getAllReviews');
                 hideLoading();
-                
+
                 allReviewsList.innerHTML = '';
 
                 if (response.success && response.data.length > 0) {
@@ -1177,7 +1298,7 @@
                                 <div class="card-body">
                                     <p class="card-text mb-1"><strong>Calificación:</strong> ${'⭐'.repeat(review.rating)}</p>
                                     <p class="card-text mb-1"><strong>Comentario:</strong> ${review.comentario}</p>
-                                    <p class="card-text text-muted mb-0"><small>Cliente con documento ${review.documento}</small></p>
+                                    <p class="card-text mb-1"><strong>Cliente: ${review.cliente}</strong></p>
                                 </div>
                             </div>
                         `;
@@ -1187,96 +1308,96 @@
                     allReviewsList.innerHTML = `<div class="p-3 text-center"><p class="text-muted mb-0">Aún no hay reseñas de clientes.</p></div>`;
                 }
             }
-            
-function renderSalesCalendar() {
-    const salesCalendar = document.getElementById('sales-calendar');
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-    const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-    // Festivos en Colombia para 2025
-    const festivosColombia2025 = [
-        '2025-01-01', '2025-01-06', '2025-03-24', '2025-04-13', '2025-04-17',
-        '2025-04-18', '2025-05-01', '2025-06-02', '2025-06-23', '2025-06-30',
-        '2025-07-20', '2025-08-07', '2025-08-18', '2025-10-13', '2025-11-03',
-        '2025-11-17', '2025-12-08', '2025-12-25'
-    ];
+            function renderSalesCalendar() {
+                const salesCalendar = document.getElementById('sales-calendar');
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+                const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-    const isFestivo = (date) => {
-        const iso = date.toISOString().split('T')[0];
-        return festivosColombia2025.includes(iso);
-    };
+                // Festivos en Colombia para 2025
+                const festivosColombia2025 = [
+                    '2025-01-01', '2025-01-06', '2025-03-24', '2025-04-13', '2025-04-17',
+                    '2025-04-18', '2025-05-01', '2025-06-02', '2025-06-23', '2025-06-30',
+                    '2025-07-20', '2025-08-07', '2025-08-18', '2025-10-13', '2025-11-03',
+                    '2025-11-17', '2025-12-08', '2025-12-25'
+                ];
 
-    const findClosestSunday = (targetDay) => {
-        let closestSunday = null;
-        let minDiff = Infinity;
+                const isFestivo = (date) => {
+                    const iso = date.toISOString().split('T')[0];
+                    return festivosColombia2025.includes(iso);
+                };
 
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const findClosestSunday = (targetDay) => {
+                    let closestSunday = null;
+                    let minDiff = Infinity;
 
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            if (date.getDay() === 0) { // Si es domingo
-                const diff = Math.abs(day - targetDay);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestSunday = day;
+                    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const date = new Date(currentYear, currentMonth, day);
+                        if (date.getDay() === 0) { // Si es domingo
+                            const diff = Math.abs(day - targetDay);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closestSunday = day;
+                            }
+                        }
+                    }
+                    return closestSunday;
+                };
+
+                // Cabecera
+                salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
+
+                // Días de la semana
+                daysOfWeek.forEach(day => {
+                    salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
+                });
+
+                // Espacios en blanco antes del primer día
+                const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+                for (let i = 0; i < firstDay; i++) {
+                    salesCalendar.innerHTML += `<div></div>`;
+                }
+
+                // Días del mes
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const sundayFor15 = findClosestSunday(15);
+                const sundayFor30 = findClosestSunday(30);
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(currentYear, currentMonth, day);
+                    const esVenta = isFestivo(date) || (day === sundayFor15) || (day === sundayFor30);
+                    const clase = esVenta ? 'calendar-day venta' : 'calendar-day';
+                    salesCalendar.innerHTML += `<div class="${clase}">${day}</div>`;
                 }
             }
-        }
-        return closestSunday;
-    };
-    
-    // Cabecera
-    salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
-    
-    // Días de la semana
-    daysOfWeek.forEach(day => {
-        salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
-    });
-
-    // Espacios en blanco antes del primer día
-    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-    for (let i = 0; i < firstDay; i++) {
-        salesCalendar.innerHTML += `<div></div>`;
-    }
-
-    // Días del mes
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const sundayFor15 = findClosestSunday(15);
-    const sundayFor30 = findClosestSunday(30);
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentYear, currentMonth, day);
-        const esVenta = isFestivo(date) || (day === sundayFor15) || (day === sundayFor30);
-        const clase = esVenta ? 'calendar-day venta' : 'calendar-day';
-        salesCalendar.innerHTML += `<div class="${clase}">${day}</div>`;
-    }
-}
 
             const modalReseñas = document.getElementById('modalResenas');
             modalResenas.addEventListener('show.bs.modal', function () {
                 loadAllReviews();
-            });  
+            });
 
-            btnAceptarPolitica.addEventListener('click', () => { 
+            btnAceptarPolitica.addEventListener('click', () => {
                 modalPolitica.hide();
                 fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
             });
-  
-            function loadProducts() { 
+
+            function loadProducts() {
                 showLoading('Cargando productos...');
                 sendData('getProducts').then(response => {
                     hideLoading();
-                    if (response.success) { 
+                    if (response.success) {
                         renderProducts(response.data);
                         modalPolitica.show();
                     }
                 });
             }
-            
+
             productsList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('add-to-cart')) { 
+                if (e.target.classList.contains('add-to-cart')) {
                     const id = e.target.dataset.id;
                     addToCart(id);
                 }
@@ -1287,4 +1408,5 @@ function renderSalesCalendar() {
         });
     </script>
 </body>
+
 </html>
