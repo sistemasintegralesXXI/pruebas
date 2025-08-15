@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,10 +87,11 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
-        .product-card img {
+        .product-image-container {
             height: 200px;
-            object-fit: cover;
             width: 100%;
+            background-size: cover;
+            background-position: center;
             border-bottom: 2px solid var(--primary-color);
         }
         .cart-summary {
@@ -118,15 +118,6 @@
         .cart-summary.minimized .cart-content,
         .cart-summary.minimized .cart-header {
             display: none;
-        }
-        .cart-summary.minimized .cart-toggle-btn {
-            display: block;
-            background: none;
-            border: none;
-            width: 100%;
-            height: 100%;
-            color: #fff;
-            font-size: 24px;
         }
         .cart-summary .cart-toggle-btn {
             display: none;
@@ -326,7 +317,7 @@
                 border-radius: 50%;
                 border: 2px solid var(--primary-color);
             }
-            .product-card img {
+            .product-image-container {
                 height: 180px;
             }
             .gallery-image {
@@ -422,7 +413,7 @@
                     <img src="https://www.itaho.co/cdn/shop/products/asadordebarrilgrandeitaho_3e1dd92b-c074-4dc8-89e1-c4a86184a328_1024x1024@2x.jpg?v=1720139692" class="img-fluid gallery-image">
                 </div>
                 <div class="col-12 col-md-4">
-                    <img src="https://homecitycolombia.com/cdn/shop/products/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.jpg?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
+                    <img src="https://homecitycolombia.com/cdn/shop/files/BARRI22_0c5ed290-1b94-45ba-9c9b-f45871b8620f.webp?v=1740757435&width=1445" alt="Carne al barril 3" class="img-fluid gallery-image">
                 </div>
                               <div class="col-12 col-md-4">
                     <img src="https://centralhomecol.com/cdn/shop/files/86bde1e6-f8da-4fcf-abb3-ea47b9176384_001af96c-c203-44b9-8693-c84b00539644.webp?v=1715116164" alt="Carne al barril 1" class="img-fluid gallery-image">
@@ -655,7 +646,7 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-12 col-md-6">
-                <img id="producto-info-img" src="" alt="Imagen del Producto" class="img-fluid rounded">
+                <div id="producto-info-image-container"></div>
               </div>
               <div class="col-12 col-md-6">
                 <h4 id="producto-info-nombre"></h4>
@@ -806,16 +797,16 @@
                     return { success: false, error: 'Error de conexión con el servidor.' };
                 }
             }
-
+            
             function renderProducts(products) {
                 allProducts = products;
                 productsList.innerHTML = '';
                 products.forEach(product => {
-                    const imageUrl = product.fileId ? `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512` : 'https://via.placeholder.com/512x200.png?text=No+Imagen';
+                    const imageUrl = `https://drive.google.com/thumbnail?id=${product.fileId}&sz=w512`;
                     const productHtml = `
                         <div class="col-6 col-md-4 mb-4">
                             <div class="card product-card">
-                                <img src="${imageUrl}" class="card-img-top" alt="${product.nombre}">
+                                <div class="product-image-container" style="background-image: url('${imageUrl}');"></div>
                                 <div class="card-body">
                                     <h5 class="card-title">${product.nombre}</h5>
                                     <p class="card-text">$${product.precio}</p>
@@ -1088,13 +1079,17 @@
                     const product = response.data.product;
                     const reviews = response.data.reviews;
                     
-                    const highQualityImageUrl = product.fileId ? `https://drive.google.com/uc?id=${product.fileId}` : 'https://via.placeholder.com/800x600.png?text=No+Imagen';
+                    // URLs de video y descarga dinámicas, construidas con el ID del producto
+                    const iframeUrl = `https://drive.google.com/file/d/${product.fileId}/preview`;
+                    const downloadUrl = `https://drive.google.com/uc?export=download&id=${product.fileId}`;
                     
-                    document.getElementById('producto-info-img').src = highQualityImageUrl;
+                    const iframeHtml = `<iframe src="${iframeUrl}" width="300" height="300" style="border: none;"></iframe>`;
+                    
+                    document.getElementById('producto-info-image-container').innerHTML = iframeHtml;
                     document.getElementById('producto-info-nombre').innerText = product.nombre;
                     document.getElementById('producto-info-descripcion').innerText = product.descripcion;
                     document.getElementById('producto-info-precio').innerText = `$${product.precio}`;
-                    document.getElementById('download-image-btn').href = highQualityImageUrl;
+                    document.getElementById('download-image-btn').href = downloadUrl;
                     document.getElementById('download-image-btn').download = `${product.nombre}.jpg`;
 
                     const resenasContainer = document.getElementById('producto-info-resenas');
@@ -1188,15 +1183,28 @@ function renderSalesCalendar() {
         return festivosColombia2025.includes(iso);
     };
 
-    const isDomingoQuincena = (date) => {
-        const day = date.getDate();
-        const isSunday = date.getDay() === 0;
-        return isSunday && (day === 15 || day === 30 || (day === 28 && date.getMonth() === 1));
-    };
+    const findClosestSunday = (targetDay) => {
+        let closestSunday = null;
+        let minDiff = Infinity;
 
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            if (date.getDay() === 0) { // Si es domingo
+                const diff = Math.abs(day - targetDay);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSunday = day;
+                }
+            }
+        }
+        return closestSunday;
+    };
+    
     // Cabecera
     salesCalendar.innerHTML = `<div class="calendar-header">${new Date(currentYear, currentMonth).toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</div>`;
-
+    
     // Días de la semana
     daysOfWeek.forEach(day => {
         salesCalendar.innerHTML += `<div class="weekday">${day}</div>`;
@@ -1210,17 +1218,16 @@ function renderSalesCalendar() {
 
     // Días del mes
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const sundayFor15 = findClosestSunday(15);
+    const sundayFor30 = findClosestSunday(30);
+
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(currentYear, currentMonth, day);
-        const isSunday = date.getDay() === 0;
-
-        const esVenta = isSunday || isFestivo(date) || isDomingoQuincena(date);
+        const esVenta = isFestivo(date) || (day === sundayFor15) || (day === sundayFor30);
         const clase = esVenta ? 'calendar-day venta' : 'calendar-day';
-
         salesCalendar.innerHTML += `<div class="${clase}">${day}</div>`;
     }
 }
-
 
             const modalResenas = document.getElementById('modalResenas');
             modalResenas.addEventListener('show.bs.modal', function () {
@@ -1232,7 +1239,7 @@ function renderSalesCalendar() {
                 fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
             });
 
-            function loadProducts() {
+            function loadProducts() { 
                 showLoading('Cargando productos...');
                 sendData('getProducts').then(response => {
                     hideLoading();
@@ -1244,7 +1251,7 @@ function renderSalesCalendar() {
             }
             
             productsList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('add-to-cart')) {
+                if (e.target.classList.contains('add-to-cart')) { 
                     const id = e.target.dataset.id;
                     addToCart(id);
                 }
