@@ -792,6 +792,21 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalProximaVenta" tabindex="-1" aria-labelledby="modalProximaVentaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center" style="background-color: var(--secondary-color); border: 3px solid var(--primary-color);">
+                <div class="modal-header d-flex justify-content-end border-bottom-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <h2 class="display-4 fw-bold text-white mb-3">¡Próxima Venta!</h2>
+                    <h1 class="display-1 fw-bold text-primary-color mb-4" id="next-sale-date"></h1>
+                    <small class="lead text-white-50">¡No te quedes sin tu carne al barril!</small>
+                    <a href="#menu" class="btn btn-primary btn-lg mt-4" data-bs-dismiss="modal">¡Pedir Ya!</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="loading-overlay" class="d-none">
         <div id="pedido-animation">
@@ -829,6 +844,7 @@
             const successSound = document.getElementById('success-sound');
             const btnAceptarPolitica = document.getElementById('btn-aceptar-politica');
             const modalPolitica = new bootstrap.Modal(document.getElementById('modalPolitica'));
+            const modalProximaVenta = new bootstrap.Modal(document.getElementById('modalProximaVenta'));
 
             const btnClienteAntiguo = document.getElementById('btn-cliente-antiguo');
             const btnClienteNuevo = document.getElementById('btn-cliente-nuevo');
@@ -1308,6 +1324,78 @@
                     allReviewsList.innerHTML = `<div class="p-3 text-center"><p class="text-muted mb-0">Aún no hay reseñas de clientes.</p></div>`;
                 }
             }
+            
+            function calculateNextSaleDate() {
+                const today = new Date();
+                const currentMonth = today.getMonth();
+                const currentYear = today.getFullYear();
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+                const festivosColombia = [
+                    '2025-01-01', '2025-01-06', '2025-03-24', '2025-04-13', '2025-04-17',
+                    '2025-04-18', '2025-05-01', '2025-06-02', '2025-06-23', '2025-06-30',
+                    '2025-07-20', '2025-08-07', '2025-08-18', '2025-10-13', '2025-11-03',
+                    '2025-11-17', '2025-12-08', '2025-12-25'
+                ];
+                
+                const isFestivo = (date) => {
+                    const iso = date.toISOString().split('T')[0];
+                    return festivosColombia.includes(iso);
+                };
+
+                const findClosestSunday = (targetDay, month, year) => {
+                    let closestSunday = null;
+                    let minDiff = Infinity;
+                    const daysInTargetMonth = new Date(year, month + 1, 0).getDate();
+
+                    for (let day = 1; day <= daysInTargetMonth; day++) {
+                        const date = new Date(year, month, day);
+                        if (date.getDay() === 0) { // If it's Sunday
+                            const diff = Math.abs(day - targetDay);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closestSunday = day;
+                            }
+                        }
+                    }
+                    return closestSunday;
+                };
+
+                const salesDays = [];
+                const sundayFor15 = findClosestSunday(15, currentMonth, currentYear);
+                const sundayFor30 = findClosestSunday(30, currentMonth, currentYear);
+
+                if (sundayFor15) salesDays.push(new Date(currentYear, currentMonth, sundayFor15));
+                if (sundayFor30) salesDays.push(new Date(currentYear, currentMonth, sundayFor30));
+                
+                festivosColombia.forEach(dateStr => {
+                    const [year, month, day] = dateStr.split('-').map(Number);
+                    salesDays.push(new Date(year, month - 1, day));
+                });
+
+                salesDays.sort((a, b) => a - b);
+
+                const nextSale = salesDays.find(date => date > today);
+                
+                if (nextSale) {
+                    return nextSale;
+                } else {
+                    const nextMonth = (currentMonth + 1) % 12;
+                    const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+                    const nextMonthSunday15 = findClosestSunday(15, nextMonth, nextYear);
+                    return new Date(nextYear, nextMonth, nextMonthSunday15);
+                }
+            }
+
+            function showNextSaleModal() {
+                const nextSaleDate = calculateNextSaleDate();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const formattedDate = nextSaleDate.toLocaleDateString('es-ES', options);
+                
+                document.getElementById('next-sale-date').innerText = formattedDate;
+                modalProximaVenta.show();
+            }
+
 
             function renderSalesCalendar() {
                 const salesCalendar = document.getElementById('sales-calendar');
@@ -1376,13 +1464,14 @@
             }
 
             const modalReseñas = document.getElementById('modalResenas');
-            modalResenas.addEventListener('show.bs.modal', function () {
+            modalReseñas.addEventListener('show.bs.modal', function () {
                 loadAllReviews();
             });
 
             btnAceptarPolitica.addEventListener('click', () => {
                 modalPolitica.hide();
                 fireSound.play().catch(e => console.error("Error al reproducir audio:", e));
+                showNextSaleModal();
             });
 
             function loadProducts() {
